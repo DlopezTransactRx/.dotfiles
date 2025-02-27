@@ -1,0 +1,33 @@
+
+#******************************************************************************
+# Snowflake Warehouse Administration
+# ******************************************************************************
+
+
+function swa() {
+  # Prompt for warehouse name
+  read "option?SnowflakeWHAdministration. Options (A=OptionA, B=OptionB): "
+  case $option in
+    A)
+	    optionA
+      ;;
+    B)
+	    optionB
+      ;;
+    *)
+      echo "Invalid option. Please select A or B."
+      ;;
+  esac
+
+  optionA() {
+    # Execute the command for Option A
+    echo "Executing Option A..."
+    # Add your command here
+  }
+
+  optionB() {
+    # Execute the command for Option B
+    echo "Executing Option B..."
+    # Add your command here
+  }
+}

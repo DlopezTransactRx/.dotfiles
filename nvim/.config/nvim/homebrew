@@ -1,0 +1,99 @@
+sudo -v
+
+# INSTALL HOMEBREW
+#/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"s
+brew update
+
+# NATS.IO
+brew tap nats-io/nats-tools
+brew install nats-io/nats-tools/nats
+brew install nats-server
+brew install nats-io/nats-tools/nsc
+
+# AWS CLI
+brew install awscli
+
+# Terraform
+brew install terraform
+
+# Docker
+brew install docker
+
+# SNOWFLAKE CLI
+brew tap snowflakedb/snowflake-cli
+brew install snowflake-cli
+
+# VSCODE
+brew install --cask visual-studio-code
+
+# JETBRAINS TOOLBOX
+brew install --cask jetbrains-toolbox
+
+# RECTANLE
+brew install --cask rectangle
+
+# CHROME
+brew install --cask google-chrome
+
+#BITWARDEN
+brew install --cask bitwarden
+
+#POSTMAN
+brew install --cask postman
+
+#SOAP UI
+brew install --cask soapui
+
+#WARP
+brew install warp
+
+#NOTION
+#brew install notion
+
+#VISCITY VPN
+brew install viscosity
+
+#MICROSOFT OFFICE
+brew install microsoft-office
+
+# Tabby
+brew install --cask tabby
+
+# Pastebot
+brew install --cask pastebot
+
+# GitHub CLI
+brew install gh
+
+# Kdiff3 - File Comparison Tool
+brew install kdiff3
+
+# GitKraken 
+brew install --cask gitkraken
+
+# NeoVim 
+brew install nvim
+
+#LuaRocks (neovim)
+brew install luarocks
+
+#wget (neovim)
+brew install wget
+
+#rust (neovim)
+brew install rust
+
+#ripgrep (neovim)
+brew install ripgrep
+
+#php (neovim)
+brew install php
+
+#TMUX
+brew install tmux
+
+#Ghosty Terminal
+brew install ghostty
+
+#Fuzzy Finder (CLI)
+brew install fzf

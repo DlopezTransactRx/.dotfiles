@@ -1,0 +1,8 @@
+# Style
+theme = tokyonight
+font-family = Hack Nerd Font
+background-opacity = .9
+background-blur = 1 
+
+# Keybiindings
+keybind = global:unconsumed:ctrl+space=toggle_visibility
