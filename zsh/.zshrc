@@ -56,6 +56,9 @@ alias tr="terraform refresh"
 # TLDR
 alias tldrs="tldr \`tldr -l | fzf  -e\`"
 
+#Homebrew
+alias bu="brew update && brew upgrade && brew cleanup"
+
 # Util
 alias ping="ping -c 5"
 alias fastping="ping -c 100 -i 0.2"
