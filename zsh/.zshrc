@@ -42,6 +42,7 @@ alias gm="git merge"
 alias gf="git fetch"
 alias gl="git log"
 alias gll="git log --oneline --graph --decorate"
+alias gbl="git blame"
 
 # GitHub CLI
 alias ghb="gh browse"
