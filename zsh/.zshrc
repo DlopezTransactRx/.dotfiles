@@ -97,13 +97,12 @@ function gencert(){
 	# Convert the private key to base64
 	base64 -i private_key.pem -o private_key.b64;
 
-	# Copy the Private Key to the clipboard
-	bat --style plain private_key.pem | pbcopy
+	# Copy the Public Key to the clipboard
+	bat --style plain public_key.pem | pbcopy
 
 	# Notify the user
 	cowsay 'Public key has been copied to the clipboard' | lolcat
 }
-
 
 
 #******************************************************************************
