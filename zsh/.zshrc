@@ -57,6 +57,11 @@ alias tr="terraform refresh"
 # TLDR
 alias tldrs="tldr \`tldr -l | fzf  -e\`"
 
+# SKHD + Yabai
+alias ys="skhd --start-service && yabai --start-service"
+alias yss="skhd --stop-service && yabai --stop-service"
+alias yr="skhd --restart-service && yabai --restart-service"
+
 #Homebrew
 alias bu="brew update && brew upgrade && brew cleanup"
 

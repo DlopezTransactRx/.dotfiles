@@ -1,0 +1,33 @@
+# bsp, stack or float
+yabai -m config layout bsp
+
+yabai -m config window_placement second_child
+
+# padding
+yabai -m config top_padding 12
+yabai -m config bottom_padding 12
+yabai -m config left_padding 12
+yabai -m config right_padding 12
+yabai -m config window_gap 12
+
+
+# mouse Settings
+yabai -m config mouse_follows_focus on
+yabai -m config mouse_modifier alt
+
+# left click + drag
+yabai -m  config mouse_action1 move
+
+
+# right click + drag
+yabai -m  config mouse_action2 resize
+yabai -m mouse_drop_action swap
+
+
+# Disable specific apps
+yabai -m rule --add app="^System Settings$" manage=off
+yabai -m rule --add app="^Calculator$" manage=off
+yabai -m rule --add app="^Ghostty" manage=off
+
+
+yabai -m signal --add label="flash_focus" event="window_focused" action="yabai -m window \$YABAI_WINDOW_ID --opacity 0.1 && sleep $(yabai -m config window_opacity_duration) && yabai -m window \$YABAI_WINDOW_ID --opacity 0.0"
