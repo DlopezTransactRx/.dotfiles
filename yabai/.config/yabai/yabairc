@@ -23,12 +23,14 @@ yabai -m  config mouse_action1 move
 yabai -m  config mouse_action2 resize
 yabai -m mouse_drop_action swap
 
-
 # Disable specific apps
 yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add app="^Calculator$" manage=off
 yabai -m rule --add app="^Ghostty" manage=off
 
+# Specific app rules
+yabai -m rule --add app="^Microsoft Teams" display=2 manage=on
+yabai -m rule --add app="^Microsoft Teams" grid=2:2:0:0:1:2
 
 # Highlight of focus window.
 borders active_color=0xffFFA500 inactive_color=0xff444444 width=10.0 &
