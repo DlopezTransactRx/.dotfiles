@@ -19,22 +19,28 @@ shift + alt - h : yabai -m window --display west | yabai -m display --focus west
 shift + alt - l : yabai -m window --display east | yabai -m display --focus east
 
 # rotate layout clockwise
-shift + ctrl - r : yabai -m space --rotate 270
+ctrl - r : yabai -m space --rotate 270
 
 # flip along y-axis
-shift + ctrl - y : yabai -m space --mirror y-axis
+ctrl - y : yabai -m space --mirror y-axis
 
 # flip along x-axis
-shift + ctrl - x : yabai -m space --mirror x-axis
+ctrl - x : yabai -m space --mirror x-axis
 
 # toggle window float
-shift + ctrl - t : yabai -m window --toggle float --grig 4:4:1:1:2:2
+ctrl - t : yabai -m window --toggle float --grig 4:4:1:1:2:2
 
 # maximize a window
-shift + ctrl - m : yabai -m window --toggle zoom-fullscreen
+ctrl - m : yabai -m window --toggle zoom-fullscreen
 
 # toggle fullscreen for the current window
-shift + ctrl - n : yabai -m window --toggle split
+ctrl - n : yabai -m window --toggle split
 
 # balance out tree of windows (resize to occupy same area) 
-shift + ctrl - e : yabai -m space --balance
+ctrl - e : yabai -m space --balance
+
+# # Disable or modify hotkeys when "Ghostty" is active
+# ghostty {
+#    # No hotkeys will work in this block unless explicitly defined
+# }
+#
