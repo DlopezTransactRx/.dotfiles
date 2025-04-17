@@ -34,15 +34,21 @@ alias gcm="git commit -m"
 alias gs="git status"
 alias gsw="git switch"
 alias gb="git branch"
-alias gps="git push"
+alias gp="git push"
 alias gpl="git pull"
 alias gr="git reset"
+alias grs="git reset --soft"
+alias grm="git reset --mixed"
+alias grh="git reset --hard"
+alias grv="git revert"
 alias gd="git diff"
 alias gm="git merge"
 alias gf="git fetch"
 alias gl="git log"
 alias gll="git log --oneline --graph --decorate"
 alias gbl="git blame"
+alias gspo="git stash pop"
+alias gspu="git stash push"
 
 # GitHub CLI
 alias ghb="gh browse"
@@ -85,8 +91,6 @@ function lsof(){
 	grc lsof "$@"
 }
 
-
-
 #******************************************************************************
 # Function to Generate a Self-Signed Certificate
 #******************************************************************************
@@ -109,30 +113,15 @@ function gencert(){
 	cowsay 'Public key has been copied to the clipboard' | lolcat
 }
 
-
-#******************************************************************************
-# Tmux Project Aliases
-#******************************************************************************
-#PowerlineDataWarehouse
-alias tpw="tmux a -t powerlineDataWarehouse"
-
-#SnowflakeWHAdministration
-alias tsa="tmux a -t snowflakeWHAdministration"
-
-#Nats Server
-alias tnats="tmux a -t Nats Server"
-
 #******************************************************************************
 # Starship (Setup)
 #******************************************************************************
 eval "$(starship init zsh)"
 
-
 #******************************************************************************
 # TheFuck (Setup)
 #******************************************************************************
 eval "$(thefuck --alias tf)"
-
 
 #******************************************************************************
 # Zoxide (Setup)
@@ -140,9 +129,7 @@ eval "$(thefuck --alias tf)"
 if [ -f ~/.zsh_zoxide ]; then
   source ~/.zsh_zoxide
 fi
-
 eval $(thefuck --alias)
-
 
 #******************************************************************************
 # Yazi
@@ -157,11 +144,9 @@ function y() {
 	rm -f -- "$tmp"
 }
 
-
 #******************************************************************************
-# Snowfalke Warehouse Admin
+# Snowfalke Warehouse Admin (Personal Script)
 #******************************************************************************
 if [ -f ~/.zsh_snowflake_wh_admin ]; then
   source ~/.zsh_snowflake_wh_admin
 fi
-
