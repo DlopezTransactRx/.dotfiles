@@ -75,6 +75,7 @@ alias bu="brew update && brew upgrade && brew cleanup"
 alias ping="ping -c 5"
 alias fastping="ping -c 100 -i 0.2"
 alias c="clear"
+alias h="history"
 alias now='echo "[ Zulu     ]: $(TZ="UTC" date)"; \
 echo "[ Eastern  ]: $(TZ="America/New_York" date) (UTC-5)"; \
 echo "[ Central  ]: $(TZ="America/Chicago" date) (UTC-6)"; \
