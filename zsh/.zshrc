@@ -94,6 +94,7 @@ function lsof(){
 
 #******************************************************************************
 # Function to Generate a Self-Signed Certificate
+# NOTE These functions will generate a self-signed certificate and encrypt the private key using standardized names
 #******************************************************************************
 function gencert(){
 
@@ -112,6 +113,21 @@ function gencert(){
 
 	# Notify the user
 	cowsay 'Public key has been copied to the clipboard' | lolcat
+}
+
+
+function encryptcert(){
+	# Notify User
+	figlet "Encrypting Cert" | lolcat
+
+	# Encrypt the private key using the public key
+	openssl pkcs8 -topk8 -in private_key.pem -out private_key_e.pem -v2 aes-256-cbc
+
+	# Convert the encrypted private key to base64
+	base64 -i private_key_e.pem -o private_key_e.b64;
+
+	# Notify the user
+	cowsay 'Encrypted Private key has been created. (private_key_e.pem & private_key_e.b64)' | lolcat 
 }
 
 #******************************************************************************
