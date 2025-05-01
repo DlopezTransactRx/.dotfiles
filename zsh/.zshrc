@@ -131,6 +131,7 @@ function encryptcert(){
 	cowsay 'Encrypted Private key has been created. (private_key_e.pem & private_key_e.b64)' | lolcat 
 }
 
+
 #******************************************************************************
 # Starship (Setup)
 #******************************************************************************
@@ -168,3 +169,12 @@ function y() {
 if [ -f ~/.zsh_snowflake_wh_admin ]; then
   source ~/.zsh_snowflake_wh_admin
 fi
+
+
+#******************************************************************************
+# NCPDP (Personal Script)
+#******************************************************************************
+if [ -f ~/.zsh_ncpdp ]; then
+  source ~/.zsh_ncpdp
+fi
+
