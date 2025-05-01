@@ -9,7 +9,7 @@ function formatNcpdp(){
 #******************************************************************************
 # Function to Format NCPDP messages from the clipboard. 
 #******************************************************************************
-function fn(){
+function nf(){
 	# Notify User
 	figlet "Formatting NCPDP" | lolcat
 
@@ -24,7 +24,7 @@ function fn(){
 #******************************************************************************
 # Function to detail the NCPDP in json.
 #******************************************************************************
-function jn() {
+function nj() {
 
   # Notify User
   figlet "NCPDP to JSON" | lolcat
