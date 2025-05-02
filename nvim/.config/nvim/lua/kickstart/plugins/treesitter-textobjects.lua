@@ -36,48 +36,48 @@ return {
             ['ic'] = { query = '@class.inner', desc = 'Select inner part of a class' },
           },
         },
-      },
-      swap = {
-        enable = true,
-        swap_next = {
-          ['<leader>na'] = { query = '@parameter.inner', desc = 'Swap next parameter' },
-          ['<leader>nf'] = { query = '@function.outer', desc = 'Swap next function' },
+        swap = {
+          enable = true,
+          swap_next = {
+            ['<leader>na'] = { query = '@parameter.inner', desc = 'Swap next parameter' },
+            ['<leader>nf'] = { query = '@function.outer', desc = 'Swap next function' },
+          },
+          swap_previous = {
+            ['<leader>pa'] = { query = '@parameter.inner', desc = 'Swap previous parameter' },
+            ['<leader>pf'] = { query = '@function.outer', desc = 'Swap previous function' },
+          },
         },
-        swap_previous = {
-          ['<leader>pa'] = { query = '@parameter.inner', desc = 'Swap previous parameter' },
-          ['<leader>pf'] = { query = '@function.outer', desc = 'Swap previous function' },
-        },
-      },
-      move = {
-        enable = true,
-        set_jumps = true, -- whether to set jumps in the jumplist
-        goto_next_start = {
-          [']a'] = { query = '@assignment.outer', desc = 'Next assignment' },
-          [']f'] = { query = '@function.outer', desc = 'Next function' },
-          [']i'] = { query = '@conditional.outer', desc = 'Next conditional' },
-          [']l'] = { query = '@loop.outer', desc = 'Next loop' },
-          [']c'] = { query = '@class.outer', desc = 'Next class' },
-        },
-        goto_next_end = {
-          [']A'] = { query = '@assignment.outer', desc = 'Next assignment end' },
-          [']F'] = { query = '@function.outer', desc = 'Next function end' },
-          [']I'] = { query = '@conditional.outer', desc = 'Next conditional end' },
-          [']L'] = { query = '@loop.outer', desc = 'Next loop end' },
-          [']C'] = { query = '@class.outer', desc = 'Next class end' },
-        },
-        goto_previous_start = {
-          ['[a'] = { query = '@assignment.outer', desc = 'Previous assignment' },
-          ['[f'] = { query = '@function.outer', desc = 'Previous function' },
-          ['[i'] = { query = '@conditional.outer', desc = 'Previous conditional' },
-          ['[l'] = { query = '@loop.outer', desc = 'Previous loop' },
-          ['[c'] = { query = '@class.outer', desc = 'Previous class' },
-        },
-        goto_previous_end = {
-          ['[A'] = { query = '@assignment.outer', desc = 'Previous assignment end' },
-          ['[F'] = { query = '@function.outer', desc = 'Previous function end' },
-          ['[I'] = { query = '@conditional.outer', desc = 'Previous conditional end' },
-          ['[L'] = { query = '@loop.outer', desc = 'Previous loop end' },
-          ['[C'] = { query = '@class.outer', desc = 'Previous class end' },
+        move = {
+          enable = true,
+          set_jumps = true, -- whether to set jumps in the jumplist
+          goto_next_start = {
+            [']a'] = { query = '@assignment.outer', desc = 'Next assignment' },
+            [']f'] = { query = '@function.outer', desc = 'Next function' },
+            [']i'] = { query = '@conditional.outer', desc = 'Next conditional' },
+            [']l'] = { query = '@loop.outer', desc = 'Next loop' },
+            [']c'] = { query = '@class.outer', desc = 'Next class' },
+          },
+          goto_next_end = {
+            [']A'] = { query = '@assignment.outer', desc = 'Next assignment end' },
+            [']F'] = { query = '@function.outer', desc = 'Next function end' },
+            [']I'] = { query = '@conditional.outer', desc = 'Next conditional end' },
+            [']L'] = { query = '@loop.outer', desc = 'Next loop end' },
+            [']C'] = { query = '@class.outer', desc = 'Next class end' },
+          },
+          goto_previous_start = {
+            ['[a'] = { query = '@assignment.outer', desc = 'Previous assignment' },
+            ['[f'] = { query = '@function.outer', desc = 'Previous function' },
+            ['[i'] = { query = '@conditional.outer', desc = 'Previous conditional' },
+            ['[l'] = { query = '@loop.outer', desc = 'Previous loop' },
+            ['[c'] = { query = '@class.outer', desc = 'Previous class' },
+          },
+          goto_previous_end = {
+            ['[A'] = { query = '@assignment.outer', desc = 'Previous assignment end' },
+            ['[F'] = { query = '@function.outer', desc = 'Previous function end' },
+            ['[I'] = { query = '@conditional.outer', desc = 'Previous conditional end' },
+            ['[L'] = { query = '@loop.outer', desc = 'Previous loop end' },
+            ['[C'] = { query = '@class.outer', desc = 'Previous class end' },
+          },
         },
       },
     }
