@@ -26,20 +26,50 @@ function nf(){
 #******************************************************************************
 function nj() {
 
-  # Notify User
-  figlet "NCPDP to JSON" | lolcat
+    local mapSegments='{
+        "AM01": "AM01-Patient",
+        "AM04": "AM04-Insurance",
+        "AM07": "AM07-Claim",
+        "AM02": "AM02-Provider",
+        "AM03": "AM03-Prescriber",
+        "AM15": "AM15-Facility",
+        "AM05": "AM05-COBOtherPayments",
+        "AM06": "AM06-WorkersCompensation",
+        "AM08": "AM08-DUR/PPS",
+        "AM11": "AM11-Pricing",
+        "AM09": "AM09-Coupon",
+        "AM10": "AM10-Compound",
+        "AM12": "AM12-PriorAuthorization",
+        "AM13": "AM13-Clinical",
+        "AM14": "AM14-Additional Documentation",
+        "AM16": "AM16-Narrative",
+        "AM20": "AM20-Message",
+        "AM25": "AM25-Insurance",
+        "AM21": "AM21-Status",
+        "AM22": "AM22-Claim",
+        "AM23": "AM23-Pricing",
+        "AM24": "AM24-DUR_PPS",
+        "AM26": "AM26-PriorAuthorization"
+    }'
 
-  # Invoke Format
-  formatNcpdp	
+    local mapFields='{
+        "F5": "F5-Something"
+    }'
 
-  # Convert NCPDP message from the clipboard to JSON format
-  pbpaste | awk '
-  BEGIN {
+    # Notify User
+    figlet "NCPDP to JSON" | lolcat
+
+    # Invoke Format
+    formatNcpdp	
+
+    # Convert NCPDP message from the clipboard to JSON format
+    pbpaste | awk '
+    BEGIN {
       print "{"
       header_printed = 0
       segment_started = 0
-  }
-  {
+    }
+    {
       # Trim leading/trailing spaces
       gsub(/^ +| +$/, "")
 
@@ -71,15 +101,19 @@ function nj() {
               }
           }
       }
-  }
-  END {
+    }
+    END {
       # Close the last segment
       if (segment_started) {
           print "  }"
       }
       print "}"
-  }' | jq . | pbcopy
+    }' | jq --argjson segMap "$mapSegments" "with_entries({key: (\$segMap[.key] // .key), value: .value})" | pbcopy
 
-  # Notify the user
-  cowsay 'JSON has been copied to the clipboard.' | lolcat
+    #    # NOTE: Trye to substitute the fields names but having issues
+    # }' | jq --argjson segMap "$mapSegments" --argjson fldMap "$mapFields" 'with_entries({key: ($segMap[.key] // .key), value: (if type == "object" then with_entries({key: ($fldMap[.key] // .key), value: .value}) else . end)})' | pbcopy
+
+
+    # Notify the user
+    cowsay 'JSON has been copied to the clipboard.' | lolcat
 }
