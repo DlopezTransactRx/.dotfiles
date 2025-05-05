@@ -991,6 +991,7 @@ require('lazy').setup({
   require 'kickstart.plugins.smear',
   require 'kickstart.plugins.treesitter-textobjects',
   require 'kickstart.plugins.undotree',
+  require 'kickstart.plugins.blink',
 
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
