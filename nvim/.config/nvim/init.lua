@@ -994,6 +994,7 @@ require('lazy').setup({
   require 'kickstart.plugins.blink',
   require 'kickstart.plugins.bullets',
   require 'kickstart.plugins.colorizer',
+  require 'kickstart.plugins.render-markdown',
 
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
