@@ -54,6 +54,9 @@ alias gspu="git stash push"
 # GitHub CLI
 alias ghb="gh browse"
 
+# Lazygit
+alias lg="lazygit"
+
 # terraform
 alias tp="terraform plan"
 alias ta="terraform apply"
