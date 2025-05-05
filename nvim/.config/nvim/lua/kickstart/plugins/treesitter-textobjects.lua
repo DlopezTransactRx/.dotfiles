@@ -34,6 +34,10 @@ return {
             -- Class Text
             ['ac'] = { query = '@class.outer', desc = 'Select outer part of a class' },
             ['ic'] = { query = '@class.inner', desc = 'Select inner part of a class' },
+
+            -- Block Text
+            ['ab'] = { query = '@block.outer', desc = 'Select outer block.' },
+            ['ib'] = { query = '@block.inner', desc = 'Selet inner block.' },
           },
         },
         swap = {
@@ -56,6 +60,7 @@ return {
             [']i'] = { query = '@conditional.outer', desc = 'Next conditional' },
             [']l'] = { query = '@loop.outer', desc = 'Next loop' },
             [']c'] = { query = '@class.outer', desc = 'Next class' },
+            [']b'] = { query = '@block.outer', desc = 'Next block' },
           },
           goto_next_end = {
             [']A'] = { query = '@assignment.outer', desc = 'Next assignment end' },
@@ -63,6 +68,7 @@ return {
             [']I'] = { query = '@conditional.outer', desc = 'Next conditional end' },
             [']L'] = { query = '@loop.outer', desc = 'Next loop end' },
             [']C'] = { query = '@class.outer', desc = 'Next class end' },
+            [']B'] = { query = '@block.outer', desc = 'Next block end' },
           },
           goto_previous_start = {
             ['[a'] = { query = '@assignment.outer', desc = 'Previous assignment' },
@@ -70,6 +76,7 @@ return {
             ['[i'] = { query = '@conditional.outer', desc = 'Previous conditional' },
             ['[l'] = { query = '@loop.outer', desc = 'Previous loop' },
             ['[c'] = { query = '@class.outer', desc = 'Previous class' },
+            ['[b'] = { query = '@block.outer', desc = 'Previous block' },
           },
           goto_previous_end = {
             ['[A'] = { query = '@assignment.outer', desc = 'Previous assignment end' },
@@ -77,6 +84,7 @@ return {
             ['[I'] = { query = '@conditional.outer', desc = 'Previous conditional end' },
             ['[L'] = { query = '@loop.outer', desc = 'Previous loop end' },
             ['[C'] = { query = '@class.outer', desc = 'Previous class end' },
+            ['[B'] = { query = '@block.outer', desc = 'Previous block end' },
           },
         },
       },
