@@ -999,6 +999,7 @@ require('lazy').setup({
   require 'kickstart.plugins.friendly-snippets',
   require 'kickstart.plugins.grug-far',
   require 'kickstart.plugins.outline',
+  require 'kickstart.plugins.headlines',
 
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
