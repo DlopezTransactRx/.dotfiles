@@ -172,6 +172,10 @@ vim.api.nvim_create_autocmd('BufWinEnter', { -- Open all folds on buffer entry
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
+--Json Key Maps
+vim.keymap.set('n', '<leader>jp', ':%! jq .<CR>', { desc = 'Json (Pretty)' })
+vim.keymap.set('n', '<leader>jm', ':%! jq -c .<CR>', { desc = 'Json (Minify)' })
+
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
