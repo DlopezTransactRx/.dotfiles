@@ -3,6 +3,8 @@ return {
   lazy = true,
   config = function()
     require('nvim-treesitter.configs').setup {
+      vim.keymap.set('n', '<leader>ti', ':InspectTree<CR>', { desc = 'Inspect Tree' }),
+
       textobjects = {
         select = {
           enable = true,
