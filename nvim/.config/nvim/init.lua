@@ -172,9 +172,12 @@ vim.api.nvim_create_autocmd('BufWinEnter', { -- Open all folds on buffer entry
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
---Json Key Maps
-vim.keymap.set({ 'x', 'n' }, '<leader>fjp', 'V:! jq .<CR>', { desc = 'Json (Pretty)' })
-vim.keymap.set({ 'x', 'n' }, '<leader>fjm', ':! jq -c .<CR>', { desc = 'Json (Minify)' })
+--Format Key Maps
+vim.keymap.set({ 'x', 'n' }, '<leader>fjp', 'V:!jq .<CR>', { desc = 'Json [P]retty' })
+vim.keymap.set({ 'x', 'n' }, '<leader>fjm', ':!jq -c .<CR>', { desc = 'Json [M]inify' })
+vim.keymap.set({ 'x', 'n' }, '<leader>ff', ':!figlet<CR>', { desc = '[F]iglet Text' })
+vim.keymap.set({ 'x', 'n' }, '<leader>fnf', '!source ~/.zshrc && fmtNcpdp<CR>', { desc = '[F]ormat Ncpdpd' })
+vim.keymap.set({ 'x', 'n' }, '<leader>fnj', '!source ~/.zshrc && ncpdptoJson<CR>', { desc = 'Ncpdp to [J]son' })
 
 --Order Strings
 vim.keymap.set('v', '<leader>oa', ":'<,'>!sort<CR>", { desc = '[A]scending Sort' })
@@ -361,6 +364,7 @@ require('lazy').setup({
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         { '<leader>fj', group = '[J]son', mode = { 'n', 'v' } },
+        { '<leader>fn', group = '[N]cpdp', mode = { 'n', 'v' } },
         { '<leader>o', group = '[O]rder', mode = { 'v' } },
       },
     },

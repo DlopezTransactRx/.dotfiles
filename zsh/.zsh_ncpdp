@@ -1,31 +1,14 @@
 #******************************************************************************
 # Function to Format NCPDP messages from the clipboard. 
 #******************************************************************************
-function formatNcpdp(){
-	pbpaste | sed 's/\\u001c/|/g' | sed 's/\\u001e/\n/g' | sed 's/\\u001d/\n/g' | sed 's/\\u0003/\n/g'|  pbcopy
+function fmtNcpdp(){
+    sed 's/\\u001c/|/g' | sed 's/\\u001e/\n/g' | sed 's/\\u001d/\n/g' | sed 's/\\u0003/\n/g'
 }
-
 
 #******************************************************************************
 # Function to Format NCPDP messages from the clipboard. 
 #******************************************************************************
-function nf(){
-	# Notify User
-	figlet "Formatting NCPDP" | lolcat
-
-	# Format NCPDP messages from the clipboard
-	formatNcpdp
-
-	# Notify the user
-	cowsay 'Formatted NCPDP message copied to clipboard' | lolcat
-
-}
-
-#******************************************************************************
-# Function to detail the NCPDP in json.
-#******************************************************************************
-function nj() {
-
+function ncpdptoJson(){
     local mapSegments='{
         "AM01": "AM01-Patient",
         "AM04": "AM04-Insurance",
@@ -56,14 +39,8 @@ function nj() {
         "F5": "F5-Something"
     }'
 
-    # Notify User
-    figlet "NCPDP to JSON" | lolcat
-
-    # Invoke Format
-    formatNcpdp	
-
     # Convert NCPDP message from the clipboard to JSON format
-    pbpaste | awk '
+    fmtNcpdp | awk '
     BEGIN {
       print "{"
       header_printed = 0
@@ -108,12 +85,37 @@ function nj() {
           print "  }"
       }
       print "}"
-    }' | jq --argjson segMap "$mapSegments" "with_entries({key: (\$segMap[.key] // .key), value: .value})" | pbcopy
-
-    #    # NOTE: Trye to substitute the fields names but having issues
-    # }' | jq --argjson segMap "$mapSegments" --argjson fldMap "$mapFields" 'with_entries({key: ($segMap[.key] // .key), value: (if type == "object" then with_entries({key: ($fldMap[.key] // .key), value: .value}) else . end)})' | pbcopy
+    }' | jq --argjson segMap "$mapSegments" "with_entries({key: (\$segMap[.key] // .key), value: .value})"
 
 
-    # Notify the user
-    cowsay 'JSON has been copied to the clipboard.' | lolcat
+}
+
+#******************************************************************************
+# Function to Format NCPDP messages from the clipboard. 
+#******************************************************************************
+function nf(){
+	# Notify User
+	figlet "Formatting NCPDP" | lolcat
+
+	# Format NCPDP messages from the clipboard
+	pbpaste | fmtNcpdp | pbcopy
+
+	# Notify the user
+	cowsay 'Formatted NCPDP message copied to clipboard' | lolcat
+
+}
+
+
+#******************************************************************************
+# Function to detail the NCPDP in json.
+#******************************************************************************
+function nj() {
+	# Notify User
+	figlet "NCPDP to Json" | lolcat
+
+	# Format NCPDP messages from the clipboard
+	pbpaste | ncpdptoJson | pbcopy
+
+	# Notify the user
+	cowsay 'formatted ncpdp json copied to clipboard' | lolcat
 }
