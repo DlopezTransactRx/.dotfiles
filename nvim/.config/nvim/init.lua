@@ -175,7 +175,7 @@ vim.api.nvim_create_autocmd('BufWinEnter', { -- Open all folds on buffer entry
 --Format Key Maps
 vim.keymap.set({ 'x', 'n' }, '<leader>fjp', 'V:!jq .<CR>', { desc = 'Json [P]retty' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fjm', ':!jq -c .<CR>', { desc = 'Json [M]inify' })
-vim.keymap.set({ 'x', 'n' }, '<leader>ff', ':!figlet<CR>', { desc = '[F]iglet Text' })
+vim.keymap.set({ 'x', 'n' }, '<leader>ff', ':!figlet<CR>', { desc = '[F]iglet' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fnf', '!source ~/.zshrc && fmtNcpdp<CR>', { desc = '[F]ormat Ncpdpd' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fnj', '!source ~/.zshrc && ncpdptoJson<CR>', { desc = 'Ncpdp to [J]son' })
 
