@@ -174,11 +174,9 @@ vim.api.nvim_create_autocmd('BufWinEnter', { -- Open all folds on buffer entry
 
 --Json Key Maps
 vim.keymap.set({ 'x', 'n' }, '<leader>fjp', 'V:! jq .<CR>', { desc = 'Json (Pretty)' })
-vim.keymap.set('x', '<leader>fjm', ':! jq -c .<CR>', { desc = 'Json (Minify)' })
-vim.keymap.set('n', '<leader>fjm', 'vab:! jq -c .<CR>', { desc = 'Json (Minify)' })
+vim.keymap.set({ 'x', 'n' }, '<leader>fjm', ':! jq -c .<CR>', { desc = 'Json (Minify)' })
 
 --Order Strings
--- Sort selected text in ascending order
 vim.keymap.set('v', '<leader>oa', ":'<,'>!sort<CR>", { desc = 'Sort Ascending' })
 vim.keymap.set('v', '<leader>od', ":'<,'>!sort -r<CR>", { desc = 'Sort Descending' })
 vim.keymap.set('v', '<leader>oi', ":'<,'>!sort -f<CR>", { desc = 'Sort Case Insensitive' })
