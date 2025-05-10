@@ -177,10 +177,15 @@ vim.keymap.set({ 'x', 'n' }, '<leader>fjp', 'V:! jq .<CR>', { desc = 'Json (Pret
 vim.keymap.set({ 'x', 'n' }, '<leader>fjm', ':! jq -c .<CR>', { desc = 'Json (Minify)' })
 
 --Order Strings
-vim.keymap.set('v', '<leader>oa', ":'<,'>!sort<CR>", { desc = 'Sort Ascending' })
-vim.keymap.set('v', '<leader>od', ":'<,'>!sort -r<CR>", { desc = 'Sort Descending' })
-vim.keymap.set('v', '<leader>oi', ":'<,'>!sort -f<CR>", { desc = 'Sort Case Insensitive' })
-vim.keymap.set('v', '<leader>on', ":'<,'>!sort -n<CR>", { desc = 'Sort Numerically' })
+vim.keymap.set('v', '<leader>oa', ":'<,'>!sort<CR>", { desc = '[A]scending Sort' })
+vim.keymap.set('v', '<leader>od', ":'<,'>!sort -r<CR>", { desc = '[D]escending Sort' })
+vim.keymap.set('v', '<leader>oi', ":'<,'>!sort -f<CR>", { desc = '[I]nsensitive Case Sort' })
+vim.keymap.set('v', '<leader>on', ":'<,'>!sort -n<CR>", { desc = '[N]umerically Sort' })
+
+vim.keymap.set('v', '<leader>or', ":'<,'>!uniq<CR>", { desc = '[R]emove Duplicate' })
+vim.keymap.set('v', '<leader>oc', ":'<,'>!uniq -c<CR>", { desc = '[C]ount Occurrences' })
+vim.keymap.set('v', '<leader>ou', ":'<,'>!uniq -u<CR>", { desc = '[U]nique Only' })
+vim.keymap.set('v', '<leader>om', ":'<,'>!uniq -d<CR>", { desc = '[M]ultiples Only' })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
