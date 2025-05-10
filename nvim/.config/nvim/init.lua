@@ -181,12 +181,16 @@ vim.keymap.set('v', '<leader>oa', ":'<,'>!sort<CR>", { desc = '[A]scending Sort'
 vim.keymap.set('v', '<leader>od', ":'<,'>!sort -r<CR>", { desc = '[D]escending Sort' })
 vim.keymap.set('v', '<leader>oi', ":'<,'>!sort -f<CR>", { desc = '[I]nsensitive Case Sort' })
 vim.keymap.set('v', '<leader>on', ":'<,'>!sort -n<CR>", { desc = '[N]umerically Sort' })
-
-vim.keymap.set('v', '<leader>or', ":'<,'>!uniq<CR>", { desc = '[R]emove Duplicate' })
 vim.keymap.set('v', '<leader>oc', ":'<,'>!uniq -c<CR>", { desc = '[C]ount Occurrences' })
-vim.keymap.set('v', '<leader>ou', ":'<,'>!uniq -u<CR>", { desc = '[U]nique Only' })
 vim.keymap.set('v', '<leader>om', ":'<,'>!uniq -d<CR>", { desc = '[M]ultiples Only' })
+vim.keymap.set('v', '<leader>or', ":'<,'>!uniq<CR>", { desc = '[R]emove Duplicate' })
+vim.keymap.set('v', '<leader>ou', ":'<,'>!uniq -u<CR>", { desc = '[U]nique Only' })
 
+--Encrypt Strings
+vim.keymap.set('x', '<leader>ee', ':!base64 <CR>', { desc = '[E]ncode Base64' })
+vim.keymap.set('x', '<leader>ed', ':!base64 -d<CR>', { desc = '[D]ecode Base64' })
+
+--
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
