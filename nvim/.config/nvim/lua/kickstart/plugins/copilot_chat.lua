@@ -15,9 +15,8 @@ return {
 
       -- Keymap to toggle CopilotChat
       vim.keymap.set('n', '<leader>cc', ':CopilotChat<CR>', { noremap = true, silent = true })
-
-      -- Keymap to accept autocomplete suggestions
-      -- vim.keymap.set('i', '<C-l>', 'copilot#Accept("<CR>")', { noremap = true, silent = true, expr = true })
+      vim.g.copilot_no_tab_map = true
+      vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.require("copilot.suggestion").accept()', { silent = true, expr = true })
     end,
   },
 }
