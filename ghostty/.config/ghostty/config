@@ -5,4 +5,4 @@ background-opacity = .9
 background-blur = 1 
 
 # Keybiindings
-keybind = global:unconsumed:ctrl+space=toggle_visibility
+keybind = global:unconsumed:alt+space=toggle_visibility
