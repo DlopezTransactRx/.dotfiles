@@ -57,6 +57,9 @@ alias ghb="gh browse"
 # Lazygit
 alias lg="lazygit"
 
+#Claude
+alias cl="claude"
+
 # terraform
 alias tp="terraform plan"
 alias ta="terraform apply"
