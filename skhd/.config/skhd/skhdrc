@@ -22,7 +22,7 @@ shift + ctrl + alt - l : yabai -m window --display east | yabai -m display --foc
 ctrl - e : yabai -m space --rotate 270
 
 # flip along y-axis
-ctrl - y : yabai -m space --mirror y-axis
+shift + ctrl - x : yabai -m space --mirror y-axis
 
 # flip along x-axis
 ctrl - x : yabai -m space --mirror x-axis
