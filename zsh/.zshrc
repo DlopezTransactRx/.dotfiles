@@ -61,11 +61,11 @@ alias lg="lazygit"
 alias cl="claude"
 
 # terraform
-alias tp="terraform plan"
-alias ta="terraform apply"
-alias td="terraform destroy"
-alias tsl="terraform state list"
-alias tr="terraform refresh"
+alias tfp="terraform plan"
+alias tfa="terraform apply"
+alias tfd="terraform destroy"
+alias tfsl="terraform state list"
+alias tfr="terraform refresh"
 
 # TLDR
 alias tldrs="tldr \`tldr -l | fzf  -e\`"
