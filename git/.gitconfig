@@ -19,3 +19,5 @@
 
 [merge]
     conflictstyle = zdiff3
+[http]
+	postBuffer = 157286400
