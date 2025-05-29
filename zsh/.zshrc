@@ -58,7 +58,7 @@ alias ghb="gh browse"
 alias lg="lazygit"
 
 #Claude
-alias cl="claude"
+alias cl="claude --model sonnet"
 
 # terraform
 alias tfp="terraform plan"
