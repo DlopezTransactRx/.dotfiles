@@ -178,7 +178,8 @@ vim.keymap.set({ 'x', 'n' }, '<leader>fjm', ':!jq -c .<CR>', { desc = 'Json [M]i
 vim.keymap.set({ 'x', 'n' }, '<leader>ff', ':!figlet<CR>', { desc = '[F]iglet' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fnf', '!source ~/.zshrc && fmtNcpdp<CR>', { desc = '[F]ormat Ncpdpd' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fnj', '!source ~/.zshrc && ncpdptoJson<CR>', { desc = 'Ncpdp to [J]son' })
-
+vim.keymap.set({ 'x', 'n' }, '<leader>fbe', ':!base64 <CR>', { desc = '[E]ncode Base64' })
+vim.keymap.set({ 'x', 'n' }, '<leader>fbd', ':!base64 -d<CR>', { desc = '[D]ecode Base64' })
 --Order Strings
 vim.keymap.set('v', '<leader>oa', ":'<,'>!sort<CR>", { desc = '[A]scending Sort' })
 vim.keymap.set('v', '<leader>od', ":'<,'>!sort -r<CR>", { desc = '[D]escending Sort' })
@@ -188,10 +189,6 @@ vim.keymap.set('v', '<leader>oc', ":'<,'>!uniq -c<CR>", { desc = '[C]ount Occurr
 vim.keymap.set('v', '<leader>om', ":'<,'>!uniq -d<CR>", { desc = '[M]ultiples Only' })
 vim.keymap.set('v', '<leader>or', ":'<,'>!uniq<CR>", { desc = '[R]emove Duplicate' })
 vim.keymap.set('v', '<leader>ou', ":'<,'>!uniq -u<CR>", { desc = '[U]nique Only' })
-
---Encrypt Strings
-vim.keymap.set('x', '<leader>ee', ':!base64 <CR>', { desc = '[E]ncode Base64' })
-vim.keymap.set('x', '<leader>ed', ':!base64 -d<CR>', { desc = '[D]ecode Base64' })
 
 --
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -365,6 +362,7 @@ require('lazy').setup({
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         { '<leader>fj', group = '[J]son', mode = { 'n', 'v' } },
         { '<leader>fn', group = '[N]cpdp', mode = { 'n', 'v' } },
+        { '<leader>fb', group = '[B]ase64', mode = { 'n', 'v' } },
         { '<leader>o', group = '[O]rder', mode = { 'v' } },
       },
     },
