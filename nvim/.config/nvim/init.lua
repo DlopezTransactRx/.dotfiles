@@ -173,8 +173,8 @@ vim.api.nvim_create_autocmd('BufWinEnter', { -- Open all folds on buffer entry
 --  See `:help vim.keymap.set()`
 
 --Format Key Maps
-vim.keymap.set({ 'x', 'n' }, '<leader>fjp', 'V:!jq .<CR>', { desc = 'Json [P]retty' })
-vim.keymap.set({ 'x', 'n' }, '<leader>fjm', ':!jq -c .<CR>', { desc = 'Json [M]inify' })
+vim.keymap.set({ 'x', 'n' }, '<leader>fjp', 'V:!jq<CR>', { desc = 'Json [P]retty' })
+vim.keymap.set({ 'x', 'n' }, '<leader>fjm', ':!jq -c<CR>', { desc = 'Json [M]inify' })
 vim.keymap.set({ 'x', 'n' }, '<leader>ff', ':!figlet<CR>', { desc = '[F]iglet' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fnf', '!source ~/.zshrc && fmtNcpdp<CR>', { desc = '[F]ormat Ncpdpd' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fnj', '!source ~/.zshrc && ncpdptoJson<CR>', { desc = 'Ncpdp to [J]son' })
@@ -434,6 +434,44 @@ require('lazy').setup({
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
+          },
+
+          -- This is an example of how to configure the prompts extension
+          prompts = {
+
+            -- Directories to scan for prompts (string or table)
+            dirs = {
+              vim.fn.expand '~/.config/nvim/prompts',
+            },
+
+            command = function(text)
+              vim.fn.setreg('+', text)
+              vim.api.nvim_feedkeys('"+p', 'n', false)
+            end,
+
+            -- Command to execute (string or function)
+            -- command = 'AvanteEdit', -- or function(text) ... end
+            --
+            -- File types to include
+            file_extensions = { 'md', 'txt' },
+            accept_all_files = false,
+
+            -- Sorting and display
+            sort_by = 'name', -- or "modified"
+            tail_path = false, -- Show full paths
+            shorten_path = true, -- Shorten paths in display
+
+            -- Preview options
+            previewer = true,
+
+            -- Layout customization
+            theme = 'dropdown', -- or "cursor", "ivy"
+            layout_strategy = 'flex',
+            layout_config = {
+              height = 0.95,
+              width = 0.95,
+              preview_width = 0.6,
+            },
           },
         },
       }
@@ -1009,7 +1047,7 @@ require('lazy').setup({
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.copilot', -- Removed in favor of github/copilot.vim
-  require 'kickstart.plugins.copilot_chat',
+  require 'kickstart.plugins.copilot-chat',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.vim-tmux-navigator',
   require 'kickstart.plugins.comment',
@@ -1027,6 +1065,7 @@ require('lazy').setup({
   require 'kickstart.plugins.grug-far',
   require 'kickstart.plugins.outline',
   require 'kickstart.plugins.headlines',
+  require 'kickstart.plugins.telescope-prompts',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
