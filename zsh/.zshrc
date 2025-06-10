@@ -61,6 +61,7 @@ alias lg="lazygit"
 alias cl="claude --model sonnet"
 
 # terraform
+alias tfi="terraform init"
 alias tfp="terraform plan"
 alias tfa="terraform apply"
 alias tfd="terraform destroy"
@@ -98,6 +99,7 @@ function ping(){
 function lsof(){
 	grc lsof "$@"
 }
+
 
 #******************************************************************************
 # Starship (Setup)
@@ -143,6 +145,13 @@ fi
 #******************************************************************************
 if [ -f ~/.zsh_ncpdp ]; then
   source ~/.zsh_ncpdp
+fi
+
+#******************************************************************************
+# n8n
+#******************************************************************************
+if [ -f ~/.zsh_n8n ]; then
+  source ~/.zsh_n8n
 fi
 
 #******************************************************************************

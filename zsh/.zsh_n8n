@@ -1,0 +1,27 @@
+#******************************************************************************
+# n8n
+# NOTE: This is a hardcoded path. This should update the path in the future.
+#******************************************************************************
+alias startn8n='(cd ~/self-hosted-ai-starter-kit && docker compose up)'
+alias stopn8n='(cd ~/self-hosted-ai-starter-kit && docker compose down)'
+
+
+#******************************************************************************
+# n8n
+# NOTE: This is a hardcoded path. This should update the path in the future.
+#******************************************************************************
+function n8n() {
+
+	N8N_URL="http://localhost:5678/webhook-test/dc1df2d7-4b63-46b2-b565-839b70d5b03e"
+
+	chat_input="$1"
+	session_id=$(uuidgen | tr 'A-Z' 'a-z') # Generate lowercase UUID
+
+
+	echo http post $N8N_URL "$(jq -n --arg sessionId "$session_id" --arg action "sendMessage" --arg chatInput "$chat_input" '[{sessionId: $sessionId, action: $action, chatInput: $chatInput}]')"
+
+	# Check if chat_input is empty
+	http post $N8N_URL "$(jq -n --arg sessionId "$session_id" --arg action "sendMessage" --arg chatInput "$chat_input" '[{sessionId: $sessionId, action: $action, chatInput: $chatInput}]')"
+
+}
+
