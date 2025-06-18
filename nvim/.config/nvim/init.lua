@@ -446,7 +446,6 @@ require('lazy').setup({
 
             command = function(text)
               vim.fn.setreg('+', text)
-              vim.api.nvim_feedkeys('"+p', 'n', false)
             end,
 
             -- Command to execute (string or function)
