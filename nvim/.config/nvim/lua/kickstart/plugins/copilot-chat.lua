@@ -8,6 +8,7 @@ return {
     build = 'make tiktoken', -- Only on MacOS or Linux
     opts = {
       panel = { enabled = true }, -- Enable the CopilotChat panel
+      model = 'claude-sonnet-4', -- Default model
     },
     config = function(_, opts)
       require('CopilotChat').setup(opts)
