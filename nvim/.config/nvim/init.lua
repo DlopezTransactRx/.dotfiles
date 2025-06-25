@@ -351,7 +351,7 @@ require('lazy').setup({
         },
       },
 
-      -- Document existing key chains
+      -- Document existing key chains (Sub Menu)
       spec = {
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
@@ -365,6 +365,7 @@ require('lazy').setup({
         { '<leader>fb', group = '[B]ase64', mode = { 'n', 'v' } },
         { '<leader>o', group = '[O]rder', mode = { 'v' } },
         { '<leader>m', group = '[M]ini' },
+        { '<leader>a', group = '[A]I' },
       },
     },
   },
