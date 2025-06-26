@@ -64,9 +64,10 @@ alias cl="claude --model sonnet"
 alias tfi="terraform init"
 alias tfp="terraform plan"
 alias tfa="terraform apply"
-alias tfd="terraform destroy"
 alias tfsl="terraform state list"
 alias tfr="terraform refresh"
+alias tfwl="terraform workspace list"
+alias tfws="terraform workspace select"
 
 # TLDR
 alias tldrs="tldr \`tldr -l | fzf  -e\`"
