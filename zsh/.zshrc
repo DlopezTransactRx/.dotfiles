@@ -63,7 +63,7 @@ alias cl="claude --model sonnet"
 # terraform
 alias tfi="terraform init"
 alias tfp="terraform plan"
-alias tfa="terraform apply"
+alias tfpv="terraform plan -var-file=terraform.tfvars"
 alias tfsl="terraform state list"
 alias tfr="terraform refresh"
 alias tfwl="terraform workspace list"
