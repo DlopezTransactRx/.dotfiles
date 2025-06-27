@@ -988,6 +988,9 @@ require('lazy').setup({
       -- Mini Split Join
       require('mini.splitjoin').setup {}
 
+      -- Mini Operatiors
+      require('mini.operators').setup {}
+
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
