@@ -967,6 +967,24 @@ require('lazy').setup({
         vim.keymap.set({ 'x', 'n' }, '<leader>mp', ':Pick files<CR>', { desc = '[P]ick Files' }),
       }
 
+      -- Mini Move
+      require('mini.move').setup {
+
+        mappings = {
+          -- Move visual selection in Visual mode
+          left = '<M-S-h>',
+          right = '<M-S-l>',
+          down = '<M-S-j>',
+          up = '<M-S-k>',
+
+          -- Move current line in Normal mode
+          line_left = '<M-S-h>',
+          line_right = '<M-S-l>',
+          line_down = '<M-S-j>',
+          line_up = '<M-S-k>',
+        },
+      }
+
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
