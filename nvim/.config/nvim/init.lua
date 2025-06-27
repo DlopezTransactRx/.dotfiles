@@ -180,6 +180,7 @@ vim.keymap.set({ 'x', 'n' }, '<leader>fnf', '!source ~/.zshrc && fmtNcpdp<CR>', 
 vim.keymap.set({ 'x', 'n' }, '<leader>fnj', '!source ~/.zshrc && ncpdptoJson<CR>', { desc = 'Ncpdp to [J]son' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fbe', ':!base64 <CR>', { desc = '[E]ncode Base64' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fbd', ':!base64 -d<CR>', { desc = '[D]ecode Base64' })
+
 --Order Strings
 vim.keymap.set('v', '<leader>oa', ":'<,'>!sort<CR>", { desc = '[A]scending Sort' })
 vim.keymap.set('v', '<leader>od', ":'<,'>!sort -r<CR>", { desc = '[D]escending Sort' })
@@ -189,6 +190,9 @@ vim.keymap.set('v', '<leader>oc', ":'<,'>!uniq -c<CR>", { desc = '[C]ount Occurr
 vim.keymap.set('v', '<leader>om', ":'<,'>!uniq -d<CR>", { desc = '[M]ultiples Only' })
 vim.keymap.set('v', '<leader>or', ":'<,'>!uniq<CR>", { desc = '[R]emove Duplicate' })
 vim.keymap.set('v', '<leader>ou', ":'<,'>!uniq -u<CR>", { desc = '[U]nique Only' })
+
+-- Git
+vim.keymap.set({ 'x', 'n' }, '<leader>gb', ':!gh browse<CR>', { desc = 'Git Hub [B]rowse' })
 
 --
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -351,10 +355,11 @@ require('lazy').setup({
         },
       },
 
-      -- Document existing key chains (Sub Menu)
+      -- Document existing key chains (SubMenu)
       spec = {
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
+        { '<leader>g', group = '[G]it' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>w', group = '[W]orkspace' },
@@ -366,6 +371,7 @@ require('lazy').setup({
         { '<leader>o', group = '[O]rder', mode = { 'v' } },
         { '<leader>m', group = '[M]ini' },
         { '<leader>a', group = '[A]I' },
+        { '<leader>x', group = '[X] Trouble' },
       },
     },
   },
@@ -1069,6 +1075,9 @@ require('lazy').setup({
   require 'kickstart.plugins.outline',
   require 'kickstart.plugins.headlines',
   require 'kickstart.plugins.telescope-prompts',
+  require 'kickstart.plugins.treesj',
+  require 'kickstart.plugins.git-blame',
+  require 'kickstart.plugins.trouble',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
