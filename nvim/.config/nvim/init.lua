@@ -985,6 +985,9 @@ require('lazy').setup({
         },
       }
 
+      -- Mini Split Join
+      require('mini.splitjoin').setup {}
+
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
@@ -1093,7 +1096,6 @@ require('lazy').setup({
   require 'kickstart.plugins.outline',
   require 'kickstart.plugins.headlines',
   require 'kickstart.plugins.telescope-prompts',
-  require 'kickstart.plugins.treesj',
   require 'kickstart.plugins.git-blame',
   require 'kickstart.plugins.trouble',
 
