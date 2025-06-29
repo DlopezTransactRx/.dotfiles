@@ -175,7 +175,7 @@ vim.api.nvim_create_autocmd('BufWinEnter', { -- Open all folds on buffer entry
 --Format Key Maps
 vim.keymap.set({ 'x', 'n' }, '<leader>fjp', 'V:!jq<CR>', { desc = 'Json [P]retty' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fjm', ':!jq -c<CR>', { desc = 'Json [M]inify' })
-vim.keymap.set({ 'x', 'n' }, '<leader>ff', ':!figlet<CR>', { desc = '[F]iglet' })
+vim.keymap.set({ 'x', 'n' }, '<leader>fg', ':!figlet<CR>', { desc = 'Fi[g]let' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fnf', '!source ~/.zshrc && fmtNcpdp<CR>', { desc = '[F]ormat Ncpdpd' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fnj', '!source ~/.zshrc && ncpdptoJson<CR>', { desc = 'Ncpdp to [J]son' })
 vim.keymap.set({ 'x', 'n' }, '<leader>fbe', ':!base64 <CR>', { desc = '[E]ncode Base64' })
@@ -194,7 +194,6 @@ vim.keymap.set('v', '<leader>ou', ":'<,'>!uniq -u<CR>", { desc = '[U]nique Only'
 -- Git
 vim.keymap.set({ 'x', 'n' }, '<leader>gb', ':!gh browse<CR>', { desc = 'Git Hub [B]rowse' })
 
---
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -769,7 +768,7 @@ require('lazy').setup({
     cmd = { 'ConformInfo' },
     keys = {
       {
-        '<leader>f',
+        '<leader>ff',
         function()
           require('conform').format { async = true, lsp_format = 'fallback' }
         end,
@@ -1101,6 +1100,8 @@ require('lazy').setup({
   require 'kickstart.plugins.telescope-prompts',
   require 'kickstart.plugins.git-blame',
   require 'kickstart.plugins.trouble',
+  require 'kickstart.plugins.markdown-preview',
+  require 'kickstart.plugins.live-preview',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
