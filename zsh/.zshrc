@@ -62,6 +62,7 @@ alias cl="claude --model sonnet"
 
 # terraform
 alias tfi="terraform init"
+alias tfiu="terraform init -upgrade"
 alias tfv="terraform validate"
 alias tfp="terraform plan"
 alias tfpv="terraform plan -var-file=variables.tfvars"
