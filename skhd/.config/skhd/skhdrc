@@ -9,14 +9,14 @@ shift + ctrl - h: yabai -m display --focus west
 shift + ctrl - l: yabai -m display --focus east
 
 # Moving Windows
-ctrl + alt - j : yabai -m window --swap south 
-ctrl + alt - k : yabai -m window --swap north 
-ctrl + alt - h : yabai -m window --swap west 
-ctrl + alt - l : yabai -m window --swap east 
+ctrl + cmd - j : yabai -m window --swap south 
+ctrl + cmd - k : yabai -m window --swap north 
+ctrl + cmd - h : yabai -m window --swap west 
+ctrl + cmd - l : yabai -m window --swap east 
 
 #Moving windows between displays
-shift + ctrl + alt - h : yabai -m window --display west | yabai -m display --focus west
-shift + ctrl + alt - l : yabai -m window --display east | yabai -m display --focus east
+shift + ctrl + cmd - h : yabai -m window --display west | yabai -m display --focus west
+shift + ctrl + cmd - l : yabai -m window --display east | yabai -m display --focus east
 
 # rotate layout clockwise
 ctrl - e : yabai -m space --rotate 270
