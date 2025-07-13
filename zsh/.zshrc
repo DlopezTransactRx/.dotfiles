@@ -72,6 +72,25 @@ alias tfr="terraform refresh"
 alias tfwl="terraform workspace list"
 alias tfws="terraform workspace select"
 
+# Utility Script to create a script to convert resources from one to another.
+function tfConvert(){
+
+    terraform state list | rg "$1" | while read -r OLD_RESOURCE; do
+
+    # Extract the ID of the old resource
+    local ID=$(terraform state show "$OLD_RESOURCE" | rg 'id\s*=\s*"' | rg -o '"([^"]*)"' -r '$1')
+
+    #Grab Prefix and Suffix
+    local NEW_RESOURCE=$(echo $OLD_RESOURCE | sed s/$1/$2/)
+
+    #Echo RM Statement
+    echo "terraform state rm '$OLD_RESOURCE'"
+    echo "terraform import '$NEW_RESOURCE' '$ID'"
+
+  done
+  
+}
+
 # TLDR
 alias tldrs="tldr \`tldr -l | fzf  -e\`"
 
