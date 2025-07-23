@@ -1092,7 +1092,7 @@ require('lazy').setup({
   require 'kickstart.plugins.bullets',
   require 'kickstart.plugins.colorizer',
   require 'kickstart.plugins.render-markdown',
-  require 'kickstart.plugins.lua_snip',
+  require 'kickstart.plugins.lua-snip',
   require 'kickstart.plugins.friendly-snippets',
   require 'kickstart.plugins.grug-far',
   require 'kickstart.plugins.outline',
@@ -1134,5 +1134,6 @@ require('lazy').setup({
   },
 })
 
+require 'folds'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
