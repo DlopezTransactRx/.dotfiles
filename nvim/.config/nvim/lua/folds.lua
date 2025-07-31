@@ -165,36 +165,20 @@ end, { desc = '[P]Fold all headings level 4 or above' })
 -- HACK: Fold markdown headings in Neovim with a keymap
 -- https://youtu.be/EYczZLNEnIY
 --
--- Keymap for folding markdown headings of level 4 or above
-vim.keymap.set('n', "z'", function()
-  -- "Update" saves only if the buffer has been modified since the last save
-  vim.cmd 'silent update'
-  -- vim.keymap.set("n", "<leader>mf;", function()
-  -- Reloads the file to refresh folds, otherwise you have to re-open neovim
-  vim.cmd 'edit!'
-  -- Unfold everything first or I had issues
-  vim.cmd 'normal! zR'
-  fold_markdown_headings { 6, 5 }
-  vim.cmd 'normal! zz' -- center the cursor line on screen
-end, { desc = '[P]Fold all headings level 5 or above' })
-
--- HACK: Fold markdown headings in Neovim with a keymap
--- https://youtu.be/EYczZLNEnIY
---
 -- Use <CR> to fold when in normal mode
 -- To see help about folds use `:help fold`
-vim.keymap.set('n', '<CR>', function()
-  -- Get the current line number
-  local line = vim.fn.line '.'
-  -- Get the fold level of the current line
-  local foldlevel = vim.fn.foldlevel(line)
-  if foldlevel == 0 then
-    vim.notify('No fold found', vim.log.levels.INFO)
-  else
-    vim.cmd 'normal! za'
-    vim.cmd 'normal! zz' -- center the cursor line on screen
-  end
-end, { desc = '[P]Toggle fold' })
+-- vim.keymap.set('n', '<CR>', function()
+--   -- Get the current line number
+--   local line = vim.fn.line '.'
+--   -- Get the fold level of the current line
+--   local foldlevel = vim.fn.foldlevel(line)
+--   if foldlevel == 0 then
+--     vim.notify('No fold found', vim.log.levels.INFO)
+--   else
+--     vim.cmd 'normal! za'
+--     vim.cmd 'normal! zz' -- center the cursor line on screen
+--   end
+-- end, { desc = '[P]Toggle fold' })
 
 -- HACK: Fold markdown headings in Neovim with a keymap
 -- https://youtu.be/EYczZLNEnIY
