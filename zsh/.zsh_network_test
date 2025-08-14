@@ -11,25 +11,6 @@
 # )
 #******************************************************************************
 function nt(){
-    # Colors for output
-    # Load targets from external file
-    local targets_file="${HOME}/.zsh_network_test_targets"
-
-    if [[ ! -f "$targets_file" ]]; then
-        echo -e "\033[0;31mError: Targets file not found at $targets_file\033[0m"
-        echo "Please create the file with NETWORK_TEST_TARGETS array."
-        return 1
-    fi
-
-    # Source the targets file
-    source "$targets_file"
-
-    # Check if array was loaded
-    if [[ ${#NETWORK_TEST_TARGETS[@]} -eq 0 ]]; then
-        echo -e "\033[0;31mError: No targets found in $targets_file\033[0m"
-        return 1
-    fi
-
     RED='\033[0;31m'
     GREEN='\033[0;32m'
     YELLOW='\033[1;33m'
@@ -37,6 +18,29 @@ function nt(){
     PURPLE='\033[38;5;129m'
     PINK='\033[38;5;213m'
     NC='\033[0m' # No Color
+
+    # Colors for output
+    # Load targets from external file
+    local targets_file="${HOME}/.zsh_network_test_targets"
+
+    if [[ ! -f "$targets_file" ]]; then
+        echo -e "${RED}Error: Targets file not found at $targets_file${NC}"
+        echo "Please create the file with NETWORK_TEST_TARGETS array."
+        return 1
+    fi
+
+    #Unset the Enviornment Variable to ensure it will load each time.
+    unset NETWORK_TEST_TARGETS
+
+    # Source the targets file
+    source "$targets_file"
+
+    # Check if array was loaded
+    if [[ ${#NETWORK_TEST_TARGETS[@]} -eq 0 ]]; then
+        echo -e "${RED}Error: No targets found in $targets_file${NC}"
+        return 1
+    fi
+
 
     echo "=============================="
     echo "Starting connectivity tests..."
