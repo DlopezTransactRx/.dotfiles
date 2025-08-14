@@ -2,6 +2,9 @@
 # Network Connectivity Test Script
 # Tests specific host:port combinations using netcat
 #
+# For this scipt to work you must define the network targest in the following file in your home folder.
+#     ${HOME}/.zsh_network_test_targets
+#
 # Format for detlare statement.	
 #      "label|host:port"
 #
