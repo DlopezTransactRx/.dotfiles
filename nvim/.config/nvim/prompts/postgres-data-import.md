@@ -103,6 +103,20 @@ Generate the original query with modifications:
 - Cast all columns to `::varchar` 
 - Add `db_export_record_version` (no casting)
 
+## 🔎 Formatting Rules for snowflake_table
+
+- Each `column {}` block must use multi-line formatting.
+- Put the `name` and `type` attributes on their own lines inside the block.
+- Example (required style):
+
+  column { 
+    name = "VERSION"     
+    type = "NUMBER(38,0)" 
+  }
+
+- Do **not** generate single-line columns like:
+  column { name = "VERSION" type = "NUMBER(38,0)" }
+  
 ## 🎯 Complete Example
 
 **Input:**
@@ -210,5 +224,3 @@ Please provide ....
 - Schema
 - SQL query 
 ...to generate code.
-
-
