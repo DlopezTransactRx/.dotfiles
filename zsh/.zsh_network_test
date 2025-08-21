@@ -57,7 +57,7 @@ function nt(){
 	host="${temp%%:*}"        # Get everything before last ":"
 	port="${temp##*:}"        # Get everything after last ":"
 
-	printf "${PINK}[$label]${NC} ${BLUE}$host${NC}:${YELLOW}$port${NC} ... "
+	printf "${PINK}$label${NC} ${BLUE}$host${NC}:${YELLOW}$port${NC} ... "
 
 	# Perform netcat test with timeout of 3 seconds
 	if nc -zv -w3 "$host" "$port" 2>/dev/null; then
