@@ -114,8 +114,9 @@ Generate the original query with modifications:
     type = "NUMBER(38,0)" 
   }
 
-- Do **not** generate single-line columns like:
-  column { name = "VERSION" type = "NUMBER(38,0)" }
+## 🔎 Formatting Rules for MODULE
+
+- The section 'FROM $$$STREAM$$$ t' must be present with 3 $ symbols on either side of the word STREAM.
   
 ## 🎯 Complete Example
 
