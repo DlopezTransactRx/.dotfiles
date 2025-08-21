@@ -1,10 +1,10 @@
-# 🚀 Terraform Generator: SQL to Snowflake Pipeline
+# 🚀 Postgres to Snowflake Import Prompt
 
 Generate complete Terraform code for Snowflake data ingestion pipelines using the `ImportFromStageTable` module.
 
 ## 📋 Task Overview
 
-**Input:** SQL SELECT query + namespace  
+**Input:** SQL SELECT query + namespace + database name + schema name. 
 **Output:** 3 code blocks
 1. `snowflake_table` resource
 2. `module` block with MERGE SQL
@@ -32,9 +32,10 @@ Generate complete Terraform code for Snowflake data ingestion pipelines using th
 ```hcl
 resource "snowflake_table" "<TABLE_NAME>" {
   name     = "<TABLE_NAME>"
-  database = var.database
-  schema   = var.schema
-
+  database = snowflake_database.<DATABASE_NAME>.name
+  schema   = snowflake_schema.<SCHEMA_NAME>.name
+  comment  = "<RAW_TABLE_NAME> data exported from external <NAMESPACE> database.
+"
   column {
     name = "VERSION"
     type = "NUMBER(38,0)"
@@ -45,11 +46,18 @@ resource "snowflake_table" "<TABLE_NAME>" {
 
 ### 2. Module Block
 ```hcl
-module "<NAMESPACE_TABLENAME>" {
-  source = "git::https://github.com/transactrx/DataIngestionS3ToSnowflake.git//ImportFromStageTable?ref=main"
-  database_name = snowflake_database.CPE_DATABASE.name
-  name = "<NAMESPACE_TABLENAME>"
-  schema_name = snowflake_schema.CPE_SCHEMA.name
+#=[DataExport - <TABLE_NAME>]========================================================================
+# Batch Job           = <NAMESPACE>-<TABLE_NAME>
+# Source Database     =  
+# Source Table        = <TABLE_NAME>
+# Event Type          = <NAMESPACE>-<TABLE_NAME>
+# Snowflake Table     = <TABLE_NAME>
+#====================================================================================================
+module "<TABLE_NAME>" {
+  source = "git::https://github.com/transactrx/DataIngestionS3ToSnowflake.git//ImportFromStageTable?ref=main"  
+  database_name = snowflake_database.<DATABASE_NAME>.name
+  schema_name   = snowflake_schema.<SCHEMA_NAME>.name  
+  name = "<TABLE_NAME>"  
   sql_import_query = <<SQL
     # MERGE logic here
   SQL
@@ -85,8 +93,9 @@ WHEN NOT MATCHED THEN INSERT # all fields
 
 - **Resource/Module names:** UPPER_SNAKE_CASE
 - **Table name:** Extract from `FROM` clause → UPPER_SNAKE_CASE
-- **Module name:** `<NAMESPACE>_<TABLE_NAME>` 
-- **Event type filter:** `<namespace>-<table_name_lower>`
+- **Raw Table Name:** Extract from `FROM` clause. Unmodifed format.
+- **snowflake_table name :** <TABLE_NAME> → UPPER_SNAKE_CASE
+- **Module name:** `<TABLE_NAME>` → UPPER_SNAKE_CASE
 
 ## 🔄 JOB SQL Output
 
@@ -99,15 +108,20 @@ Generate the original query with modifications:
 **Input:**
 ```
 namespace = "copay"
-SELECT programid, name, amount FROM programs;
+database = "CPE_DATABASE"
+schema = "COPAY"
+SELECT programid, name, amount FROM programtiers;
 ```
 
 **Output 1: Table Resource**
 ```hcl
-resource "snowflake_table" "PROGRAMS" {
-  name     = "PROGRAMS"
-  database = var.database
-  schema   = var.schema
+resource "snowflake_table" "PROGRAM_TIERS" {
+  database = snowflake_database.CPE_DATABASE.name
+  schema   = snowflake_schema.COPAY.name
+  name     = "PROGRAM_TIERS"
+  comment  = "programtiers data exported from external copay database."
+  change_tracking = false
+
 
   column {
     name = "VERSION"
@@ -130,13 +144,20 @@ resource "snowflake_table" "PROGRAMS" {
 
 **Output 2: Module Block**
 ```hcl
-module "COPAY_PROGRAMS" {
+#=[DataExport - PROGRAM_TIERS]========================================================================
+# Batch Job           = copay-program-tiers
+# Source Database     =  
+# Source Table        = programtiers
+# Event Type          = copay-program-tiers
+# Snowflake Table     = PROGRAM_TIERS
+#====================================================================================================
+module "PROGRAMS" {
   source = "git::https://github.com/transactrx/DataIngestionS3ToSnowflake.git//ImportFromStageTable?ref=main"
   database_name = snowflake_database.CPE_DATABASE.name
-  name = "COPAY_PROGRAMS"
-  schema_name = snowflake_schema.CPE_SCHEMA.name
+  schema_name = snowflake_schema.COPAY.name
+  name = "PROGRAMS"
   sql_import_query = <<SQL
-MERGE INTO ${snowflake_table.PROGRAMS.database}.${snowflake_table.PROGRAMS.schema}.${snowflake_table.PROGRAMS.name} AS target
+MERGE INTO ${snowflake_table.PROGRAM_TIERS.database}.${snowflake_table.PROGRAM_TIERS.schema}.${snowflake_table.PROGRAM_TIERS.name} AS target
 USING (
   WITH ranked_data AS (
     SELECT
@@ -148,8 +169,8 @@ USING (
       DATA:eventPayload:programid::varchar AS PROGRAMID,
       DATA:eventPayload:name::varchar AS NAME,
       DATA:eventPayload:amount::number(38,2) AS AMOUNT
-    FROM $$STREAM$$ t
-    WHERE t.DATA:eventType::varchar = 'copay-programs'
+    FROM $$$STREAM$$$ t
+    WHERE t.DATA:eventType::varchar = 'copay-program-tiers'
   )
   SELECT * FROM ranked_data WHERE rnk = 1
 ) AS source
@@ -177,9 +198,17 @@ SELECT
   name::varchar,
   amount::varchar,
   db_export_record_version
-FROM programs;
+FROM programtiers;
 ```
 
 ---
 
-**Ready for input:** Provide namespace + SQL query to generate code.
+**Ready for input:** 
+Please provide ....
+- Provide namespace
+- Database
+- Schema
+- SQL query 
+...to generate code.
+
+
