@@ -1,5 +1,4 @@
 tap "felixkratz/formulae"
-tap "homebrew/bundle"
 tap "jesseduffield/lazygit"
 tap "koekeishiya/formulae"
 tap "nats-io/nats-tools"
