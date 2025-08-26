@@ -40,7 +40,7 @@ export HOMEBREW_NO_AUTO_UPDATE=1   # optional: skip auto-update for speed
 brew update --force --quiet || true
 
 cd "$DOTFILES_BREW_DIR"
-brew bundle --file="$BREWFILE" --no-lock
+brew bundle --file="$BREWFILE"
 
 echo "✅ Homebrew + Brewfile install complete."
 
