@@ -58,7 +58,7 @@ source_plugins() {
 
 # Copy Tmux Config
 copy_config(){
-	local tmuxNavigatorConfig="$CURRENT_DIR/vim-tmux-navigator"
+	local tmuxNavigatorConfig="$CURRENT_DIR/../vim-tmux-navigator/vim-tmux-navigator.tmux"
 
 	# Copy file after sourcing plugins
 	if [ -f "$CONFIG_DIR/vim-tmux-navigator.tmux" && -d "$tmuxNavigatorConfig" ]; then
