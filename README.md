@@ -33,7 +33,7 @@ This repository contains my personal dotfiles for various tools, terminal config
 - Custom prompt with git status information
 - Window management hotkeys for productivity
 
-## Installation
+## Manual Installation (Option A)
 
 To install these dotfiles:
 
@@ -53,6 +53,31 @@ To install these dotfiles:
    brew bundle --file=~/.dotfiles/homebrew/Brewfile
    ```
 
+## Install Script (Option B)
+At the root of this project is 'install.sh' by executing...
+
+```bash
+sh install.sh
+```
+- This will setup hombrew and install the entire bundle package.
+
+## TMUX Install
+```bash
+tmux
+```
+
+2) Reload the configuration:
+
+If TMUX is already running, type this in terminal:
+```bash
+tmux source ~/.tmux.conf
+```
+
+3) Manually copy the TMUX/configs file to their relative projects.
+
+4) Inside a TMUX session:
+- Press `CTRL + B` (prefix key)
+- Then press `CTRL + I` (install plugins)
 ## Recent Updates
 
 - Added Claude CLI alias
