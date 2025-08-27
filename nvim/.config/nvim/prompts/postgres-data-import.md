@@ -18,13 +18,13 @@ Generate complete Terraform code for Snowflake data ingestion pipelines using th
 **Auto-detect types by pattern:**
 | Pattern | Type | Examples |
 |---------|------|----------|
-| `*id` | `VARCHAR(100)` | programid, userid |
+| `*id` | `STRING` | programid, userid |
 | `*amount` | `NUMBER(38,2)` | total_amount, fee_amount |
 | `*quantity` | `DOUBLE` | order_quantity |
 | `*date*` | `TIMESTAMP_NTZ` | created_date, date_modified |
 | `*age`, `*days`, `*number`, `*fills` | `INTEGER` | patient_age, refill_fills |
 | `require*`, `allow*`, `enable*`, `active*` | `BOOLEAN` | requires_auth, active_status |
-| Default | `VARCHAR(255)` | notes, email, type |
+| Default | `STRING` | notes, email, type |
 
 ## 🏗️ Code Structure
 
@@ -144,11 +144,11 @@ resource "snowflake_table" "PROGRAM_TIERS" {
   }
   column {
     name = "PROGRAMID"
-    type = "VARCHAR(100)"
+    type = "STRING"
   }
   column {
     name = "NAME"
-    type = "VARCHAR(255)"
+    type = "STRING"
   }
   column {
     name = "AMOUNT"
@@ -159,12 +159,12 @@ resource "snowflake_table" "PROGRAM_TIERS" {
 
 **Output 2: Module Block**
 ```hcl
-#=[DataExport - PROGRAM_TIERS]========================================================================
-# Batch Job           = copay-program-tiers
-# Source Database     =  
-# Source Table        = programtiers
-# Event Type          = copay-program-tiers
-# Snowflake Table     = PROGRAM_TIERS
+#=[DataExport - COPAY_PROGRAMS]========================================================================
+# Batch Job           = copay_programs
+# Source Database     = copay
+# Source Table        = programs
+# Event Type          = copay-programs
+# Snowflake Table     = COPAY_PROGRAMS
 #====================================================================================================
 module "PROGRAMS" {
   source = "git::https://github.com/transactrx/DataIngestionS3ToSnowflake.git//ImportFromStageTable?ref=main"
