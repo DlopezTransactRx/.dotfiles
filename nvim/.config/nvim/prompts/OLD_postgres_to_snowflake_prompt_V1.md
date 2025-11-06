@@ -116,10 +116,9 @@ resource "snowflake_table" "<TABLE_NAME>" {
 #=============================================================================
 module "<NAMESPACE>_<TABLE_NAME>" {
   source        = "git::https://github.com/transactrx/DataIngestionS3ToSnowflake.git//ImportFromStageTable?ref=main"
-  database_name = snowflake_database.<DATABASE>.name
-  schema_name   = snowflake_schema.<SCHEMA>.name
-  name          = "<TABLE_NAME>"
-
+  database_name = snowflake_table.<TABLE_NAME>.database
+  schema_name   = snowflake_table.<TABLE_NAME>.schema
+  name          = snowflake_table.<TABLE_NAME>.name
   sql_import_query = <<SQL
     MERGE INTO ${snowflake_table.<TABLE_NAME>.database}.${snowflake_table.<TABLE_NAME>.schema}.${snowflake_table.<TABLE_NAME>.name} AS target
     USING (

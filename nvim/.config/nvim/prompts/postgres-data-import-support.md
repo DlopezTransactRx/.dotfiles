@@ -74,3 +74,4 @@ SELECT ‘<SCHEMA>_<T2>_VIEW’ AS TABLE_NAME, COUNT() AS CNT FROM <SCHEMA>_<T2>
 - `database_name` = {{DATABASE}}  
 - `schema_name`   = {{SCHEMA}}  
 - `table_names`   = {{TABLES_CSV}}
+

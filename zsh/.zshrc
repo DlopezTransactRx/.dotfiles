@@ -190,3 +190,5 @@ fi
 if [ -f ~/.zsh_network_test ]; then
   source ~/.zsh_network_test
 fi
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"
