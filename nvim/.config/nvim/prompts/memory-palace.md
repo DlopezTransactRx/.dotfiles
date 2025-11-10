@@ -12,14 +12,18 @@ You will be given a concept that someone wants to remember. Your job is to produ
 
    The goal is to make the image **memorable and directly connected to the concept**.
 
-2. **A Markdown-formatted explanation** (max 150 words) that:  
-   - Describes the mental image in plain language  
-   - Explains the visual metaphor or mnemonic used  
-   - Highlights the memory principle(s) applied
+2. **A Markdown-formatted explanation** with two parts:  
+   - A **Conceptual Summary** (briefly explain the real concept, clearly and practically, without any mnemonic or metaphor).  
+   - A **Memory Palace Explanation** (describe the mental image and how it encodes the concept).
+
+---
 
 ## OUTPUT FORMAT  
-- **DALL·E Prompt**: [Insert detailed image generation prompt]
-- **Explanation**: [Describe the visual scene, why it's memorable, and what mnemonic technique is used]
+- **DALL·E Prompt**: [Insert detailed image generation prompt]  
+- **Conceptual Summary**: [Briefly explain the concept in plain terms — what it *actually means* or represents.]  
+- **Memory Palace Explanation**: [Describe the vivid mental image, the metaphor or mnemonic used, and the memory principles applied.]
+
+---
 
 ## INPUT  
 [Insert the concept you want to remember here]
