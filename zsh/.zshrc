@@ -57,8 +57,6 @@ alias ghb="gh browse"
 # Lazygit
 alias lg="lazygit"
 
-#Claude
-alias cl="claude --model sonnet"
 
 # terraform
 alias tfi="terraform init"
@@ -189,6 +187,13 @@ fi
 #******************************************************************************
 if [ -f ~/.zsh_hidden ]; then
   source ~/.zsh_hidden
+fi
+
+#******************************************************************************
+# (Personal Work Script)
+#******************************************************************************
+if [ -f ~/.zsh_claude ]; then
+  source ~/.zsh_claude
 fi
 
 #******************************************************************************

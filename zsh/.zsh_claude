@@ -1,0 +1,5 @@
+#Claude
+alias cc="claude --model haiku"
+alias ccs="claude --model sonnet"
+alias cco="claude --model opus"
+alias ccx="claude --allow-dangerously-skip-permissions"
