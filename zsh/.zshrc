@@ -204,3 +204,23 @@ if [ -f ~/.zsh_network_test ]; then
 fi
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"
+
+#******************************************************************************
+# Scripts TODO THIS IS SUPPOSED TO MAKE SYM LINKS BUT ITS NOT WORKING.  FIX IT.
+#******************************************************************************
+# --- scripts/bin setup ---
+SCRIPTS_DIR="$HOME/scripts"
+SCRIPTS_BIN="$SCRIPTS_DIR/bin"
+
+mkdir -p "$SCRIPTS_BIN"
+export PATH="$SCRIPTS_BIN:$PATH"
+
+# Symlink all *.sh under ~/scripts (excluding ~/scripts/bin) into ~/scripts/bin
+while IFS= read -r -d '' f; do
+  base="${f##*/}"
+  name="${base%.sh}"
+  link="$SCRIPTS_BIN/$name"
+
+  # Create or update the symlink
+  ln -sf "$f" "$link"
+done < <(find "$SCRIPTS_DIR" -type f -name "*.sh" ! -path "$SCRIPTS_BIN/*" -print0)
