@@ -1,17 +1,5 @@
-# AWS Authentication For Claude
-function ca() {
-  # NOTE This will launch the file you will save your aws authkey to, this will be sourced by the cc command to import those keys across every session.
-  nvim ~/.aws/bedrock-creds 
-}
-
 # Claude (Bedrock) wrapper
 function cc() {
-  # Source credentials and export them to make them available in the environment
-  source ~/.aws/bedrock-creds
-  export $(grep -v '^#' ~/.aws/bedrock-creds | xargs)
-
-  # Set region and run claude
-  export AWS_REGION=us-east-1
   claude "$@"
 }
 alias cch='cc --model haiku'
