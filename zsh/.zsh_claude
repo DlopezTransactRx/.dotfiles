@@ -6,9 +6,12 @@ function ca() {
 
 # Claude (Bedrock) wrapper
 function cc() {
+  # Source credentials and export them to make them available in the environment
   source ~/.aws/bedrock-creds
-  AWS_REGION=us-east-1 \
-  CLAUDE_CODE_USE_BEDROCK=1 \
+  export $(grep -v '^#' ~/.aws/bedrock-creds | xargs)
+
+  # Set region and run claude
+  export AWS_REGION=us-east-1
   claude "$@"
 }
 alias cch='cc --model haiku'
