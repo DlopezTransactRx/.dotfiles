@@ -1,6 +1,18 @@
-#Claude
-alias cc="claude --model haiku"
-alias ccae="claude --permission-mode acceptEdits"
-alias ccs="claude --model sonnet"
-alias cco="claude --model opus"
-alias ccx="claude --allow-dangerously-skip-permissions"
+# AWS Authentication For Claude
+function ca() {
+  # NOTE This will launch the file you will save your aws authkey to, this will be sourced by the cc command to import those keys across every session.
+  nvim ~/.aws/bedrock-creds 
+}
+
+# Claude (Bedrock) wrapper
+function cc() {
+  source ~/.aws/bedrock-creds
+  AWS_REGION=us-east-1 \
+  CLAUDE_CODE_USE_BEDROCK=1 \
+  claude "$@"
+}
+alias cch='cc --model haiku'
+alias ccs='cc --model sonnet'
+alias cco='cc --model opus'
+alias ccae='cc --permission-mode acceptEdits'
+alias ccx='cc --allow-dangerously-skip-permissions'
