@@ -67,7 +67,7 @@ if [ "$BRANCH_PATTERN" = "Production" ]; then
       --input - << EOF
 {
   "required_status_checks": {
-    "strict": true,
+    "strict": false,
     "contexts": ["check-branch"]
   },
   "enforce_admins": true,
@@ -176,7 +176,6 @@ echo "  - Lock branch (prevent force pushes and deletions)"
 echo "  - Do not allow bypassing the above settings (enforce for administrators)"
 if [ "$BRANCH_PATTERN" = "Production" ]; then
     echo "  - Require 'check-branch' status check to pass before merging"
-    echo "  - Require branches to be up to date before merging"
 fi
 echo ""
 echo "Repository Settings Applied to '$OWNER/$REPO':"
