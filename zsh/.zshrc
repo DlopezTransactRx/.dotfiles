@@ -11,6 +11,9 @@ alias ll="eza -la -g --icons --git"
 # Pretty Tree With Eza
 alias llt="eza -la --icons --tree --git-ignore"
 
+# Copy Working Directory to Clipboard
+alias pwdc="pwd | pbcopy"
+
 # Change Directory
 alias ..="cd .."
 alias .1="cd ../.."
