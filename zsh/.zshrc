@@ -205,13 +205,6 @@ fi
 if [ -f ~/.zsh_claude ]; then
   source ~/.zsh_claude
 fi
-
-#******************************************************************************
-# Network Test
-#******************************************************************************
-if [ -f ~/.zsh_network_test ]; then
-  source ~/.zsh_network_test
-fi
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"
 

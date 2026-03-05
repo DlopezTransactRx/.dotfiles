@@ -41,3 +41,49 @@ function ndp(){
 		nats-discover -context Production
 	} | gum style --border rounded --padding "1 2" --border-foreground 196 --foreground 196
 }
+
+#******************************************************************************
+# Network Connectivity Test
+# Tests specific host:port combinations using netcat
+# Targets are defined in .zsh_hidden (NETWORK_TEST_TARGETS array)
+#******************************************************************************
+function nt(){
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    BLUE='\033[1;34m'
+    PURPLE='\033[38;5;129m'
+    PINK='\033[38;5;213m'
+    NC='\033[0m' # No Color
+
+    # Check if array exists
+    if [[ ${#NETWORK_TEST_TARGETS[@]} -eq 0 ]]; then
+        echo -e "${RED}Error: NETWORK_TEST_TARGETS array not found${NC}"
+        echo "Please ensure .zsh_hidden is sourced with NETWORK_TEST_TARGETS defined."
+        return 1
+    fi
+
+    echo "=============================="
+    echo "Starting connectivity tests..."
+    echo "=============================="
+
+    # Loop through each target
+    for target in "${NETWORK_TEST_TARGETS[@]}"; do
+	# Split host, port, and label
+	label="${target%%|*}"     # Get everything before first "|"
+	temp="${target#*|}"       # Remove label and first "|"
+	host="${temp%%:*}"        # Get everything before last ":"
+	port="${temp##*:}"        # Get everything after last ":"
+
+	printf "${PINK}$label${NC} ${BLUE}$host${NC}:${YELLOW}$port${NC} ... "
+
+	# Perform netcat test with timeout of 3 seconds
+	if nc -zv -w3 "$host" "$port" 2>/dev/null; then
+	    echo -e "${GREEN}OPEN${NC}"
+	else
+	    echo -e "${RED}CLOSED/FILTERED${NC}"
+	fi
+    done
+
+    echo -e "\n${NC}Connectivity tests completed.${NC}"
+}
