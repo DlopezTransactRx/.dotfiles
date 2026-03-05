@@ -28,18 +28,21 @@ function jwtToken(){
 	cowsay 'JWT Token has been copied to the clipboard' | lolcat
 }
 
-# Nats Discover
+
+#******************************************************************************
+# Nats-Discover
+#******************************************************************************
 function ndd(){
 	{
-		figlet "NATS Discover (Development)"
-		nats-discover -context Development
-	} | gum style --border rounded --padding "1 2" --border-foreground 39 --foreground 39
+		figlet "[NATS Discover (Development)]"
+		nats-discover -context Development "$@" 2>&1
+	} | gum style --border-foreground 39 --foreground 39
 }
 function ndp(){
 	{
-		figlet "NATS Discover (Production)"
-		nats-discover -context Production
-	} | gum style --border rounded --padding "1 2" --border-foreground 196 --foreground 196
+		figlet "[NATS Discover (Production)]"
+		nats-discover -context Production "$@" 2>&1
+	} | gum style --border-foreground 196 --foreground 196
 }
 
 #******************************************************************************
