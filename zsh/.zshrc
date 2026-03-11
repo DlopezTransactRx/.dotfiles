@@ -13,6 +13,10 @@ alias llt="eza -la --icons --tree --git-ignore"
 
 # Copy Working Directory to Clipboard
 alias pwdc="pwd | pbcopy"
+alias rp="realpath"
+function rpc () {
+  realpath "$@" | pbcopy
+}
 
 # Change Directory
 alias ..="cd .."

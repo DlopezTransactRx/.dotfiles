@@ -13,3 +13,6 @@ export PATH="$PATH:/Users/dlopez/CLI"
 
 export PATH=/Applications/SnowSQL.app/Contents/MacOS:$PATH
 
+
+# Added by Obsidian
+export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
