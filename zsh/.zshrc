@@ -64,7 +64,6 @@ alias ghb="gh browse"
 # Lazygit
 alias lg="lazygit"
 
-
 # terraform
 alias tfi="terraform init"
 alias tfiu="terraform init -upgrade"
@@ -117,6 +116,7 @@ echo "[ Eastern  ]: $(TZ="America/New_York" date) (UTC-5)"; \
 echo "[ Central  ]: $(TZ="America/Chicago" date) (UTC-6)"; \
 echo "[ Mountain ]: $(TZ="America/Denver" date) (UTC-7)"; \
 echo "[ Pacific  ]: $(TZ="America/Los_Angeles" date) (UTC-8)"'
+alias m="cmatrix -s"
 
 #******************************************************************************
 # grc (Generic Colouriser) 
