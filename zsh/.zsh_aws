@@ -1,0 +1,26 @@
+# Write Aws Environment .env file
+function ae() {
+  local envfile="$HOME/.aws/.env"
+
+  pbpaste | tr -d '\r' > "$envfile"
+  echo "" >> "$envfile"
+  echo "export AWS_REGION=us-east-1" >> "$envfile"
+  chmod 600 "$envfile"
+
+  gum style --foreground 226 "✓ AWS env file updated from clipboard into $envfile"
+
+}
+
+
+# Load AWS Envionrment .Env File Into Shell
+function al(){
+  local envfile="$HOME/.aws/.env"
+
+  set -a
+  source "$envfile"
+  set +a
+
+
+  gum style --foreground 226 "✓ AWS env loaded from clipboard into $envfile"
+  export | rg "AWS"
+}
