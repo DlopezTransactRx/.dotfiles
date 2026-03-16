@@ -141,8 +141,9 @@ alias ccx='cc --allow-dangerously-skip-permissions'
 function notify() {
   osascript \
     -e 'do shell script "afplay /System/Library/Sounds/Submarine.aiff >/dev/null 2>&1 &"' \
-    -e "display dialog \"$1\" with title \"${2:-Notification}\" buttons {\"OK\"} default button \"OK\""
+    -e "display dialog \"$1\" with title \"${2:-Notification}\" with icon POSIX file \"/System/Applications/Utilities/Terminal.app/Contents/Resources/Terminal.icns\" buttons {\"OK\"} default button \"OK\""
 }
+
 
 #******************************************************************************
 # grc (Generic Colouriser) 
