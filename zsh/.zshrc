@@ -76,6 +76,10 @@ alias tfr="terraform refresh"
 alias tfwl="terraform workspace list"
 alias tfws="terraform workspace select"
 
+
+# Functions - Just Method Names
+alias functions="print -l ${(k)functions}"
+
 # Utility Script to create a script to convert resources from one to another.
 function tfConvert(){
 
