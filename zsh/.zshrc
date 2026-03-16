@@ -78,8 +78,8 @@ alias tfws="terraform workspace select"
 
 # Claude
 function cc() {
-  # Load AWS Access Keys
-  al
+  # Load AWS Access Keys, then clear screen.
+  al && c
 
   # Launch Claude
   claude "$@"
