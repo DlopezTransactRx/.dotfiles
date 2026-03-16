@@ -124,15 +124,42 @@ alias m="cmatrix -s"
 
 # Claude
 function cc() {
-  # Load AWS Access Keys, then clear screen.
-  al && clear;
+  # Check if --notify flag is present
+  local notify=false
+  local args=()
 
-  # Launch Claude
-  claude "$@";
+  al && clear
+
+  for arg in "$@"; do
+    if [[ "$arg" == "--notify" ]]; then
+      notify=true
+    else
+      args+=("$arg")
+    fi
+  done
+
+  if [[ "$notify" == true ]]; then
+    # Notify mode: load AWS keys, clear screen, use notify settings
+    command cp ~/.claude/settings.notify.json ~/.claude/settings.json
+  else
+    # Silent mode (default): skip al/clear, use silent settings
+    command cp ~/.claude/settings.silent.json ~/.claude/settings.json
+  fi
+
+  # Launch Claude with remaining args
+  claude "${args[@]}"
 }
-alias cch='cc --model haiku'
-alias ccs='cc --model sonnet'
-alias cco='cc --model opus'
+
+#Notify By Default
+alias cch='cc --notify --model haiku'
+alias ccs='cc --notify --model sonnet'
+alias cco='cc --notify --model opus'
+
+#Silent (Optional)
+alias cchs='cc --model haiku'
+alias ccss='cc --model sonnet'
+alias ccos='cc --model opus'
+
 alias ccae='cc --permission-mode acceptEdits'
 alias ccx='cc --allow-dangerously-skip-permissions'
 

@@ -1,0 +1,104 @@
+{
+  "env": {
+    "CLAUDE_CODE_USE_BEDROCK": "true",
+    "ANTHROPIC_MODEL": "anthropic.claude-sonnet-4-6"
+  },
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true,
+    "ras-dev-toolkit@ras-marketplace": true,
+    "cli-anything@cli-anything": true
+  },
+  "extraKnownMarketplaces": {
+    "cli-anything": {
+      "source": {
+        "source": "github",
+        "repo": "HKUDS/CLI-Anything"
+      }
+    }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "skills": {
+    "enabled": true
+  },
+  "statusBar": {
+    "enabled": true,
+    "format": "{model} | {folder} | {branch} | Context: {context_percent}% | Cost: ${cost} | Time: {execution_time}",
+    "components": {
+      "model": true,
+      "folder": true,
+      "branch": true,
+      "context_percent": true,
+      "cost": true,
+      "execution_time": true
+    }
+  },
+  "allowedCommands": [
+    "go",
+    "make",
+    "git status",
+    "git log",
+    "git diff",
+    "git branch",
+    "git checkout",
+    "git add",
+    "git commit",
+    "git pull",
+    "npm test",
+    "npm run",
+    "npm install",
+    "go test",
+    "go build",
+    "go mod tidy",
+    "cargo build",
+    "cargo test",
+    "make",
+    "pip install",
+    "python",
+    "node",
+    "ls",
+    "pwd",
+    "cd",
+    "cat",
+    "head",
+    "tail",
+    "echo",
+    "printf",
+    "find",
+    "grep",
+    "rg",
+    "stow"
+  ],
+  "model": "us.anthropic.claude-sonnet-4-6[1m]",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude finished\" with title \"Claude Code\" sound name \"Pop\"'"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude needs input\" with title \"Claude Code\" sound name \"Pop\"'"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude needs approval\" with title \"Claude Code\" sound name \"Pop\"'"
+          }
+        ]
+      }
+    ]
+  }
+}
