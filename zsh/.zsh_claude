@@ -1,5 +1,6 @@
 # Claude (Bedrock) wrapper
 function cc() {
+
   claude "$@"
 }
 alias cch='cc --model haiku'
