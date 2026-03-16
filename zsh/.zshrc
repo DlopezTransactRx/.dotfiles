@@ -228,8 +228,8 @@ if [ -f ~/.zsh_aws ]; then
   source ~/.zsh_aws
 fi
 
-# Load AWS Keys On Startup
-al
+# Load AWS Keys On Startup, Then Clear Screen
+al && c
 
 #******************************************************************************
 # Scripts TODO THIS IS SUPPOSED TO MAKE SYM LINKS BUT ITS NOT WORKING.  FIX IT.
