@@ -76,6 +76,19 @@ alias tfr="terraform refresh"
 alias tfwl="terraform workspace list"
 alias tfws="terraform workspace select"
 
+# Claude
+function cc() {
+  # Load AWS Access Keys
+  al
+
+  # Launch Claude
+  claude "$@"
+}
+alias cch='cc --model haiku'
+alias ccs='cc --model sonnet'
+alias cco='cc --model opus'
+alias ccae='cc --permission-mode acceptEdits'
+alias ccx='cc --allow-dangerously-skip-permissions'
 
 # Functions - Just Method Names
 alias functions="print -l ${(k)functions}"
@@ -215,18 +228,15 @@ if [ -f ~/.zsh_aws ]; then
   source ~/.zsh_aws
 fi
 
-#******************************************************************************
-# (Personal Claude Script)
-#******************************************************************************
-if [ -f ~/.zsh_claude ]; then
-  source ~/.zsh_claude
-fi
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="/opt/homebrew/bin:$PATH"
+# Load AWS Keys On Startup
+al
 
 #******************************************************************************
 # Scripts TODO THIS IS SUPPOSED TO MAKE SYM LINKS BUT ITS NOT WORKING.  FIX IT.
 #******************************************************************************
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"
+
 # --- scripts/bin setup ---
 SCRIPTS_DIR="$HOME/scripts"
 SCRIPTS_BIN="$SCRIPTS_DIR/bin"
