@@ -76,19 +76,6 @@ alias tfr="terraform refresh"
 alias tfwl="terraform workspace list"
 alias tfws="terraform workspace select"
 
-# Claude
-function cc() {
-  # Load AWS Access Keys, then clear screen.
-  al && c
-
-  # Launch Claude
-  claude "$@"
-}
-alias cch='cc --model haiku'
-alias ccs='cc --model sonnet'
-alias cco='cc --model opus'
-alias ccae='cc --permission-mode acceptEdits'
-alias ccx='cc --allow-dangerously-skip-permissions'
 
 # Functions - Just Method Names
 alias functions="print -l ${(k)functions}"
@@ -134,6 +121,28 @@ echo "[ Central  ]: $(TZ="America/Chicago" date) (UTC-6)"; \
 echo "[ Mountain ]: $(TZ="America/Denver" date) (UTC-7)"; \
 echo "[ Pacific  ]: $(TZ="America/Los_Angeles" date) (UTC-8)"'
 alias m="cmatrix -s"
+
+# Claude
+function cc() {
+  # Load AWS Access Keys, then clear screen.
+  al && clear;
+
+  # Launch Claude
+  claude "$@";
+}
+alias cch='cc --model haiku'
+alias ccs='cc --model sonnet'
+alias cco='cc --model opus'
+alias ccae='cc --permission-mode acceptEdits'
+alias ccx='cc --allow-dangerously-skip-permissions'
+
+
+# Desktop Notification Function
+function notify() {
+  osascript \
+    -e 'do shell script "afplay /System/Library/Sounds/Submarine.aiff >/dev/null 2>&1 &"' \
+    -e "display dialog \"$1\" with title \"${2:-Notification}\" buttons {\"OK\"} default button \"OK\""
+}
 
 #******************************************************************************
 # grc (Generic Colouriser) 
@@ -227,9 +236,6 @@ fi
 if [ -f ~/.zsh_aws ]; then
   source ~/.zsh_aws
 fi
-
-# Load AWS Keys On Startup, Then Clear Screen
-al && c
 
 #******************************************************************************
 # Scripts TODO THIS IS SUPPOSED TO MAKE SYM LINKS BUT ITS NOT WORKING.  FIX IT.
