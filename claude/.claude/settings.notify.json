@@ -20,17 +20,9 @@
   "skills": {
     "enabled": true
   },
-  "statusBar": {
-    "enabled": true,
-    "format": "{model} | {folder} | {branch} | Context: {context_percent}% | Cost: ${cost} | Time: {execution_time}",
-    "components": {
-      "model": true,
-      "folder": true,
-      "branch": true,
-      "context_percent": true,
-      "cost": true,
-      "execution_time": true
-    }
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/dlopez/.claude/statusline-command.sh"
   },
   "allowedCommands": [
     "go",
