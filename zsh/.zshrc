@@ -11,6 +11,9 @@ alias ll="eza -la -g --icons --git"
 # Pretty Tree With Eza
 alias llt="eza -la --icons --tree --git-ignore"
 
+# Tail 
+alias t="tail -f"
+
 # Copy Working Directory to Clipboard
 alias pwdc="pwd | pbcopy"
 alias rp="realpath"
