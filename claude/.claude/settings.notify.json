@@ -67,7 +67,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude finished\" with title \"Claude Code\" sound name \"Pop\"'"
+            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude finished\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
           }
         ]
       }
@@ -77,7 +77,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude needs input\" with title \"Claude Code\" sound name \"Pop\"'"
+            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs input\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
           }
         ]
       }
@@ -87,7 +87,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude needs approval\" with title \"Claude Code\" sound name \"Pop\"'"
+            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs approval\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
           }
         ]
       }
