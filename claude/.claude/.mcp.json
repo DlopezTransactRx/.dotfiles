@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "obsidian": {
+      "command": "/opt/homebrew/bin/uv",
+      "args": [
+        "--directory",
+        "/Users/dlopez/ClaudeTools/mcp-obsidian",
+        "run",
+        "mcp-obsidian"
+      ],
+      "env": {
+        "OBSIDIAN_API_KEY": "17367740e68a85ac34c934f2641219ca115fec782bd1742aa482804692778bc9",
+        "OBSIDIAN_HOST": "127.0.0.1",
+        "OBSIDIAN_PORT": "27124",
+        "OBSIDIAN_PROTOCOL": "https"
+      }
+    }
+  }
+}
