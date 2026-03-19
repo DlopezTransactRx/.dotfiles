@@ -24,6 +24,10 @@
     "type": "command",
     "command": "bash /Users/dlopez/.claude/statusline-command.sh"
   },
+  "attribution": {
+    "commit": "Generated with AI\n\nCo-Authored-By: AI <ai@example.com>",
+    "pr": ""
+  },
   "allowedCommands": [
     "go",
     "make",
