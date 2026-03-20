@@ -33,7 +33,6 @@ alias .5="cd ../../../../../../.."
 alias mv="mv -I"
 alias rm="rm -I"
 alias cp="cp -I"
-alias ln='ln -I'
 alias mkdir="mkdir -pv"
 
 # git
@@ -136,7 +135,8 @@ alias ccs='cc --model sonnet'
 alias cco='cc --model opus'
 alias ccae='cc --permission-mode acceptEdits'
 alias ccx='cc --allow-dangerously-skip-permissions'
-
+# NOTE: As of the this time, claude MCP servers cannot be configured globally. They must exist locally to the project.  This alias will create a symlink to my .mcp.json file to make MCP available to a project.
+alias ccmcp='ln -sf ~/.claude/.mcp.json .mcp.json'
 
 # Desktop Notification Function
 function notify() {
