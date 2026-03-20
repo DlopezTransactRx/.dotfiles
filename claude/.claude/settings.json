@@ -1,7 +1,47 @@
 {
   "env": {
     "CLAUDE_CODE_USE_BEDROCK": "true",
-    "ANTHROPIC_MODEL": "anthropic.claude-sonnet-4-6"
+    "ANTHROPIC_MODEL": "global.anthropic.claude-sonnet-4-20250514-v1:0"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude finished\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs input\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs approval\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/dlopez/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true,
@@ -16,17 +56,10 @@
       }
     }
   },
+  "effortLevel": "low",
   "skipDangerousModePermissionPrompt": true,
   "skills": {
     "enabled": true
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "bash /Users/dlopez/.claude/statusline-command.sh"
-  },
-  "attribution": {
-    "commit": "",
-    "pr": ""
   },
   "allowedCommands": [
     "go",
@@ -63,38 +96,5 @@
     "grep",
     "rg",
     "stow"
-  ],
-  "model": "us.anthropic.claude-sonnet-4-6[1m]",
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude finished\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs input\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
-          }
-        ]
-      }
-    ],
-    "PermissionRequest": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs approval\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
-          }
-        ]
-      }
-    ]
-  }
+  ]
 }
