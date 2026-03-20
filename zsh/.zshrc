@@ -125,16 +125,12 @@ echo "[ Mountain ]: $(TZ="America/Denver" date) (UTC-7)"; \
 echo "[ Pacific  ]: $(TZ="America/Los_Angeles" date) (UTC-8)"'
 alias m="cmatrix -s"
 
+
 # Claude
 function cc() {
-  # Check if --notify flag is present
-  al && clear
-
   # Launch Claude with remaining args
-  claude "${args[@]}"
+  al && clear && claude "$@"
 }
-
-#Notify By Default
 alias cch='cc --model haiku'
 alias ccs='cc --model sonnet'
 alias cco='cc --model opus'
