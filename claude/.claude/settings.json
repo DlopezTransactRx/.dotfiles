@@ -8,6 +8,9 @@
     "commit": "",
     "pr": ""
   },
+  "preferences": {
+    "tmuxSplitPanes": "true"
+  },
   "hooks": {
     "Stop": [
       {
