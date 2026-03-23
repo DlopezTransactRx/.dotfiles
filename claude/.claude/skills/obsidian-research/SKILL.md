@@ -7,14 +7,27 @@ tools: Agent, obsidian
 
 # Obsidian Research Orchestrator
 
-This skill automates research for tasks in your Obsidian daily log.
+This skill automates comprehensive research for tasks in your Obsidian daily log, combining internet research, wiki context, and project analysis.
 
 ## How It Works
 
 1. Finds today's log file in @log folder
 2. Parses tasks tagged with #claude-research
-3. Spawns parallel research agents (one per task)
-4. Reports progress as each completes
+3. Extracts wiki-style references [[folder/name]] for additional context
+4. Spawns parallel research agents (one per task)
+5. Each agent performs:
+   - Internet research (best practices, documentation, tutorials)
+   - Wiki context analysis (from referenced Obsidian folders)
+   - Project analysis (if a specific project is identified)
+6. Reports progress as each completes
+
+## Key Features
+
+- **Internet Research**: Automatically searches for relevant resources, best practices, and implementation guides
+- **Wiki Context**: Uses Obsidian wiki links [[folder/name]] to include project-specific documentation
+- **Project Analysis**: Analyzes local project files, architecture, and git history
+- **Parallel Execution**: Multiple research tasks run simultaneously
+- **Comprehensive Reports**: Markdown reports with external references and actionable steps
 
 ## Usage
 
@@ -80,19 +93,21 @@ READ_LOG:
 
 ### Step 3: Parse Tasks with #claude-research Tag
 
-Parse log content to extract research tasks:
+Parse log content to extract research tasks and wiki references:
 
 1. Split content by `---` dividers to identify sections
 2. For each section, check if it contains `#claude-research` tag
 3. **Skip tasks that already have `#claude-research-result` tag** (research already completed)
 4. Extract task header (matches pattern: `# <span...>TITLE</span>`)
 5. Extract task content (everything between dividers)
-6. Build task list with: title, content, section header
+6. **Extract wiki-style references** `[[folder/name]]` from task content
+7. Build task list with: title, content, section header, wiki references
 
 Example regex patterns:
 
 - Header pattern: `#\s*<span[^>]*>([^<]+)</span>[^#]*#claude-research`
 - Section divider: `^---$`
+- Wiki link pattern: `\[\[([^\]]+)\]\]`
 
 Example implementation logic:
 
@@ -117,11 +132,16 @@ PARSE_TASKS:
         content_lines = section.split('\n')[1:]  # Skip header line
         content = '\n'.join(content_lines).strip()
 
+        # Extract wiki-style references [[folder/name]]
+        wiki_pattern = r'\[\[([^\]]+)\]\]'
+        wiki_refs = regex_findall(wiki_pattern, content)
+
         task = {
           'title': title,
           'content': content,
           'section_header': header_match.group(0),
-          'log_path': log_path
+          'log_path': log_path,
+          'wiki_refs': wiki_refs  # List of wiki reference strings
         }
         tasks.append(task)
 
@@ -163,6 +183,17 @@ SPAWN_AGENTS:
   FOR index, task in enumerate(tasks):
     agent_name = f"research-task-{index + 1}"
 
+    wiki_refs_note = ""
+    if task.get('wiki_refs'):
+      wiki_refs_list = '\n'.join([f"- [[{ref}]]" for ref in task['wiki_refs']])
+      wiki_refs_note = f"""
+
+**Wiki Context References:**
+{wiki_refs_list}
+
+These wiki references provide additional context. Resolve and read their contents using Obsidian MCP tools.
+"""
+
     prompt = f"""
 Research Task Analysis
 
@@ -172,18 +203,24 @@ Research Task Analysis
 {task['content']}
 
 **Log File Path:** {task['log_path']}
+{wiki_refs_note}
 
 **Your Mission:**
-1. Infer the project this task refers to from the description
-2. Search /Users/dlopez/Documents/Development/Projects/ for the project
-3. If found: analyze project state and create comprehensive research report
-4. If not found: create error report
-5. Write report to {{project}}/.claude/research/research-{{uuid}}.md
-6. Update Obsidian task with results
+1. Extract and resolve any wiki-style references [[folder/name]] for additional context
+2. Perform internet research to gather relevant resources, best practices, and implementation guides
+3. Infer project location from task content (if applicable)
+4. If project found: analyze project state
+5. If project not found but internet research succeeded: create general research report
+6. Consolidate findings from: internet + wiki context + project analysis (if found)
+7. Write comprehensive research report with external resources
+8. Update Obsidian task with results
 
 **Base Project Path:** /Users/dlopez/Documents/Development/Projects/
 
-Follow the obsidian-research-agent workflow.
+Follow the obsidian-research-agent workflow, which now includes:
+- Step 0: Extract wiki references (if any)
+- Step 1.5: Perform internet research using WebFetch
+- Steps 2-6: Project analysis and report generation with all context sources
 """
 
     agent_call = {
@@ -225,6 +262,8 @@ Spawning research agents...
 ✓ Completed research for: Optimize database query performance
 
 All research tasks complete! Check your Obsidian log for results.
+
+Note: Research reports include internet findings, best practices, and external resources.
 ```
 
 ## Usage Example
@@ -237,14 +276,45 @@ All research tasks complete! Check your Obsidian log for results.
 
 ### Tag Format
 
-In your daily log, tag tasks that need research:
+In your daily log, tag tasks that need research with `#claude-research`:
 
+**Basic research task:**
 ```markdown
 ---
 # <span style="color:rgb(0, 112, 192)">TODO</span> [12:32] - Fix authentication bug in user-service - <mark style="background: #BBFABBA6;">OPEN</mark>
 #todo #user-service #claude-research
 
 The login endpoint is returning 500 errors intermittently. Need to investigate the root cause and implement a fix.
+---
+```
+
+**With wiki context reference:**
+```markdown
+---
+# <span style="color:rgb(0, 112, 192)">TODO</span> [12:32] - Implement new payment gateway - <mark style="background: #BBFABBA6;">OPEN</mark>
+#todo #payments #claude-research
+
+Need to integrate Stripe payment processing into the checkout flow. See [[Projects/Payments/Architecture]] for context on our current payment system design.
+---
+```
+
+**With multiple wiki references:**
+```markdown
+---
+# <span style="color:rgb(0, 112, 192)">TODO</span> [12:32] - Refactor authentication module - <mark style="background: #BBFABBA6;">OPEN</mark>
+#todo #auth #claude-research
+
+The authentication code needs to be refactored to support OAuth2. Reference [[Projects/Auth/Standards]] and [[Projects/Auth/Migration Guide]] for our approach.
+---
+```
+
+**General research (no specific project):**
+```markdown
+---
+# <span style="color:rgb(0, 112, 192)">TODO</span> [12:32] - Research microservices patterns - <mark style="background: #BBFABBA6;">OPEN</mark>
+#todo #architecture #claude-research
+
+Research best practices for microservices architecture, focusing on service discovery, API gateways, and event-driven patterns.
 ---
 ```
 
@@ -266,8 +336,9 @@ All research tasks complete! Check your Obsidian log for results.
 
 ### Result in Obsidian
 
-Your task will be updated with:
+Your task will be updated with a link to the research report:
 
+**Project-based research:**
 ```markdown
 ---
 # <span style="color:rgb(0, 112, 192)">TODO</span> [12:32] - Fix authentication bug in user-service - <mark style="background: #BBFABBA6;">OPEN</mark>
@@ -281,7 +352,28 @@ The login endpoint is returning 500 errors intermittently. Need to investigate t
 ---
 ```
 
-The linked report contains comprehensive analysis with solution approaches.
+**General research (no project):**
+```markdown
+---
+# <span style="color:rgb(0, 112, 192)">TODO</span> [12:32] - Research microservices patterns - <mark style="background: #BBFABBA6;">OPEN</mark>
+#todo #architecture #claude-research
+
+Research best practices for microservices architecture, focusing on service discovery, API gateways, and event-driven patterns.
+
+#### Research Results
+📊 Research completed: General research (no project-specific analysis)
+Report location: `~/.claude/research/research-a1b2c3d4-e5f6-7890-abcd-ef1234567890.md`
+#claude-research-result
+---
+```
+
+The research report includes:
+- **Internet research findings** - Best practices, tutorials, documentation links
+- **Wiki context** (if referenced) - Guidance from your Obsidian vault
+- **Project analysis** (if found) - Current state, architecture, relevant code
+- **Recommended approaches** - Solution options with pros/cons
+- **Implementation steps** - Actionable next steps
+- **External references** - All consulted URLs
 
 ## Troubleshooting
 
