@@ -347,8 +347,10 @@ Your task will be updated with a link to the research report:
 The login endpoint is returning 500 errors intermittently. Need to investigate the root cause and implement a fix.
 
 #### Research Results
-📊 Research completed: [[.claude/research/research-a1b2c3d4-e5f6-7890-abcd-ef1234567890]]
 #claude-research-result
+```
+📊 Research completed: [[.claude/research/research-a1b2c3d4-e5f6-7890-abcd-ef1234567890]]
+```
 ---
 ```
 
@@ -361,9 +363,11 @@ The login endpoint is returning 500 errors intermittently. Need to investigate t
 Research best practices for microservices architecture, focusing on service discovery, API gateways, and event-driven patterns.
 
 #### Research Results
+#claude-research-result
+```
 📊 Research completed: General research (no project-specific analysis)
 Report location: `~/.claude/research/research-a1b2c3d4-e5f6-7890-abcd-ef1234567890.md`
-#claude-research-result
+```
 ---
 ```
 

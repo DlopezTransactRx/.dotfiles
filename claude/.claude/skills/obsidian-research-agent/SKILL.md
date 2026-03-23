@@ -579,8 +579,10 @@ UPDATE_OBSIDIAN:
   update_content = f"""
 
 #### Research Results
-📊 Research completed: [[{relative_report_path}]]
 #claude-research-result
+```
+📊 Research completed: [[{relative_report_path}]]
+```
 """
 
   # 2. Use MCP to append results to task section
@@ -697,9 +699,11 @@ HANDLE_INTERNET_ONLY_RESEARCH:
     update_content = f"""
 
 #### Research Results
+#claude-research-result
+```
 📊 Research completed: General research (no project-specific analysis)
 Report location: `~/.claude/research/research-{uuid}.md`
-#claude-research-result
+```
 """
 
     TRY:
@@ -773,10 +777,12 @@ Unable to complete research for this task.
   error_update = f"""
 
 #### Research Results
+#claude-research-error
+```
 ❌ Error: Research incomplete (project not found, limited internet results)
 Error ID: {uuid}
 Location: `~/.claude/research-errors/error-{uuid}.md`
-#claude-research-error
+```
 """
 
   TRY:
