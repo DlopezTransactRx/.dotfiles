@@ -17,6 +17,25 @@ This agent performs autonomous project research and generates comprehensive repo
 - Write access only for research reports
 - No Edit tool (forces explicit operations)
 
+### Obsidian Tools
+
+**Obsidian MCP Server (Primary):**
+- `obsidian_list_files_in_vault` - List all files in the vault
+- `obsidian_get_file_contents` - Read file contents
+- `obsidian_patch_content` - Update file content with patches
+- `obsidian_put_content` - Write/overwrite file content
+- `obsidian_append_content` - Append to file content
+- `obsidian_search` - Search vault content
+- Other MCP operations exposed by the Obsidian REST API plugin
+
+**Obsidian CLI (Fallback):**
+If you need to perform operations not exposed by the MCP server, the `obsidian` CLI is available via Bash tool. Use this for operations like:
+- Direct file system operations not available in MCP
+- Custom Obsidian plugin interactions
+- Batch operations requiring shell scripting
+
+**Prefer MCP server when possible** - it provides structured data and better error handling.
+
 ## Workflow
 
 This agent receives a task description and:

@@ -33,6 +33,41 @@ This skill automates comprehensive research for tasks in your Obsidian daily log
 
 Invoke with `/research` in Claude Code.
 
+## Available Tools
+
+This skill has access to both the Obsidian MCP server and the Obsidian CLI:
+
+### Obsidian MCP Server (Primary)
+- `obsidian_list_files_in_vault` - List all files in the vault
+- `obsidian_get_file_contents` - Read file contents
+- `obsidian_patch_content` - Update file content with patches
+- `obsidian_put_content` - Write/overwrite file content
+- `obsidian_append_content` - Append to file content
+- `obsidian_search` - Search vault content
+- Other MCP operations exposed by the Obsidian REST API plugin
+
+### Obsidian CLI (Fallback)
+If you need to perform operations not exposed by the MCP server, the `obsidian` CLI is available via Bash tool:
+
+```bash
+# Example: Check Obsidian CLI help
+obsidian --help
+
+# Example: Open a note in Obsidian
+obsidian open "path/to/note.md"
+
+# Example: Create a new note
+obsidian new "path/to/note.md"
+```
+
+**When to use the CLI:**
+- Operations not available in MCP server
+- Direct file system operations needed
+- Custom Obsidian plugin interactions
+- Batch operations requiring shell scripting
+
+**Prefer MCP server when possible** - it provides structured data and better error handling.
+
 ## Implementation
 
 ### Step 1: Find Obsidian Vault with @log Folder
