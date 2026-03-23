@@ -30,9 +30,6 @@ alias .4="cd ../../../../.."
 alias .5="cd ../../../../../../.."
 
 # File Management
-alias mv="mv -I"
-alias rm="rm -I"
-alias cp="cp -I"
 alias mkdir="mkdir -pv"
 
 # git
