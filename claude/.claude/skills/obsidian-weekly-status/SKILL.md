@@ -7,15 +7,16 @@ tools: obsidian
 
 # Obsidian Weekly Status
 
-Generates a categorized summary of all entries from the current week's daily logs.
+Generates a narrative summary of all work completed during the current week's daily logs.
 
 ## How It Works
 
 1. Finds @log folder in Obsidian vault
 2. Calculates current calendar week (Sunday-Saturday)
 3. Reads all daily logs for the week
-4. Parses entries and extracts hashtags
-5. Groups by tags and displays formatted summary
+4. Parses entries with titles and detailed content
+5. Groups related work intelligently by project/topic
+6. Formats as narrative bullets with contextual sub-bullets
 
 ## Usage
 
@@ -144,14 +145,14 @@ READ_LOGS:
 
 Expected: List of daily_log objects with date, filename, and content.
 
-### Step 4: Parse Entries and Extract Tags
+### Step 4: Parse Entries with Full Content
 
-Parse each daily log to extract entries with metadata:
+Parse each daily log to extract entries with titles, tags, and detailed content:
 
 1. Split each log by `---` section dividers
-2. For each section, extract title, tags, and content
-3. Handle edge cases (no title, no tags)
-4. Build entry list with source date
+2. For each section, extract title, tags, and full content body
+3. Parse content body for bullet points and details
+4. Build comprehensive entry list with source date
 
 Implementation pseudocode:
 
@@ -160,124 +161,203 @@ PARSE_ENTRIES:
   all_entries = []
 
   FOR daily_log in daily_logs:
-    content = daily_log['content']
+    raw_content = daily_log['content']
     date = daily_log['date']
 
     # Split by section dividers
-    sections = split_by_regex(content, r'^---$', multiline=True)
+    sections = split_by_regex(raw_content, r'^---$', multiline=True)
 
     FOR section in sections:
       # Skip empty sections
       IF section.strip() == "":
         CONTINUE
 
-      # Extract title
-      title_match = regex_search(r'#\s*<span[^>]*>([^<]+)</span>', section)
-      IF title_match:
-        title = clean_html(title_match.group(1))
-      ELSE:
-        # No title found - use first line
-        first_line = section.split('\n')[0].strip()
-        # Remove markdown formatting
-        title = remove_markdown(first_line)
-        IF title == "":
-          CONTINUE  # Skip sections with no content
+      lines = section.split('\n')
+
+      # Extract title from header line
+      header_line = lines[0] if lines else ""
+      title_match = regex_search(r'#\s*<span[^>]*>([^<]+)</span>\s*\[([^\]]+)\]\s*-\s*(.+)', header_line)
+
+      IF NOT title_match:
+        CONTINUE  # Skip sections without proper header
+
+      entry_type = title_match.group(1).strip()
+      time = title_match.group(2).strip()
+      title = title_match.group(3).strip()
+
+      # Remove status markers from title
+      title = remove_status_markers(title)  # Removes <mark>DONE</mark>, etc.
 
       # Extract all hashtags
       tag_matches = regex_findall(r'#([a-zA-Z0-9_-]+)', section)
-      tags = list(set(tag_matches))  # Remove duplicates
+      # Filter out hex color codes
+      tags = [t for t in tag_matches if not is_hex_color(t)]
+      tags = list(set(tags))  # Remove duplicates
+
+      # Extract content body (everything after header and tags line)
+      content_lines = []
+      in_content = False
+      FOR line in lines[1:]:  # Skip header line
+        line_stripped = line.strip()
+        # Skip the tags line
+        IF line_stripped.startswith('#') AND all(word.startswith('#') for word in line_stripped.split()):
+          in_content = True
+          CONTINUE
+        IF in_content AND line_stripped:
+          content_lines.append(line)
+
+      content_body = '\n'.join(content_lines).strip()
+
+      # Parse bullet points and details from content
+      details = extract_bullet_points(content_body)
 
       # Store entry
       entry = {
+        'type': entry_type,
         'title': title,
         'tags': tags,
         'date': date,
-        'content': section  # Store full content for potential future use
+        'details': details,  # List of bullet points/sub-items
+        'raw_content': content_body
       }
       all_entries.append(entry)
 
   RETURN all_entries
 ```
 
+Helper function to extract bullet points:
+
+```
+EXTRACT_BULLET_POINTS:
+  details = []
+  lines = content_body.split('\n')
+
+  FOR line in lines:
+    trimmed = line.strip()
+    # Match markdown list items (-, *, •)
+    IF trimmed.startswith(('-', '*', '•')):
+      # Remove bullet marker
+      text = trimmed[1:].strip()
+      # Determine indentation level
+      indent_level = count_leading_spaces(line) // 4  # Assume 4 spaces = 1 indent
+      details.append({
+        'text': text,
+        'indent': indent_level
+      })
+
+  RETURN details
+```
+
 Example entry:
 ```python
 {
-  'title': 'Fix authentication bug in user-service',
-  'tags': ['todo', 'user-service', 'bug-fix'],
-  'date': datetime(2026, 3, 17),
-  'content': '# <span>TODO</span>...'
+  'type': 'TASK',
+  'title': 'Patient Rx History (Full Response)',
+  'tags': ['task', 'patientrxhistory'],
+  'date': datetime(2026, 3, 18),
+  'details': [
+    {'text': 'Added branch protection to repository', 'indent': 0},
+    {'text': 'Removed deprecated tables', 'indent': 1}
+  ],
+  'raw_content': '- Added branch protection...\n  - Removed deprecated...'
 }
 ```
 
-### Step 5: Group Entries by Tags
+### Step 5: Group Related Work Intelligently
 
-Organize entries by their hashtags:
+Analyze entries and group related work by project/topic using semantic clustering:
 
-1. Create tag-to-entries mapping
-2. Handle entries with multiple tags (appear in each)
-3. Separate untagged entries
-4. Sort tags by frequency
-5. Sort entries within each tag chronologically
+1. Identify project names from tags and titles
+2. Merge related entries into topic groups
+3. Sort by relevance and chronology
 
 Implementation pseudocode:
 
 ```
-GROUP_BY_TAGS:
-  tag_groups = {}  # tag -> list of entries
-  untagged_entries = []
+GROUP_RELATED_WORK:
+  project_groups = {}  # project_key -> list of entries
+
+  # Define project/topic patterns (can be extended)
+  project_patterns = {
+    'snowflake': ['snowflake', 'snowflakeadministration', 'masking'],
+    'patientrxhistory': ['patientrxhistory', 'patient rx', 'milliman'],
+    'httpstonats': ['httpstonats', 'https to nats'],
+    'rasdatawarehouse': ['rasdatawarehouse', 'transmission log'],
+    'databricks': ['databricks', 'prx'],
+  }
+
+  # Additional patterns for people, general topics
+  people_pattern = ['kris', 'carli', 'abdiel', 'kevin', 'mario', 'tom']
+  meeting_pattern = ['meeting', 'discussion']
 
   FOR entry in all_entries:
-    IF len(entry['tags']) == 0:
-      # No tags - add to untagged
-      untagged_entries.append(entry)
-    ELSE:
-      # Add to each tag group
-      FOR tag in entry['tags']:
-        IF tag not in tag_groups:
-          tag_groups[tag] = []
-        tag_groups[tag].append(entry)
+    assigned = False
 
-  # Sort tags by entry count (descending)
-  sorted_tags = sorted(
-    tag_groups.keys(),
-    key=lambda tag: len(tag_groups[tag]),
-    reverse=True
-  )
+    # Check if entry matches a project pattern
+    FOR project_key, keywords in project_patterns.items():
+      IF any(keyword in entry['title'].lower() OR keyword in entry['tags'] for keyword in keywords):
+        IF project_key not in project_groups:
+          project_groups[project_key] = []
+        project_groups[project_key].append(entry)
+        assigned = True
+        BREAK
 
-  # Sort entries within each tag by date
-  FOR tag in tag_groups:
-    tag_groups[tag].sort(key=lambda entry: entry['date'])
+    # If not assigned to project, check for people-specific work
+    IF NOT assigned:
+      FOR person in people_pattern:
+        IF person in entry['tags'] OR person in entry['title'].lower():
+          key = f'collaboration_{person}'
+          IF key not in project_groups:
+            project_groups[key] = []
+          project_groups[key].append(entry)
+          assigned = True
+          BREAK
 
-  # Sort untagged entries by date
-  untagged_entries.sort(key=lambda entry: entry['date'])
+    # If still not assigned, check for meetings/discussions
+    IF NOT assigned:
+      IF any(keyword in entry['tags'] for keyword in meeting_pattern):
+        key = 'meetings'
+        IF key not in project_groups:
+          project_groups[key] = []
+        project_groups[key].append(entry)
+        assigned = True
 
-  RETURN (sorted_tags, tag_groups, untagged_entries)
+    # Fallback: place in "other" category
+    IF NOT assigned:
+      IF 'other' not in project_groups:
+        project_groups['other'] = []
+      project_groups['other'].append(entry)
+
+  # Sort entries within each group chronologically
+  FOR project_key in project_groups:
+    project_groups[project_key].sort(key=lambda entry: entry['date'])
+
+  RETURN project_groups
 ```
 
 Example output:
 ```python
-sorted_tags = ['project-name', 'bug-fix', 'meeting']
-tag_groups = {
-  'project-name': [entry1, entry2, entry3],
-  'bug-fix': [entry4, entry5],
-  'meeting': [entry6]
+project_groups = {
+  'snowflake': [entry1, entry2, entry3],
+  'patientrxhistory': [entry4, entry5],
+  'collaboration_kris': [entry6],
+  'meetings': [entry7]
 }
-untagged_entries = [entry7]
 ```
 
-### Step 6: Display Summary
+### Step 6: Format Narrative Summary
 
-Format and output the weekly summary to console:
+Format and output the weekly summary as narrative bullets with contextual details:
 
 1. Build header with week date range
-2. Format each tag group with entries
-3. Add untagged section if present
-4. Add footer with totals
+2. Merge related entries into narrative bullets
+3. Include sub-bullets for details
+4. Format as professional status report
 
 Implementation pseudocode:
 
 ```
-DISPLAY_SUMMARY:
+FORMAT_NARRATIVE_SUMMARY:
   # Calculate week range for header
   week_end = week_start + timedelta(days=6)
   header_date_range = format_date_range(week_start, week_end)
@@ -286,43 +366,76 @@ DISPLAY_SUMMARY:
   # Build output
   output = []
   output.append(f"📅 Weekly Summary: {header_date_range}")
-  output.append("═" * 40)
   output.append("")
 
-  # Add each tag group
-  FOR tag in sorted_tags:
-    entries = tag_groups[tag]
-    count = len(entries)
+  # Define friendly project names
+  project_names = {
+    'snowflake': 'Snowflake Administration',
+    'patientrxhistory': 'Patient Rx History',
+    'httpstonats': 'HTTPS to NATS',
+    'rasdatawarehouse': 'RAS Data Warehouse',
+    'databricks': 'Databricks Integration',
+    'meetings': 'Meetings & Discussions',
+    'other': 'Other Tasks'
+  }
 
-    output.append(f"## #{tag} ({count} entries)")
+  # Process each project group
+  FOR project_key, entries in project_groups.items():
+    # Skip empty groups
+    IF len(entries) == 0:
+      CONTINUE
 
-    FOR entry in entries:
-      date_str = format_entry_date(entry['date'])
-      # Example: "[Mon 3/17]"
-      output.append(f"  • {date_str} {entry['title']}")
+    # Merge related entries into narrative bullets
+    narrative_items = merge_into_narrative(entries)
 
-    output.append("")  # Blank line between groups
+    # Add narrative bullets with details
+    FOR item in narrative_items:
+      output.append(f"- {item['summary']}")
 
-  # Add untagged section if present
-  IF len(untagged_entries) > 0:
-    count = len(untagged_entries)
-    output.append(f"## Untagged ({count} entries)")
-
-    FOR entry in untagged_entries:
-      date_str = format_entry_date(entry['date'])
-      output.append(f"  • {date_str} {entry['title']}")
-
-    output.append("")
-
-  # Add footer
-  total_entries = sum(len(tag_groups[tag]) for tag in tag_groups) + len(untagged_entries)
-  days_with_entries = len(daily_logs)
-  output.append("─" * 40)
-  output.append(f"Total: {total_entries} entries across {days_with_entries} days")
+      # Add sub-bullets for details
+      FOR detail in item['details']:
+        indent = "    " * (detail['indent'] + 1)
+        output.append(f"{indent}- {detail['text']}")
 
   # Print to console
   FOR line in output:
     PRINT(line)
+```
+
+Helper function to merge entries into narrative:
+
+```
+MERGE_INTO_NARRATIVE:
+  narrative_items = []
+
+  # Group entries by similarity
+  # For now, each entry becomes a narrative item
+  FOR entry in entries:
+    summary = entry['title']
+
+    # Extract details from entry
+    details = []
+
+    # If entry has parsed bullet points, use them
+    IF entry['details']:
+      details = entry['details']
+    # Otherwise, parse the raw content
+    ELSE IF entry['raw_content']:
+      # Look for bullet points in content
+      lines = entry['raw_content'].split('\n')
+      FOR line in lines:
+        trimmed = line.strip()
+        IF trimmed.startswith(('-', '*', '•')):
+          text = trimmed[1:].strip()
+          indent = count_leading_spaces(line) // 4
+          details.append({'text': text, 'indent': indent})
+
+    narrative_items.append({
+      'summary': summary,
+      'details': details
+    })
+
+  RETURN narrative_items
 ```
 
 Helper functions:
@@ -335,30 +448,29 @@ def format_date_range(start, end):
   else:
     return f"{start.strftime('%B %d')} - {end.strftime('%B %d, %Y')}"
 
-def format_entry_date(date):
-  # "[Mon 3/17]"
-  day_name = date.strftime("%a")  # Mon, Tue, etc.
-  month = date.month
-  day = date.day
-  return f"[{day_name} {month}/{day}]"
+def count_leading_spaces(line):
+  count = 0
+  for char in line:
+    if char == ' ':
+      count += 1
+    else:
+      break
+  return count
 ```
 
 Expected output example:
 ```
 📅 Weekly Summary: March 16-22, 2026
-═══════════════════════════════════════
 
-## #project-name (5 entries)
-  • [Sun 3/16] Initial project setup
-  • [Mon 3/17] Implement authentication
-  • [Wed 3/19] Add database integration
-
-## #meeting (2 entries)
-  • [Mon 3/16] Team standup
-  • [Fri 3/21] Sprint planning
-
-───────────────────────────────────────
-Total: 7 entries across 4 days
+- Investigated a Milliman data issue and traced one of the problematic records back to a BestRx import.
+- Made progress on the PHI masking effort in the Snowflake Administration project and established the masking pattern.
+    - Updated the RAS project hook into the tag resource.
+- Deployed a Patient Rx History update to return the full response payload.
+    - Added branch protection to the Patient Rx History repository.
+    - Removed deprecated HTTPS_REQUEST_HISTORY and HTTPS_PATIENT_RX_HISTORY tables from the project.
+- Completed Snowflake Administration tasks.
+    - Granted the new ETC schema to the FDB read-only database roles after Mario flagged the access issue.
+    - Added Carly Wagner as a Snowflake user in production.
 ```
 
 ## Usage Example
@@ -394,19 +506,21 @@ Run: `/weekly-status`
 Expected output:
 ```
 📅 Weekly Summary: March 16-22, 2026
-═══════════════════════════════════════
 
-## #todo (3 entries)
-  • [Mon 3/17] Fix authentication bug
-  • [Tue 3/18] Update documentation
-  • [Wed 3/19] Review pull requests
-
-## #meeting (2 entries)
-  • [Mon 3/16] Team standup
-  • [Fri 3/21] Sprint planning
-
-───────────────────────────────────────
-Total: 5 entries across 4 days
+- Investigated a Milliman data issue and traced one of the problematic records back to a BestRx import.
+- Made progress on the PHI masking effort in the Snowflake Administration project and established the masking pattern.
+    - Updated the RAS project hook into the tag resource.
+- Deployed a Patient Rx History update to return the full response payload.
+    - Added branch protection to the Patient Rx History repository.
+    - Removed deprecated HTTPS_REQUEST_HISTORY and HTTPS_PATIENT_RX_HISTORY tables from the project.
+    - Deleted 1,998,467,509 obsolete HttpsToNats staging events while preserving the Patient Rx History-related events.
+- Completed Snowflake Administration tasks.
+    - Granted the new ETC schema to the FDB read-only database roles after Mario flagged the access issue.
+    - Added Carly Wagner as a Snowflake user in production.
+    - Created a new Strand service account in Snowflake.
+- Assisted Kris with the PRX share follow-up.
+    - Added the PRX database to the read-only roles.
+    - Helped validate the current setup approach and identified the ownership fix using USE ROLE SYSADMIN.
 ```
 
 ## Troubleshooting
@@ -426,12 +540,13 @@ Total: 5 entries across 4 days
 - Check API key in MCP configuration at `~/.claude/.mcp.json`
 - Try restarting Obsidian
 
-**No entries shown**
+**No entries shown or incomplete output**
 - Check that log sections are divided by `---`
-- Verify section format includes title line
-- Try running `/research` first to ensure MCP connection works
+- Verify section format includes proper header: `# <span>TYPE</span> [TIME] - Title`
+- Ensure entries have meaningful content beyond just the header
+- Try running `/obsidian-research` first to ensure MCP connection works
 
-**Entries missing tags**
-- Verify hashtags use format `#tag-name` (letters, numbers, hyphens, underscores)
-- Check that tags are in the section content, not just title
-- Tags are case-sensitive: `#Todo` ≠ `#todo`
+**Output format issues**
+- If details/sub-bullets are missing, check that content includes markdown list items (-, *, •)
+- Indentation should use 4 spaces per level for proper sub-bullet nesting
+- Complex nested content may require manual formatting adjustment
