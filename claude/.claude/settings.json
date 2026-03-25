@@ -1,4 +1,5 @@
 {
+  "awsCredentialExport": "/Users/dlopez/.claude/aws-credential-export.sh",
   "env": {
     "CLAUDE_CODE_USE_BEDROCK": "true",
     "ANTHROPIC_MODEL": "global.anthropic.claude-sonnet-4-20250514-v1:0",
