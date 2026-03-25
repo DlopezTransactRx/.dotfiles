@@ -123,15 +123,13 @@ alias m="cmatrix -s"
 
 
 # Claude
-function cc() {
-  # Launch Claude with remaining args
-  al && clear && claude "$@"
-}
-alias cch='cc --model haiku'
-alias ccs='cc --model sonnet'
-alias cco='cc --model opus'
-alias ccae='cc --permission-mode acceptEdits'
-alias ccx='cc --allow-dangerously-skip-permissions'
+
+alias claude='al && claude'
+alias cch='claude --model haiku'
+alias ccs='claude --model sonnet'
+alias cco='claude --model opus'
+alias ccae='claude --permission-mode acceptEdits'
+alias ccx='claude --allow-dangerously-skip-permissions'
 # NOTE: As of the this time, claude MCP servers cannot be configured globally. They must exist locally to the project.  This alias will create a symlink to my .mcp.json file to make MCP available to a project.
 alias ccmcp='ln -sf ~/.claude/.mcp.json .mcp.json'
 
