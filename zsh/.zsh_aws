@@ -19,8 +19,6 @@ function al(){
   set -a
   source "$envfile"
   set +a
-
-
-  gum style --foreground 226 "✓ AWS keys loaded from clipboard into $envfile"
-  export | rg "AWS"
 }
+
+alias aws="al && aws"
