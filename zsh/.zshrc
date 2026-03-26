@@ -140,6 +140,49 @@ function notify() {
 }
 
 
+
+#******************************************************************************
+# [Command List Menu Utility]
+# _cmd_category <category> [args...]
+#
+# Reads $COMMANDS_FILE entries formatted as:
+#   [category][label]command
+#
+# Filters by [category], shows results via `gum filter`,
+# strips [label], and executes the command with optional args.
+#
+# Example wrapper:
+#   logs() { _cmd_category logs "$@"; }
+#   gitcmd() { _cmd_category git "$@"; }
+#
+# Usage:
+#   logs
+#   logs prod-index
+#
+# Requires: rg, gum
+# Note: uses eval → commands file must be trusted
+#
+#******************************************************************************
+#
+function _cmd_category() {
+  local category="$1"
+  shift
+
+  local -a choices
+  local selected command
+
+  choices=("${(@f)$(rg "^\[$category\]" "$COMMANDS_FILE" | sed -E 's/^\[[^]]+\]//')}")
+  (( ${#choices[@]} == 0 )) && return
+
+  selected=$(gum filter "${choices[@]}") || return
+  [[ -z "$selected" ]] && return
+
+  command="${selected#*]}"
+  command="${command#"${command%%[![:space:]]*}"}"
+
+  eval "$command${@:+ $@}"
+}
+
 #******************************************************************************
 # grc (Generic Colouriser) 
 #******************************************************************************

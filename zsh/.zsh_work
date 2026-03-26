@@ -91,5 +91,7 @@ function nt(){
     echo -e "\n${NC}Connectivity tests completed.${NC}"
 }
 
-# NCPDP Spec
-alias ncpdp="glow \"/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/@NOTES/NCPDP/NCPDP - Transaction Codes Explained.md\""
+# Command List Functions
+function ras() {
+  _cmd_category ras "$@"
+}

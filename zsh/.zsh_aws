@@ -1,6 +1,6 @@
 # Write Aws Environment .env file
 function ak() {
-  local envfile="$HOME/.aws/.keys"
+  local envfile="${AWS_KEYS_FILE:-$HOME/.aws/.keys}"
 
   pbpaste | tr -d '\r' > "$envfile"
   echo "" >> "$envfile"
@@ -14,7 +14,7 @@ function ak() {
 
 # Load AWS Envionrment .Env File Into Shell
 function al(){
-  local envfile="$HOME/.aws/.keys"
+  local envfile="${AWS_KEYS_FILE:-$HOME/.aws/.keys}"
 
   set -a
   source "$envfile"

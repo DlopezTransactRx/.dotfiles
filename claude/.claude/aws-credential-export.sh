@@ -1,8 +1,8 @@
 #!/bin/zsh
 # Export AWS credentials for Claude Code agent teams
-# Reads AWS credentials from ~/.aws/.keys and outputs JSON
+# Reads AWS credentials from $AWS_KEYS_FILE and outputs JSON
 
-KEYS_FILE="$HOME/.aws/.keys"
+KEYS_FILE="${AWS_KEYS_FILE:-$HOME/.aws/.keys}"
 
 # Check if keys file exists
 if [[ ! -f "$KEYS_FILE" ]]; then
