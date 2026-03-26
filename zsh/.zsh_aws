@@ -22,3 +22,4 @@ function al(){
 }
 
 alias aws="al && aws"
+alias awslogs="al && awslogs"
