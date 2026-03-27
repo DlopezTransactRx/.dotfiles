@@ -21,5 +21,7 @@ function al(){
   set +a
 }
 
-alias aws="al && aws"
-alias awslogs="al && awslogs"
+# alias aws="al && aws"
+# alias awslogs="al && awslogs"
+#
+#

@@ -123,7 +123,7 @@ alias m="cmatrix -s"
 
 
 # Claude
-alias claude='al && claude'
+# alias claude='al && claude'
 alias cch='claude --model haiku'
 alias ccs='claude --model sonnet'
 alias cco='claude --model opus'
@@ -174,13 +174,14 @@ function _cmd_category() {
   choices=("${(@f)$(rg "^\[$category\]" "$COMMANDS_FILE" | sed -E 's/^\[[^]]+\]//')}")
   (( ${#choices[@]} == 0 )) && return
 
-  selected=$(gum filter "${choices[@]}") || return
+  selected=$(gum filter --no-fuzzy "${choices[@]}") || return
   [[ -z "$selected" ]] && return
 
   command="${selected#*]}"
   command="${command#"${command%%[![:space:]]*}"}"
 
-  eval "$command${@:+ $@}"
+  # Add command to buffer stack so user can press Enter to execute
+  print -z "$command${@:+ $@}"
 }
 
 #******************************************************************************
