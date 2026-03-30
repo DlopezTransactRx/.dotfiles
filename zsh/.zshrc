@@ -123,7 +123,7 @@ alias m="cmatrix -s"
 
 
 # Claude
-# alias claude='al && claude'
+alias claude='al && claude'
 alias cch='claude --model haiku'
 alias ccs='claude --model sonnet'
 alias cco='claude --model opus'
