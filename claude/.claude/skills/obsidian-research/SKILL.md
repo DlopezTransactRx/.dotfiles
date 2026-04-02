@@ -230,6 +230,14 @@ These wiki references provide additional context. Resolve and read their content
 """
 
     prompt = f"""
+**FIRST ACTION: Invoke the 'obsidian-research-agent' skill**
+
+Use the Skill tool to load the obsidian-research-agent workflow:
+- Skill: "obsidian-research-agent"
+- Args: none needed
+
+Then follow that skill's workflow exactly with this task context:
+
 Research Task Analysis
 
 **Task Title:** {task['title']}
@@ -252,7 +260,7 @@ Research Task Analysis
 
 **Base Project Path:** /Users/dlopez/Documents/Development/Projects/
 
-Follow the obsidian-research-agent workflow, which now includes:
+The obsidian-research-agent skill includes:
 - Step 0: Extract wiki references (if any)
 - Step 1.5: Perform internet research using WebFetch
 - Steps 2-6: Project analysis and report generation with all context sources
@@ -260,7 +268,7 @@ Follow the obsidian-research-agent workflow, which now includes:
 
     agent_call = {
       'description': f"Research: {task['title'][:40]}...",
-      'subagent_type': 'obsidian-research-agent',
+      'subagent_type': 'general-purpose',
       'name': agent_name,
       'prompt': prompt
     }

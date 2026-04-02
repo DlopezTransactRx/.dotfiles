@@ -10,23 +10,28 @@ This agent performs autonomous project research and generates comprehensive repo
 
 ## Capabilities
 
-- Tools: Read, Glob, Grep, Write, Bash (for git log), WebFetch (for internet research), Obsidian MCP tools
+- Tools: Read, Glob, Grep, Bash (for git log), WebFetch (for internet research), Obsidian MCP tools
 - Internet research via WebFetch for gathering external resources
 - Wiki context integration via Obsidian MCP
 - Read-only access to project files
-- Write access only for research reports
-- No Edit tool (forces explicit operations)
+- Write access via Obsidian MCP to @NOTES/RESEARCH/ directory
+- No Edit or Write tools (all file operations via Obsidian MCP)
 
 ### Obsidian Tools
 
 **Obsidian MCP Server (Primary):**
 - `obsidian_list_files_in_vault` - List all files in the vault
 - `obsidian_get_file_contents` - Read file contents
-- `obsidian_patch_content` - Update file content with patches
-- `obsidian_put_content` - Write/overwrite file content
-- `obsidian_append_content` - Append to file content
+- `obsidian_put_content` - Write/overwrite file content (use for creating research reports)
+- `obsidian_append_content` - Append to file content (PREFERRED for updating tasks)
+- `obsidian_patch_content` - Update file content with patches (use only when targeting specific sections)
+- `obsidian_list_files_in_dir` - List files in a specific directory
 - `obsidian_search` - Search vault content
 - Other MCP operations exposed by the Obsidian REST API plugin
+
+**Note:** 
+- Use `put_content` to write research reports to @NOTES/RESEARCH/ directory
+- Use `append_content` for updating task files, as it's more reliable with complex task formats (e.g., HTML spans in headers)
 
 **Obsidian CLI (Fallback):**
 If you need to perform operations not exposed by the MCP server, the `obsidian` CLI is available via Bash tool. Use this for operations like:
@@ -45,8 +50,8 @@ This agent receives a task description and:
 3. Infers project location from task content (if applicable)
 4. Analyzes project state (code, docs, commits) if project found
 5. Consolidates internet research, wiki context, and project analysis
-6. Writes comprehensive research report with external resources
-7. Updates Obsidian task with results link
+6. Writes comprehensive research report to Obsidian vault at @NOTES/RESEARCH/
+7. Updates Obsidian task with wiki link [[]] to the research report
 
 ## Implementation
 
@@ -439,30 +444,39 @@ ANALYZE_PROJECT:
 
 Create comprehensive research report based on analysis:
 
-1. Generate unique UUID for filename
+1. Generate unique timestamp-based filename
 2. Create report content following template
-3. Write to project's .claude/research/ directory
+3. Write to Obsidian vault at @NOTES/RESEARCH/ directory
 4. Handle directory creation if needed
 
 Example implementation logic:
 
 ```
 GENERATE_REPORT:
-  # 1. Generate UUID
+  # 1. Generate timestamp-based filename
   TRY:
-    uuid = Bash("python3 -c 'import uuid; print(uuid.uuid4())'").strip()
-    IF uuid is empty OR uuid contains error text:
-      RETURN ERROR: "Failed to generate UUID"
+    timestamp = Bash("date +%Y%m%d-%H%M%S").strip()
+    IF timestamp is empty OR timestamp contains error text:
+      RETURN ERROR: "Failed to generate timestamp"
   CATCH error:
-    RETURN ERROR: "UUID generation failed: {error}"
-  report_filename = f"research-{uuid}.md"
+    RETURN ERROR: "Timestamp generation failed: {error}"
+  
+  # Create a clean filename from task title (lowercase, replace spaces with hyphens)
+  clean_title = task_title.lower().replace(' ', '-').replace('/', '-')[:50]
+  report_filename = f"{timestamp}-{clean_title}.md"
 
-  # 2. Ensure research directory exists
-  research_dir = f"{project_path}/.claude/research"
+  # 2. Ensure research directory exists in Obsidian vault
+  # Use Obsidian MCP to verify @NOTES/RESEARCH directory exists
+  research_vault_path = "@NOTES/RESEARCH"
+  
   TRY:
-    Bash(f"mkdir -p {research_dir}")
+    # Try to list files in the directory to verify it exists
+    obsidian_mcp.list_files_in_dir(research_vault_path)
   CATCH error:
-    RETURN ERROR: "Cannot create .claude/research directory"
+    # Directory doesn't exist - try to create it via filesystem
+    # Note: This requires knowing the vault root path
+    LOG: f"Warning: {research_vault_path} may not exist - attempting to create"
+    # In practice, create via Bash if vault root is known, or instruct user to create it
 
   # 3. Build report content
   report_content = f"""# Research Report: {task_title}
@@ -525,17 +539,21 @@ GENERATE_REPORT:
     ELSE IF project_context['complexity'] == "complex":
       report_content = expand_report(report_content, target_pages=8)
 
-  # 4. Write report
-  report_path = f"{research_dir}/{report_filename}"
+  # 4. Write report to Obsidian vault using MCP
+  report_vault_path = f"{research_vault_path}/{report_filename}"
   TRY:
-    Write(file_path=report_path, content=report_content)
+    # Use Obsidian MCP put_content to write the report
+    obsidian_mcp.put_content(
+      filepath=report_vault_path,
+      content=report_content
+    )
   CATCH error:
-    RETURN ERROR: "Failed to write report to {report_path}: {error}"
+    RETURN ERROR: "Failed to write report to {report_vault_path}: {error}"
 
   RETURN {
-    'report_path': report_path,
-    'relative_path': f".claude/research/{report_filename}",
-    'uuid': uuid
+    'report_vault_path': report_vault_path,  # Full vault path like "@NOTES/RESEARCH/20260402-101755-snowflake-sns.md"
+    'wiki_link': f"@NOTES/RESEARCH/{report_filename}",  # Wiki link format for Obsidian
+    'timestamp': timestamp
   }
 
 # Note: Helper functions to be implemented by the executing agent:
@@ -587,33 +605,30 @@ GENERATE_REPORT:
 Update the original task in Obsidian with research results:
 
 1. Construct update content with link and tag
-2. Use MCP patch_content to add subsection
+2. Use MCP append_content to add results to the end of the log file
 3. Handle update errors gracefully
 
 Implementation pseudocode:
 
 ```
 UPDATE_OBSIDIAN:
-  # 1. Build update content
+  # 1. Build update content with wiki link
+  # Use [[wiki_link]] format so Obsidian renders as clickable link
   update_content = f"""
-
 #### Research Results
 #claude-research-result
-```
-📊 Research completed: [[{relative_report_path}]]
-```
+📊 Research completed: [[{wiki_link}]]
 """
 
-  # 2. Use MCP to append results to task section
-  # The append mode adds content at the end of the task section
+  # 2. Use MCP append_content to add results to the end of the log file
+  # This is more reliable than patch_content for tasks with complex formatting
+  # (e.g., HTML spans in headers like: # <span style="...">TASK</span> Title)
 
   TRY:
-    # Use Obsidian MCP patch_content
-    result = obsidian_mcp.patch_content(
-      file_path=log_path,
-      heading=task_title,  # Task title from task metadata
-      content=update_content,
-      mode="append"  # Append to end of section
+    # Use Obsidian MCP append_content - simply appends to end of file
+    result = obsidian_mcp.append_content(
+      filepath=log_path,  # e.g., "2026-04-02.md"
+      content=update_content
     )
 
     RETURN {
@@ -629,6 +644,13 @@ UPDATE_OBSIDIAN:
       'message': f'Report created but Obsidian update failed: {error}'
     }
 ```
+
+**Why append_content instead of patch_content?**
+
+- Task headers often contain HTML formatting: `# <span style="...">TASK</span> [timestamp] - Title`
+- `patch_content` requires targeting a specific heading, which fails with complex HTML
+- `append_content` simply adds to the end of the file - more reliable and simpler
+- Results still appear after the task due to file structure
 
 ### Step 6: Handle Different Research Scenarios
 
@@ -654,12 +676,13 @@ Implementation for Scenario B (Internet-only research):
 HANDLE_INTERNET_ONLY_RESEARCH:
   # If internet research succeeded, create a general research report
   IF len(internet_findings['resources']) > 0:
-    # Generate UUID
-    uuid = Bash("python3 -c 'import uuid; print(uuid.uuid4())'").strip()
+    # Generate timestamp-based filename
+    timestamp = Bash("date +%Y%m%d-%H%M%S").strip()
+    clean_title = task_title.lower().replace(' ', '-').replace('/', '-')[:50]
+    report_filename = f"{timestamp}-{clean_title}.md"
 
-    # Create general research report (no project path available)
-    research_dir = "/Users/dlopez/.claude/research"
-    Bash(f"mkdir -p {research_dir}")
+    # Write to Obsidian vault research directory
+    research_vault_path = "@NOTES/RESEARCH"
 
     report_content = f"""# Research Report: {task_title}
 
@@ -710,27 +733,29 @@ HANDLE_INTERNET_ONLY_RESEARCH:
 **Note:** This research did not identify a specific project. The findings above are based on internet research and provide general guidance for implementing the task.
 """
 
-    # Write report to general research directory
-    report_path = f"{research_dir}/research-{uuid}.md"
-    Write(file_path=report_path, content=report_content)
+    # Write report to Obsidian vault using MCP
+    report_vault_path = f"{research_vault_path}/{report_filename}"
+    wiki_link = f"@NOTES/RESEARCH/{report_filename}"
+    
+    TRY:
+      obsidian_mcp.put_content(
+        filepath=report_vault_path,
+        content=report_content
+      )
+    CATCH error:
+      RETURN ERROR: f"Failed to write report: {error}"
 
     # Update Obsidian with success (even though no project found)
     update_content = f"""
-
 #### Research Results
 #claude-research-result
-```
-📊 Research completed: General research (no project-specific analysis)
-Report location: `~/.claude/research/research-{uuid}.md`
-```
+📊 Research completed: [[{wiki_link}]]
 """
 
     TRY:
-      obsidian_mcp.patch_content(
-        file_path=log_path,
-        heading=task_title,
-        content=update_content,
-        mode="append"
+      obsidian_mcp.append_content(
+        filepath=log_path,
+        content=update_content
       )
     CATCH error:
       LOG: f"Warning: Could not update Obsidian - {error}"
@@ -744,9 +769,12 @@ Implementation for Scenario C (Complete Failure):
 ```
 HANDLE_COMPLETE_FAILURE:
   # Only reach here if BOTH project not found AND internet research failed
-  uuid = Bash("python3 -c 'import uuid; print(uuid.uuid4())'").strip()
-  IF uuid is empty:
-    uuid = "error-" + timestamp()
+  timestamp = Bash("date +%Y%m%d-%H%M%S").strip()
+  IF timestamp is empty:
+    timestamp = "error-unknown"
+  
+  clean_title = task_title.lower().replace(' ', '-').replace('/', '-')[:50]
+  error_filename = f"{timestamp}-error-{clean_title}.md"
 
   error_report_content = f"""# Research Report: {task_title}
 
@@ -787,29 +815,31 @@ Unable to complete research for this task.
 {format_partial_findings(internet_findings) if internet_findings else "No internet findings available"}
 """
 
-  # Write error report
-  error_path = f"/Users/dlopez/.claude/research-errors/error-{uuid}.md"
-  Bash("mkdir -p /Users/dlopez/.claude/research-errors")
-  Write(file_path=error_path, content=error_report_content)
+  # Write error report to Obsidian vault
+  research_vault_path = "@NOTES/RESEARCH"
+  error_vault_path = f"{research_vault_path}/{error_filename}"
+  wiki_link = f"@NOTES/RESEARCH/{error_filename}"
+  
+  TRY:
+    obsidian_mcp.put_content(
+      filepath=error_vault_path,
+      content=error_report_content
+    )
+  CATCH error:
+    LOG: f"Failed to write error report: {error}"
 
   # Update Obsidian with error
   error_update = f"""
-
 #### Research Results
 #claude-research-error
-```
 ❌ Error: Research incomplete (project not found, limited internet results)
-Error ID: {uuid}
-Location: `~/.claude/research-errors/error-{uuid}.md`
-```
+See: [[{wiki_link}]]
 """
 
   TRY:
-    obsidian_mcp.patch_content(
-      file_path=log_path,
-      heading=task_title,
-      content=error_update,
-      mode="append"
+    obsidian_mcp.append_content(
+      filepath=log_path,
+      content=error_update
     )
   CATCH:
     LOG: "Could not update Obsidian with error"
