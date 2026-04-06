@@ -1,12 +1,12 @@
 return {
   'nvim-treesitter/nvim-treesitter-textobjects',
+  dependencies = { 'nvim-treesitter/nvim-treesitter' },
   lazy = true,
   config = function()
-    require('nvim-treesitter.configs').setup {
-      vim.keymap.set('n', '<leader>ti', ':InspectTree<CR>', { desc = 'Inspect Tree' }),
+    vim.keymap.set('n', '<leader>ti', ':InspectTree<CR>', { desc = 'Inspect Tree' })
 
-      textobjects = {
-        select = {
+    require('nvim-treesitter-textobjects').setup {
+      select = {
           enable = true,
           lookahead = true,
           keymaps = {
@@ -89,7 +89,6 @@ return {
             ['[B'] = { query = '@block.outer', desc = 'Previous block end' },
           },
         },
-      },
-    }
+      }
   end,
 }

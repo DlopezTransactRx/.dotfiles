@@ -1019,7 +1019,7 @@ require('lazy').setup({
       -- Optional: Highlight and navigate to text objects
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    main = 'nvim-treesitter.config', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = {
