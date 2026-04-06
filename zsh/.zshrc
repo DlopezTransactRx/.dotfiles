@@ -123,7 +123,6 @@ alias m="cmatrix -s"
 
 
 # Claude
-alias claude='al && claude'
 alias cch='claude --model haiku'
 alias ccs='claude --model sonnet'
 alias cco='claude --model opus'
@@ -225,14 +224,6 @@ function y() {
 	fi
 	rm -f -- "$tmp"
 }
-
-#******************************************************************************
-# Snowfalke Warehouse Admin (Personal Script)
-#******************************************************************************
-if [ -f ~/.zsh_snowflake_wh_admin ]; then
-  source ~/.zsh_snowflake_wh_admin
-fi
-
 
 #******************************************************************************
 # NCPDP (Personal Script)
