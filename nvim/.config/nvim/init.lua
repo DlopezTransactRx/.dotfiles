@@ -478,7 +478,12 @@ require('lazy').setup({
             layout_config = {
               height = 0.95,
               width = 0.95,
-              preview_width = 0.6,
+              horizontal = {
+                preview_width = 0.6,
+              },
+              vertical = {
+                preview_height = 0.7,
+              },
             },
           },
         },
