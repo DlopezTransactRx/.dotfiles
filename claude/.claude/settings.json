@@ -1,10 +1,4 @@
 {
-  "awsCredentialExport": "/Users/dlopez/.claude/aws-credential-export.sh",
-  "env": {
-    "CLAUDE_CODE_USE_BEDROCK": "true",
-    "ANTHROPIC_MODEL": "global.anthropic.claude-sonnet-4-20250514-v1:0",
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": 1
-  },
   "attribution": {
     "commit": "",
     "pr": ""
@@ -102,7 +96,6 @@
     "rg",
     "stow"
   ],
-  "model": "us.anthropic.claude-opus-4-6-v1[1m]",
   "agent-themes": {
     "enabled": true
   }
