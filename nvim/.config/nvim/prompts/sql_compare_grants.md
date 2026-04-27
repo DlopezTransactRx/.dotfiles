@@ -7,26 +7,29 @@ I need you to generate a SQL query that compares grants between two Snowflake ro
 Please ask me for:
 1. **Role 1 Name**: The first role to compare
 2. **Role 2 Name**: The second role to compare
-3. **Database Name Patterns**: What are the database names to normalize?
-   - Example: `DEV_DATABASE` and `PROD_DATABASE` should both normalize to `{DB}`
-   - Or: `RAS_DEV` and `RAS_PROD` should both normalize to `{DB}`
 
-**Note**: This assumes both roles exist in the same Snowflake account accessible via `snowsql -c claude-dev`.
+**Note**: 
+- Both roles must exist in the same Snowflake account accessible via `snowsql -c claude-dev`
+- Database names will be automatically normalized (no need to specify patterns)
 
 ## Step 2: Generate SQL Query
 
 Based on my inputs, generate a complete SQL query that:
 
 1. Uses `SHOW GRANTS TO ROLE` to fetch grant data for both roles
-2. Normalizes database names to allow comparison across dev/prod databases:
-   - Replace database names with `{DB}` placeholder
-   - Example: `DEV_DATABASE.SALES.CUSTOMERS` → `{DB}.SALES.CUSTOMERS`
-   - Example: `PROD_DATABASE.SALES.CUSTOMERS` → `{DB}.SALES.CUSTOMERS`
+2. **Automatically normalizes database names** in fully-qualified object names:
+   - Replaces the database portion (everything before the first `.`) with `{DB}`
+   - Works for ANY database name - no need to specify patterns
+   - Examples:
+     - `DEV_DATABASE.SALES.CUSTOMERS` → `{DB}.SALES.CUSTOMERS`
+     - `PROD_DATABASE.SALES.CUSTOMERS` → `{DB}.SALES.CUSTOMERS`
+     - `RAS_DEV.PUBLIC.USERS` → `{DB}.PUBLIC.USERS`
+     - `RAS_PROD.PUBLIC.USERS` → `{DB}.PUBLIC.USERS`
 3. Compares grants on ALL attributes: privilege, object_type, object_name, grant_option, granted_by
 4. Produces a single result set with three categories:
    - `BOTH`: Grants that exist in both roles
-   - `ONLY_ROLE1`: Grants that exist only in the first role
-   - `ONLY_ROLE2`: Grants that exist only in the second role
+   - `ONLY_{ROLE1}`: Grants that exist only in the first role
+   - `ONLY_{ROLE2}`: Grants that exist only in the second role
 
 ## Required Query Structure
 
@@ -62,12 +65,13 @@ role1_normalized_grants AS (
     SELECT 
         privilege,
         granted_on AS object_type,
-        -- Normalize database names for comparison
+        -- Automatically normalize database names
         CASE 
             WHEN granted_on = 'ACCOUNT' THEN name
-            WHEN granted_on = 'DATABASE' AND name IN ('{DB1_NAME}', '{DB2_NAME}') THEN '{DB}'
-            WHEN name LIKE '{DB1_NAME}.%' THEN '{DB}' || SUBSTR(name, LENGTH('{DB1_NAME}') + 1)
-            WHEN name LIKE '{DB2_NAME}.%' THEN '{DB}' || SUBSTR(name, LENGTH('{DB2_NAME}') + 1)
+            WHEN granted_on = 'DATABASE' THEN '{DB}'
+            WHEN name LIKE '%.%' THEN 
+                -- Replace database portion with {DB} for fully-qualified names
+                '{DB}' || SUBSTR(name, POSITION('.' IN name))
             ELSE name
         END AS object_name,
         grant_option,
@@ -78,12 +82,12 @@ role2_normalized_grants AS (
     SELECT 
         privilege,
         granted_on AS object_type,
-        -- Same normalization logic
+        -- Same automatic normalization logic
         CASE 
             WHEN granted_on = 'ACCOUNT' THEN name
-            WHEN granted_on = 'DATABASE' AND name IN ('{DB1_NAME}', '{DB2_NAME}') THEN '{DB}'
-            WHEN name LIKE '{DB1_NAME}.%' THEN '{DB}' || SUBSTR(name, LENGTH('{DB1_NAME}') + 1)
-            WHEN name LIKE '{DB2_NAME}.%' THEN '{DB}' || SUBSTR(name, LENGTH('{DB2_NAME}') + 1)
+            WHEN granted_on = 'DATABASE' THEN '{DB}'
+            WHEN name LIKE '%.%' THEN 
+                '{DB}' || SUBSTR(name, POSITION('.' IN name))
             ELSE name
         END AS object_name,
         grant_option,
@@ -114,7 +118,7 @@ UNION ALL
 
 -- Grants ONLY in role1
 SELECT 
-    'ONLY_ROLE1' AS comparison_result,
+    'ONLY_{ROLE1}' AS comparison_result,
     privilege, 
     object_type, 
     object_name, 
@@ -123,7 +127,7 @@ SELECT
 FROM role1_normalized_grants
 EXCEPT
 SELECT 
-    'ONLY_ROLE1' AS comparison_result,
+    'ONLY_{ROLE1}' AS comparison_result,
     privilege, 
     object_type, 
     object_name, 
@@ -135,7 +139,7 @@ UNION ALL
 
 -- Grants ONLY in role2
 SELECT 
-    'ONLY_ROLE2' AS comparison_result,
+    'ONLY_{ROLE2}' AS comparison_result,
     privilege, 
     object_type, 
     object_name, 
@@ -144,7 +148,7 @@ SELECT
 FROM role2_normalized_grants
 EXCEPT
 SELECT 
-    'ONLY_ROLE2' AS comparison_result,
+    'ONLY_{ROLE2}' AS comparison_result,
     privilege, 
     object_type, 
     object_name, 
@@ -158,9 +162,20 @@ ORDER BY comparison_result, object_type, object_name, privilege;
 ## Output Format
 
 After generating the query, provide:
-1. The complete SQL query ready to copy/paste
+1. The complete SQL query ready to copy/paste (with role names substituted)
 2. Step-by-step instructions on how to run it
 3. Brief explanation of how to interpret the results
+
+## How Database Normalization Works
+
+The normalization logic automatically handles any database names:
+
+- **Account-level grants**: No normalization (`ACCOUNT` stays as-is)
+- **Database grants**: Database name → `{DB}`
+- **Fully-qualified names**: `DATABASE.SCHEMA.OBJECT` → `{DB}.SCHEMA.OBJECT`
+- **Schema/table only**: No normalization (no `.` found)
+
+This works for ANY database naming convention without requiring you to specify patterns.
 
 ## Example Usage
 
