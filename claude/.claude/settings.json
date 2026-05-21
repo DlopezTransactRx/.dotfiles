@@ -3,16 +3,13 @@
     "commit": "",
     "pr": ""
   },
-  "preferences": {
-    "tmuxSplitPanes": "true"
-  },
   "hooks": {
     "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude finished\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
+            "command": "folder=$(basename \"$(pwd)\"); say \"Claude finished in $folder\""
           }
         ]
       }
@@ -22,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs input\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
+            "command": "folder=$(basename \"$(pwd)\"); say \"Claude needs input in $folder\""
           }
         ]
       }
@@ -32,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs approval\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
+            "command": "folder=$(basename \"$(pwd)\"); say \"Claude needs approval in $folder\""
           }
         ]
       }
@@ -57,6 +54,9 @@
   },
   "effortLevel": "low",
   "skipDangerousModePermissionPrompt": true,
+  "preferences": {
+    "tmuxSplitPanes": "true"
+  },
   "skills": {
     "enabled": true
   },
@@ -98,5 +98,7 @@
   ],
   "agent-themes": {
     "enabled": true
-  }
+  },
+  "theme": "light-ansi",
+  "editorMode": "vim"
 }
