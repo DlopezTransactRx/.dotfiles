@@ -1,0 +1,10 @@
+{
+  "name": "rfl",
+  "version": "1.0.0",
+  "description": "Ralph Feedback Loop — language-agnostic autonomous development loop on top of Claude Code's /goal command. Generate a prd.json of tiny independently-buildable features, then drive an autonomous build loop over them. Works with any language/toolchain.",
+  "author": {
+    "name": "Daniel Lopez"
+  },
+  "license": "MIT",
+  "keywords": ["prd", "goal", "autonomous", "language-agnostic", "ralph-loop", "build-loop"]
+}

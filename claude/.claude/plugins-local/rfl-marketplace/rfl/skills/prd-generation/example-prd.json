@@ -1,0 +1,20 @@
+[
+  {
+    "id": "FEAT-001",
+    "category": "technical",
+    "description": "The module compiles and is formatted, vetted, and free of build errors.",
+    "depends_on": [],
+    "steps": [
+      "Confirm the source tree formats cleanly.",
+      "Confirm the module builds.",
+      "Confirm static analysis is clean."
+    ],
+    "goal_condition": "Feature FEAT-001 is complete when ALL of the following are visible in this session's transcript: (1) `gofmt -l .` was executed and produced no output (an empty result line). (2) `go build ./...` was executed and exited 0. (3) `go vet ./...` was executed and exited 0. Each command's full output and exit code must be visible in this transcript. (4) Append a line to progress.jsonl of the form {\"feature_id\":\"FEAT-001\",\"status\":\"pass\",\"timestamp\":\"<ISO8601>\"} and `cat progress.jsonl | tail -1` must show that line in the transcript. (5) Append an entry to RFL_JOURNAL.md following the success-entry schema, then run `tail -40 RFL_JOURNAL.md` so the entry is visible in the transcript. Stop after 15 turns if not complete and report what is blocking.",
+    "validation": {
+      "command": "go vet ./... && go build ./...",
+      "expect_exit_code": 0
+    },
+    "turn_cap": 15,
+    "progress_log_entry": { "feature_id": "FEAT-001", "status": "pass" }
+  }
+]

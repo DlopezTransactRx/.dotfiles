@@ -42,7 +42,8 @@
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true,
     "ras-dev-toolkit@ras-marketplace": true,
-    "cli-anything@cli-anything": true
+    "cli-anything@cli-anything": true,
+    "rfl@rfl-marketplace": true
   },
   "extraKnownMarketplaces": {
     "cli-anything": {
@@ -50,10 +51,18 @@
         "source": "github",
         "repo": "HKUDS/CLI-Anything"
       }
+    },
+    "rfl-marketplace": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/dlopez/.claude/plugins-local/rfl-marketplace"
+      }
     }
   },
   "effortLevel": "low",
   "skipDangerousModePermissionPrompt": true,
+  "theme": "light-ansi",
+  "editorMode": "vim",
   "preferences": {
     "tmuxSplitPanes": "true"
   },
@@ -98,7 +107,5 @@
   ],
   "agent-themes": {
     "enabled": true
-  },
-  "theme": "light-ansi",
-  "editorMode": "vim"
+  }
 }
