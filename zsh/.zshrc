@@ -126,6 +126,10 @@ alias m="cmatrix -s"
 alias cch='claude --model haiku'
 alias ccs='claude --model sonnet'
 alias cco='claude --model opus'
+alias ccha='claude agents --model haiku'
+alias ccsa='claude agents --model sonnet'
+alias ccoa='claude agents --model opus'
+
 alias ccae='claude --permission-mode acceptEdits'
 alias ccx='claude --allow-dangerously-skip-permissions'
 # NOTE: As of the this time, claude MCP servers cannot be configured globally. They must exist locally to the project.  This alias will create a symlink to my .mcp.json file to make MCP available to a project.
