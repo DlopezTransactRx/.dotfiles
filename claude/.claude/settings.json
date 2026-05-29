@@ -9,7 +9,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "folder=$(basename \"$(pwd)\"); say \"Claude finished in $folder\""
+            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude finished\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
           }
         ]
       }
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "folder=$(basename \"$(pwd)\"); say \"Claude needs input in $folder\""
+            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs input\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
           }
         ]
       }
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "folder=$(basename \"$(pwd)\"); say \"Claude needs approval in $folder\""
+            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs approval\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
           }
         ]
       }
