@@ -22,13 +22,13 @@ shift + ctrl + cmd - l : yabai -m window --display east | yabai -m display --foc
 ctrl - e : yabai -m space --rotate 270
 
 # flip along y-axis
-shift + ctrl - x : yabai -m space --mirror y-axis
+shift + ctrl - w : yabai -m space --mirror y-axis
 
 # flip along x-axis
-ctrl - x : yabai -m space --mirror x-axis
+ctrl - w : yabai -m space --mirror x-axis
 
 # toggle window float
-ctrl - t : yabai -m window --toggle float --grig 4:4:1:1:2:2
+ctrl - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
 
 # maximize a window
 ctrl - m : yabai -m window --toggle zoom-fullscreen
