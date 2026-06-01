@@ -123,17 +123,17 @@ alias m="cmatrix -s"
 
 
 # Claude
-alias cch='claude --model haiku'
-alias ccs='claude --model sonnet'
-alias cco='claude --model opus'
-alias ccha='claude agents --model haiku'
-alias ccsa='claude agents --model sonnet'
-alias ccoa='claude agents --model opus'
+alias ch='claude --model haiku'
+alias cs='claude --model sonnet'
+alias co='claude --model opus'
+alias cha='claude agents --model haiku'
+alias csa='claude agents --model sonnet'
+alias coa='claude agents --model opus'
 
-alias ccae='claude --permission-mode acceptEdits'
-alias ccx='claude --allow-dangerously-skip-permissions'
+alias cae='claude --permission-mode acceptEdits'
+alias cx='claude --allow-dangerously-skip-permissions'
 # NOTE: As of the this time, claude MCP servers cannot be configured globally. They must exist locally to the project.  This alias will create a symlink to my .mcp.json file to make MCP available to a project.
-alias ccmcp='ln -sf ~/.claude/.mcp.json .mcp.json'
+alias cmcp='ln -sf ~/.claude/.mcp.json .mcp.json'
 
 # Desktop Notification Function
 function notify() {
