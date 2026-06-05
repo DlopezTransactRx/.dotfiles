@@ -32,16 +32,6 @@
           }
         ]
       }
-    ],
-    "PermissionRequest": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "folder=$(basename \"$(pwd)\"); osascript -e \"display notification \\\"Claude needs approval\\\" with title \\\"Claude Code ($folder)\\\" sound name \\\"Pop\\\"\""
-          }
-        ]
-      }
     ]
   },
   "statusLine": {
