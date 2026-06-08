@@ -122,6 +122,9 @@ echo "[ Pacific  ]: $(TZ="America/Los_Angeles" date) (UTC-8)"'
 alias m="cmatrix -s"
 
 
+# Codex
+alias cx='codex'
+
 # Claude
 alias ch='claude --model haiku'
 alias cs='claude --model sonnet'
@@ -131,7 +134,6 @@ alias csa='claude agents --model sonnet'
 alias coa='claude agents --model opus'
 
 alias cae='claude --permission-mode acceptEdits'
-alias cx='claude --allow-dangerously-skip-permissions'
 # NOTE: As of the this time, claude MCP servers cannot be configured globally. They must exist locally to the project.  This alias will create a symlink to my .mcp.json file to make MCP available to a project.
 alias cmcp='ln -sf ~/.claude/.mcp.json .mcp.json'
 
