@@ -123,7 +123,7 @@ alias m="cmatrix -s"
 
 
 # Codex
-alias cx='codex'
+alias x='codex'
 
 # Claude
 alias ch='claude --model haiku'
