@@ -90,6 +90,43 @@ in the summary — those taps' formulae won't update until the user runs `brew
 trust <tap>`. Mention it; don't run `brew trust` automatically, since it grants
 the tap permission to run arbitrary code.
 
+### Cask upgrade caveats & recovery
+
+GUI casks (apps installed under `/Applications`) often need extra care that
+formula bottles do not. Watch for these and don't report the upgrade as clean
+until they're resolved:
+
+1. **Casks may require `sudo`, which fails in a non-interactive/agent shell.**
+   Symptom: `sudo: a terminal is required to read the password` or
+   `exited with 1 ... touch /Applications/<App>.app/.homebrew-write-test`. The
+   agent cannot supply a password. Don't retry — tell the user to run the
+   upgrade themselves interactively (in Claude Code, suggest `! brew upgrade
+   <cask>`), and note the old version is backed up under
+   `/opt/homebrew/Caskroom/<cask>/<old-version>`.
+
+2. **Self-updating casks (`auto_updates true`) drift from brew's records.**
+   Apps like Bitwarden, Obsidian, and Arc update themselves, so the version on
+   disk may be neither brew's recorded version nor the cask's latest. This
+   produces a stale-record state and, after a partial failure, the collision
+   `Error: <cask>: It seems there is already an App at
+   '/opt/homebrew/Caskroom/<cask>/<old-version>/<App>.app'` (an orphaned backup
+   from the earlier failed attempt). `brew upgrade` only targets these casks
+   when `--greedy` / `HOMEBREW_UPGRADE_GREEDY_CASKS` is set; otherwise it leans
+   on the app's own updater.
+
+3. **Recovery for a partially-failed or stuck cask upgrade:**
+   - Check what's *actually* installed:
+     `defaults read /Applications/<App>.app/Contents/Info.plist CFBundleShortVersionString`
+   - Confirm brew's view: `brew list --cask --versions <cask>` and
+     `ls /opt/homebrew/Caskroom/<cask>`.
+   - Resync and clear the orphaned backup with `brew reinstall <cask>` (this
+     also needs `sudo`, so hand it to the user interactively if running headless).
+   - As a last resort, remove just the stale backup dir:
+     `rm -rf /opt/homebrew/Caskroom/<cask>/<old-version>`.
+
+   A version mismatch between brew and an auto-updating app is normal, not a
+   broken install — say so rather than looping on `brew upgrade`.
+
 ## Closing summary
 
 End with a brief combined recap across whichever tools ran: what was updated,
