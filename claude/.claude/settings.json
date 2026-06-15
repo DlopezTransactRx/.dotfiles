@@ -1,4 +1,8 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(git diff:*)",
@@ -8,10 +12,7 @@
       "Bash(rg:*)"
     ]
   },
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "Stop": [
       {
@@ -60,7 +61,7 @@
   },
   "effortLevel": "low",
   "skipDangerousModePermissionPrompt": true,
-  "theme": "light-ansi",
+  "theme": "dark-ansi",
   "editorMode": "vim",
   "preferences": {
     "tmuxSplitPanes": "true"
