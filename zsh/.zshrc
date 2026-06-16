@@ -64,6 +64,7 @@ alias ghb="gh browse"
 alias lg="lazygit"
 
 # terraform
+alias tff="terraform fmt"
 alias tfi="terraform init"
 alias tfiu="terraform init -upgrade"
 alias tfv="terraform validate"
