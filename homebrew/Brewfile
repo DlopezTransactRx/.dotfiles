@@ -1,4 +1,4 @@
-tap "arimxyer/tap", trusted: true
+tap "asmvik/formulae"
 tap "charmbracelet/tap", trusted: true
 tap "felixkratz/formulae", trusted: true
 tap "gromgit/brewtils", trusted: true
@@ -6,8 +6,8 @@ tap "hashicorp/tap", trusted: true
 tap "homebrew/bundle"
 tap "jesseduffield/lazygit", trusted: true
 tap "jhlee0409/tap"
-tap "koekeishiya/formulae", trusted: true
 tap "nats-io/nats-tools", trusted: true
+tap "reyamira/tap"
 tap "snowflakedb/snowflake-cli", trusted: true
 tap "transactrx/tap", trusted: true
 # Cryptography and SSL/TLS Toolkit
@@ -40,6 +40,8 @@ brew "dust"
 brew "entr"
 # Modern, maintained replacement for ls
 brew "eza"
+# Open-source framework for augmenting humans using AI
+brew "fabric-ai"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
 # Banner-like program prints strings as ASCII art
@@ -92,6 +94,8 @@ brew "mactop"
 brew "make"
 # Drop-in replacement for MySQL
 brew "mariadb"
+# Fast TUI and CLI for browsing AI models, benchmarks, and coding agents
+brew "models"
 # Lightweight cloud messaging system
 brew "nats-server"
 # Open-source, cross-platform JavaScript runtime environment
@@ -146,8 +150,6 @@ brew "yarn"
 brew "yazi"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
-# A fast TUI and CLI for browsing AI models, benchmarks, and coding agents
-brew "arimxyer/tap/models"
 # A powerful terminal-based AI assistant for developers, providing intelligent coding assistance directly in your terminal.
 brew "charmbracelet/tap/crush"
 # A window border system for macOS
@@ -156,10 +158,6 @@ brew "felixkratz/formulae/borders"
 brew "gromgit/brewtils/taproom"
 # Terraform
 brew "hashicorp/tap/terraform"
-# Simple hotkey-daemon for macOS.
-brew "koekeishiya/formulae/skhd"
-# A tiling window manager for macOS based on binary space partitioning.
-brew "koekeishiya/formulae/yabai"
 # NATS utility
 brew "nats-io/nats-tools/nats"
 # A tool for creating NATS account and user access configurations
