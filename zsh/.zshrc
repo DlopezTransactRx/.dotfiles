@@ -156,7 +156,7 @@ function notify() {
 # [Command List Menu Utility]
 # _cmd_category <category> [args...]
 #
-# Reads $COMMANDS_FILE entries formatted as:
+# Reads $COMMAND_LIST_FILE entries formatted as:
 #   [category][label]command
 #
 # Filters by [category], shows results via `gum filter`,
@@ -182,7 +182,7 @@ function _cmd_category() {
   local -a choices
   local selected command
 
-  choices=("${(@f)$(rg "^\[$category\]" "$COMMANDS_FILE" | sed -E 's/^\[[^]]+\]//')}")
+  choices=("${(@f)$(rg "^\[$category\]" "$COMMAND_LIST_FILE" | sed -E 's/^\[[^]]+\]//')}")
   (( ${#choices[@]} == 0 )) && return
 
   selected=$(gum filter --no-fuzzy "${choices[@]}") || return
@@ -195,8 +195,19 @@ function _cmd_category() {
   print -z "$command${@:+ $@}"
 }
 
+# Edit/View Command List
+alias cle="nvim $COMMAND_LIST_FILE"
+alias clv="bat $COMMAND_LIST_FILE"
+
 #******************************************************************************
-# grc (Generic Colouriser) 
+# fzf Shell Integration (Ctrl-R history, Ctrl-T files, Alt-C cd)
+#******************************************************************************
+# EDITOR=nvim makes zsh default to the vi keymap, where ^R is `redisplay`.
+# fzf's widget rebinds ^R to a fuzzy history picker (and adds ^T / Alt-C).
+source <(fzf --zsh)
+
+#******************************************************************************
+# grc (Generic Colouriser)
 #******************************************************************************
 function ping(){
 	grc ping "$@"
