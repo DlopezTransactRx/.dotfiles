@@ -3,7 +3,7 @@
 [ras] [AWS - List Profile]  aws configure list-profiles
 [ras] [AWS - Set Profile]  awsp
 [ras] [AWS - Identify Logged In Account]  aws sts get-caller-identity && bat /Users/dlopez/.aws/config
-[ras] [AWS Logs]  awslogs get `awslogs groups | gum filter` -s '12h ago'
+[ras] [AWS - Logs]  g=$(awslogs groups | gum filter) && print -z "awslogs get $g -s '12h ago'"
 [ras] [AWS - List Batch Schedules - DEV] aws scheduler list-schedules --profile=batch-dev
 [ras] [AWS - List Schedule Groups - DEV]  aws scheduler list-schedule-groups --profile=batch-dev
 [ras] [NATS Discover Prod]	ndp
