@@ -21,7 +21,11 @@ function al(){
   set +a
 }
 
-# alias aws="al && aws"
-# alias awslogs="al && awslogs"
-#
-#
+# Interactively select and export an AWS profile for the session
+function awsp() {
+  local profile
+  profile=$(aws configure list-profiles | gum choose) || return
+  [[ -n "$profile" ]] || return
+  export AWS_PROFILE="$profile"
+  aws sts get-caller-identity
+}

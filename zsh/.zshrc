@@ -63,6 +63,11 @@ alias ghb="gh browse"
 # Lazygit
 alias lg="lazygit"
 
+
+# Fabric
+alias fabric="fabric-ai"
+alias f="fabric-ai"
+
 # terraform
 alias tff="terraform fmt"
 alias tfi="terraform init"
@@ -297,3 +302,4 @@ while IFS= read -r -d '' f; do
   # Create or update the symlink
   ln -sf "$f" "$link"
 done < <(find "$SCRIPTS_DIR" -type f -name "*.sh" ! -path "$SCRIPTS_BIN/*" -print0)
+
