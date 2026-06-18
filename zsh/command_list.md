@@ -12,6 +12,6 @@
 [ras] [Network Test]	nt
 [ras] [Postgres - Edit Config] nvim ~/.config/pgcli/config
 [ras] [Postgres - Alias List]	pgcli --list-dsn
-[ras] [Postgres - Connect]	pgcli -D `pgcli --list-dsn | cut -d: -f1 | gum choose`
+[ras] [Postgres - Connect]	p=$(pgcli --list-dsn | cut -d: -f1 | gum choose) && print -z "pgcli -D $p"
 [ras] [Snowflake - Edit Config] nvim	 ~/.snowsql/config
 [ras] [Snowflake - DEV] snowsql -c claude-dev
