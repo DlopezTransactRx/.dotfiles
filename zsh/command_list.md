@@ -4,9 +4,11 @@
 [ras] [AWS - Set Profile] awsp
 [ras] [AWS - Identify Logged In Account] aws sts get-caller-identity && bat /Users/dlopez/.aws/config
 [ras] [AWS - Logs] awsp && g=$(awslogs groups | gum filter) && print -z "awslogs get $g -s '12h ago'"
-[ras] [AWS - List Batch Schedules] awsp && aws scheduler list-schedules --profile=DEV-BATCH
-[ras] [AWS - List Schedule Groups]  awsp && aws scheduler list-schedule-groups --profile=DEV-BATCH
+[ras] [AWS - List Schedule Groups]  awsp && aws scheduler list-schedule-groups --output=table
+[ras] [AWS - List Schedules] awsp && aws scheduler list-schedules --output=text
 [ras] [AWS - Batch Job Detail]  awsp && s=$(aws scheduler list-schedules --output text --query 'Schedules[].[Name,GroupName]' | gum filter --header 'NAME	GROUP') && n=$(echo "$s" | awk '{print $1}') && g=$(echo "$s" | awk '{print $2}') && print -z "aws scheduler get-schedule --name $n --group-name $g > /tmp/sched.json; echo; gum style --bold --foreground 212 --border normal --padding '0 1' 'Schedule'; jq -C '.' /tmp/sched.json; echo; gum style --bold --foreground 212 --border normal --padding '0 1' 'Job Config'; jq -r '.Target.Input | fromjson' /tmp/sched.json | jq -C '.'"
+[ras] [AWS - Get Secret]  awsp && sec=$(aws secretsmanager list-secrets --query 'SecretList[].Name' --output text | tr '\t' '\n' | fzf) && print -z "aws secretsmanager get-secret-value --secret-id $sec --query SecretString --output text | { jq -C '.' 2>/dev/null || cat; }"
+[ras] [AWS - ECS Describe Service]  awsp && c=$(aws ecs list-clusters --query 'clusterArns' --output text | tr '\t' '\n' | gum choose) && s=$(aws ecs list-services --cluster "$c" --query 'serviceArns' --output text | tr '\t' '\n' | fzf) && print -z "aws ecs describe-services --cluster $c --services $s --output table"
 [ras] [NATS Discover Prod] ndp
 [ras] [NATS Discover Dev] ndd
 [ras] [Spec - NCPDP] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/@NOTES/NCPDP/NCPDP - Transaction Codes Explained.md"
