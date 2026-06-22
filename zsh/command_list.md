@@ -19,3 +19,4 @@
 [ras] [Postgres - Connect] p=$(pgcli --list-dsn | cut -d: -f1 | gum choose) && print -z "pgcli -D $p"
 [ras] [Snowflake - Edit Config] nvim	 ~/.snowsql/config
 [ras] [Snowflake - DEV] snowsql -c claude-dev
+[ras] [GitHub Login] gh auth login
