@@ -17,7 +17,7 @@
 [ras] [Postgres - Edit PGCLI Config] nvim ~/.config/pgcli/config
 [ras] [Postgres - Edit Passwords] nvim ~/.pgpass && chmod 600 ~/.pgpass
 [ras] [Postgres - Alias List] pgcli --list-dsn
-[ras] [Postgres - Connect] p=$(pgcli --list-dsn | cut -d: -f1 | gum choose) && print -z "pgcli -D $p"
+[ras] [Postgres - Connect] p=$(pgcli --list-dsn | cut -d: -f1 | gum filter) && print -z "pgcli -D $p"
 [ras] [Snowflake - Edit Config] nvim	 ~/.snowsql/config
 [ras] [Snowflake - DEV] snowsql -c DEV-CLAUDE
 [ras] [GitHub Login] gh auth login

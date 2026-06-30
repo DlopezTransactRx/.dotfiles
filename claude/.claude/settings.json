@@ -107,5 +107,6 @@
   ],
   "agent-themes": {
     "enabled": true
-  }
+  },
+  "tui": "fullscreen"
 }
