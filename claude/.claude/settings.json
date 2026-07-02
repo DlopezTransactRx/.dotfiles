@@ -41,9 +41,9 @@
   },
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true,
-    "ras-dev-toolkit@ras-marketplace": true,
     "cli-anything@cli-anything": true,
-    "rfl@rfl-marketplace": true
+    "rfl@rfl-marketplace": true,
+    "ras-dev-toolkit@ras-marketplace": true
   },
   "extraKnownMarketplaces": {
     "cli-anything": {
@@ -60,6 +60,7 @@
     }
   },
   "effortLevel": "low",
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark-ansi",
   "editorMode": "vim",
@@ -107,6 +108,5 @@
   ],
   "agent-themes": {
     "enabled": true
-  },
-  "tui": "fullscreen"
+  }
 }
