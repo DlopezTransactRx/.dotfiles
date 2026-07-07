@@ -118,6 +118,35 @@ vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
 
+-- Cap the LSP log file size so it can't silently grow unbounded (it hit 38GB once)
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    local log_path = vim.lsp.get_log_path()
+    local stat = vim.uv.fs_stat(log_path)
+    local max_bytes = 10 * 1024 * 1024 -- 10 MB
+    do
+      local df = io.open('/tmp/debug.txt', 'w')
+      if df then
+        df:write('fired size=' .. tostring(stat and stat.size))
+        df:close()
+      end
+    end
+    if stat and stat.size > max_bytes then
+      local fd = vim.uv.fs_open(log_path, 'w', 438)
+      if fd then
+        vim.uv.fs_close(fd)
+      end
+    end
+  end,
+})
+
+-- Copy the absolute path of the current file to the clipboard
+vim.keymap.set('n', '<leader>cp', function()
+  local path = vim.fn.expand '%:p'
+  vim.fn.setreg('+', path)
+  vim.notify('Copied path: ' .. path)
+end, { desc = 'Copy file path to clipboard' })
+
 -- Enable break indent
 vim.opt.breakindent = true
 
