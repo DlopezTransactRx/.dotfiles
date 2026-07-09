@@ -1,8 +1,8 @@
 # TASK: PHI Population Metrics for a Snowflake Table
 
 ## Parameters
-- FULLY_QUALIFIED_TABLE: <DATABASE.SCHEMA.TABLE>   e.g. CPE_PROD.DATA.RXMILE_CUSTOMER_BASE
-- SNOW_CONNECTION:       <connection name>          e.g. PROD-CLAUDE
+- FULLY_QUALIFIED_TABLE: <DATABASE.SCHEMA.TABLE>   
+- SNOW_CONNECTION:       <connection name>          
 
 ## Hard Constraints (MUST follow exactly)
 1. Use the `snow` CLI with the given connection: `snow sql -c <SNOW_CONNECTION> -q "..."`.
