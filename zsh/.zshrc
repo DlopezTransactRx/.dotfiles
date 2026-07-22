@@ -11,8 +11,22 @@ alias ll="eza -la -g --icons --git"
 # Pretty Tree With Eza
 alias llt="eza -la --icons --tree --git-ignore"
 
-# Tail 
+# Tail
 alias t="tail -f"
+
+# Fix tmux "dead space filled with dots": resize every window in every session
+# to the current attached client's size. Use when a window is pinned smaller than
+# the terminal (dots) after swapping sessions or attaching a smaller client.
+function tmuxfit () {
+  if [ -z "$TMUX" ]; then echo "tmuxfit: not inside a tmux session" >&2; return 1; fi
+  local w h
+  w=$(tmux display -p '#{client_width}')
+  h=$(tmux display -p '#{window_height}')
+  tmux list-windows -a -F '#{session_name}:#{window_index}' | while read -r win; do
+    tmux resize-window -t "$win" -x "$w" -y "$h" 2>/dev/null
+  done
+  echo "tmuxfit: resized all windows to ${w}x${h}"
+}
 
 # Copy Working Directory to Clipboard
 alias pwdc="pwd | pbcopy"
