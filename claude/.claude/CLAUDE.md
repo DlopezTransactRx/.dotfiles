@@ -1,5 +1,29 @@
 # RedSail RAS AI Code Assitance useful context
 
+## Scaffolding preferences (my personal golden repos)
+- **Kafka consumer services:** when scaffolding a Kafka-consumer ingress (the
+  `ras-dev-toolkit` scaffold-microservice skill / golden-repos index), mirror
+  **`transactrx/masterPatientIndexClinicalPlusFeeder`** (branch `Development`) as the
+  golden reference INSTEAD of `MasterPatientIndexFeeder`. Follow its idiom and layout:
+  `pkg/kafka/consumer.go`, `pkg/kafka/MSKTokenProvider.go`, `pkg/kafka/offsettracker.go`,
+  the `cmd/<service>/main.go` run-loop + graceful shutdown, and its `pkg/` package
+  structure, `pkg/logger` logging idiom, and config style. This is my personal preference
+  and overrides the plugin's default golden repo — it is not an org-wide standard.
+- **NATS endpoint services:** when scaffolding a NATS-endpoint ingress, mirror
+  **`transactrx/SnowflakeDataService`** (branch `Development`) as the golden reference
+  INSTEAD of `masterPatientIndex` / the inline `templates/microservice/TEMPLATES.md`
+  endpoint sections. Follow its idiom and layout: `cmd/<service>/main.go`,
+  `pkg/natsHelper/natsHelper.go`, `pkg/services/*` (endpoint handlers +
+  `documentation_test`/`service_metadata` tests), `pkg/models` (`Request.go`/`Response.go`),
+  and `pkg/svcctx` (service context, `dbclient`, `logger`). Personal preference, overrides
+  the plugin default — not an org-wide standard.
+  - **EXCEPTION — logging:** do NOT copy SnowflakeDataService's logging idiom. Use my ECS
+    logging conventions instead (see "Creating an ECS service" below): a zap
+    **SugaredLogger** (not a plain `*zap.Logger`), `LOG_LEVEL` **defaulting to `info`** when
+    unset (never panic on a missing `LOG_LEVEL`), plus the ECS task-metadata startup log and
+    the hardcoded `const version` marker. Mirror SnowflakeDataService for layout, handlers,
+    NATS wiring, and `svcctx` structure — but the logger follows the ECS conventions.
+
 ## Command Restrictions
 
 ### Terraform Commands
