@@ -12,7 +12,6 @@
 [ras] [AWS - SSM Session]  awsp && id=$(aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].[Tags[?Key=='Name']|[0].Value,InstanceId]" --output text | sort | fzf --prompt="Pick an instance: " | awk '{print $NF}') && [ -n "$id" ] && (trap 'printf "\033]111\007"' EXIT INT; printf '\033]11;#241a3a\007'; aws ssm start-session --target "$id")
 [ras] [NATS Discover Prod] ndp
 [ras] [NATS Discover Dev] ndd
-[ras] [Spec - NCPDP] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/@NOTES/NCPDP/NCPDP - Transaction Codes Explained.md"
 [ras] [Network Test] nt
 [ras] [Postgres - Edit PGCLI Config] nvim ~/.config/pgcli/config
 [ras] [Postgres - Edit Passwords] nvim ~/.pgpass && chmod 600 ~/.pgpass
@@ -22,3 +21,5 @@
 [ras] [Snow - Edit Config] nvim	 ~/.snowflake/config.toml
 [ras] [Snowflake - DB Connect] p=$(snow connection list --format CSV |rg -v connection_name | cut -d, -f1 | gum filter) && print -z "snow sql -c $p"
 [ras] [GitHub Login] gh auth login
+[ras] [DOC - Spec - NCPDP] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/NCPDP/NCPDP - Transaction Codes Explained.md"
+[ras] [DOC - Pharmacy Claims Routing] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/Pharmacy Claim Routing.md"

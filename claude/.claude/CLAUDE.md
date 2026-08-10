@@ -1,3 +1,36 @@
+# About Me
+## Philosophies I subscribe to in regards to learning and productivity
+- Remember It! by Nelson Dellis
+- Getting Things Done: The Art of Stress-Free Productivity by David Allen
+
+
+# Agent Communication Style Guide
+
+## How to explain things to me
+Lead with one plain sentence that answers the question. 
+No nonsense. Straigt to the point.
+Short sentences. One idea each. No stacked clauses.
+Use everyday words. If a technical term is unavoidable, define it inline, once, then use it.
+Give a concrete example instead of an abstract description.
+Say what something is not when people commonly get it wrong.
+Skip headers and bullet lists for anything under ~200 words. Just talk.
+Don't hedge. If there's a real caveat, state it in one sentence and move on.
+If I need the precise or technical version, I'll ask for it.
+
+Use analogies and memory tricks if they’ll make concepts easier to grasp.
+
+
+## Commit messages
+Subject line: what changed, in plain words, imperative mood, under 60 chars.
+Body: 1-2 sentences on why. Skip the body if the subject says it all.
+No bullet lists of every file touched. The diff already says that.
+## Issue and PR reviews
+Open with: what this is asking for, in one sentence.
+Then: what's actually wrong or missing, plainly stated.
+Then: what it would take to fix. Rough, not a spec.
+Flag anything that looks like it'll bite later, but say it in one line.
+
+
 # RedSail RAS AI Code Assitance useful context
 
 ## Scaffolding preferences (my personal golden repos)
@@ -43,29 +76,6 @@
 - with go, if you need to make api calls, use https://github.com/transactrx/nats-service lib as client
 - there is also a java library available in private mvn repository, the source https://github.com/transactrx/nats-service-java.  We prefer new projects to be go.
 
-## Creating a jobstream batch job
-- There is a job scheduling platform available on our system. Jobs can be scheduled, they run on AWS Batch, all Fargate instances.
-- Only read the following repository, if I ask to create a job.
-- Reference example: https://github.com/transactrx/batchAIGeneratedJobSample (Rust, but language is irrelevant, our default language is Go)
-- Env variables are suported, secrets must have the suffix _SECRET_ARN
-- With secrets, the job must read the secret from secret manager using the appropriate AWS SDK
-- Logs are automatic, all output to stdout will be pushed to AWS CloudWatch. Never print sensitive (PII, credentials, keys) information to stdout.
-
-### Required project structure
-```
-project/
-├── .github/
-│   └── workflows/
-│       └── build.yml           # CI/CD workflow (REQUIRED)
-├── Dockerfile                  # Container build
-├── terraform/
-│   ├── setup.tf                # Variables (project_name, image_full) and S3 backend
-│   ├── ecr_repo.tf             # ECR repository definition
-│   ├── job-def.tf              # AWS Batch job definition (Fargate)
-│   ├── documentation.tf        # DynamoDB job documentation entry
-│   └── jobdoc.md               # Job documentation markdown
-└── src/                        # Application source code
-```
 
 ### Key files to copy from reference
 1. `.github/workflows/build.yml` - Handles AWS auth, ECR push, terraform deploy
@@ -89,4 +99,3 @@ When I create a new ECS (Fargate) service, always include the following unless I
   `debug` and continue) when the metadata endpoint is absent (running locally) — never panic.
 - **Hardcoded `version` marker** — a `const version` logged at startup (`info`) so the logs show
   which build is deployed; I bump it before deploying.
-
