@@ -1,9 +1,9 @@
 ---
-name: codex-review
-description: Use when the user wants a second-opinion code review of their current uncommitted/staged git changes OR of a GitHub pull request, asks to "run codex review", pastes a PR URL for review, wants Codex to critique a diff, or wants an adversarial quality check before committing or merging.
+name: code-review-cross-agent
+description: Use when the user wants a rigorous multi-agent code review of their current uncommitted/staged git changes OR of a GitHub pull request. Two independent reviewers (Claude and the Codex CLI) review the diff blind, cross-examine each other's findings, and the parent adjudicates into one consolidated list. Triggers on "cross-agent review", "cross review", "run codex review", "second opinion on this diff", pasting a PR URL for review, or asking for an adversarial quality check before committing or merging.
 ---
 
-# Codex Review
+# Code Review — Cross-Agent
 
 ## Overview
 
@@ -18,8 +18,47 @@ The engine (Phases A–C) is identical in both modes. Only the diff setup and th
 
 ## Prerequisites
 
-- `codex` installed (`which codex`) and authenticated (`codex login status`). If not authenticated, tell the user to run `codex login` themselves — do not attempt it.
-- PR mode also needs `gh` installed and authenticated (`gh auth status`). Same rule: the user runs `gh auth login`.
+Run these checks **before** spawning anything. A missing tool discovered halfway through wastes a full review pass.
+
+### 1. Codex CLI must exist
+
+```bash
+which codex && codex --version
+```
+
+**If missing, install it.** The user has standing approval for this install; do it without asking, but say what you are doing.
+
+```bash
+brew install codex        # the formula is literally `codex` (OpenAI's coding agent)
+```
+
+If Homebrew is unavailable, fall back to `npm install -g @openai/codex`. If both fail, stop and report — do not run a one-reviewer review and present it as a cross-agent review.
+
+After installing, re-run `which codex && codex --version` to confirm.
+
+### 2. Codex must be authenticated
+
+```bash
+codex login status
+```
+
+If not authenticated, **stop and tell the user to run `codex login` themselves.** It is interactive and browser-based. Never attempt it, and never work around it.
+
+### 3. Verify the flag behavior on the installed version
+
+The prompt/scope-flag conflict below was verified on 0.147.0. On a version you have not seen before, confirm `codex review "<prompt>"` is accepted before relying on it.
+
+### 4. PR mode also needs `gh`
+
+```bash
+gh --version && gh auth status
+```
+
+Install with `brew install gh` if missing. If unauthenticated, the user runs `gh auth login` themselves — same rule as Codex.
+
+### Degraded runs
+
+If Codex cannot be made to work, the choice is the user's: run Claude-only and label it clearly as a **single-reviewer review with no cross-examination**, or stop. Never silently degrade — the entire value of this skill is the second model, and a single-reviewer result presented as a cross-agent one is worse than no review, because it carries false confidence.
 
 ---
 
@@ -333,6 +372,9 @@ Both modes send a full diff to an external model. If the changes include credent
 ## Common mistakes
 
 - **Running only one reviewer.** Both, always, in parallel and blind to each other. One reviewer's blind spots go straight to the user.
+- **Skipping the prerequisite checks.** A missing `codex` found mid-run wastes the whole pass.
+- **Silently degrading to one reviewer** when Codex is missing or unauthenticated. Say so loudly, or stop. False confidence is worse than no review.
+- **Trying to run `codex login` yourself.** It is interactive and browser-based. The user runs it.
 - **Letting the reviewers see each other's output.** Destroys the independence the whole method depends on.
 - **Delegating the final call.** Subagents verify individual claims; the parent decides what ships.
 - **Trusting "both flagged it" without checking.** Two models can be wrong the same way. Verify against source regardless.

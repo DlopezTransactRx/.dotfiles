@@ -23,3 +23,4 @@
 [ras] [GitHub Login] gh auth login
 [ras] [DOC - Spec - NCPDP] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/NCPDP/NCPDP - Transaction Codes Explained.md"
 [ras] [DOC - Pharmacy Claims Routing] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/Pharmacy Claim Routing.md"
+[ras] [DOC - Kafka Lag Alert Reasons] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/Kafka/Kafka Lag Alert Reasons.md"

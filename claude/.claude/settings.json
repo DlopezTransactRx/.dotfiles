@@ -43,7 +43,7 @@
     "superpowers@superpowers-marketplace": true,
     "cli-anything@cli-anything": true,
     "rfl@rfl-marketplace": true,
-    "ras-dev-toolkit@ras-marketplace": false
+    "ras-dev-toolkit@ras-marketplace": true
   },
   "extraKnownMarketplaces": {
     "cli-anything": {
