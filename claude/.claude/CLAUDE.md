@@ -57,6 +57,18 @@ Flag anything that looks like it'll bite later, but say it in one line.
     the hardcoded `const version` marker. Mirror SnowflakeDataService for layout, handlers,
     NATS wiring, and `svcctx` structure — but the logger follows the ECS conventions.
 
+## My team's GitHub issue board
+- Org: `transactrx`. Project board: **"RAS AI and Data Services"**, project number **23**
+  (https://github.com/orgs/transactrx/projects/23). This is the board my team works off of.
+- When I ask you to create an issue / file a ticket / "track this", create it in the relevant
+  `transactrx` repo and then add it to project 23:
+  ```bash
+  gh issue create --repo transactrx/<repo> --title "..." --body "..."
+  gh project item-add 23 --owner transactrx --url <issue-url>
+  ```
+- To see what's on the board: `gh project item-list 23 --owner transactrx`.
+- Always confirm the issue title and body with me before creating it.
+
 ## Command Restrictions
 
 ### Terraform Commands

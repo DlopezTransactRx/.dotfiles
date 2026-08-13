@@ -21,7 +21,10 @@
 [ras] [Snow - Edit Config] nvim	 ~/.snowflake/config.toml
 [ras] [Snowflake - DB Connect] p=$(snow connection list --format CSV |rg -v connection_name | cut -d, -f1 | gum filter) && print -z "snow sql -c $p"
 [ras] [GitHub Login] gh auth login
-[ras] [DOC - Spec - NCPDP] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/NCPDP/NCPDP - Transaction Codes Explained.md"
+[ras] [DOC - NCPDP Codes Spec] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/NCPDP/NCPDP - Transaction Codes Explained.md"
 [ras] [DOC - Pharmacy Business Terminology] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/RedSail/Pharmacy Business Terminology.md"
 [ras] [DOC - Pharmacy Claims Routing] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/RedSail/Pharmacy Claim Routing.md"
 [ras] [DOC - Kafka Lag Alert Reasons] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/Kafka/Kafka Lag Alert Reasons.md"
+[ras] [DOC - NCPDP Specs] yazi "/Users/dlopez/Documents/Specs/NCPDP"
+
+
