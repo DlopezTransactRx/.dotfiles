@@ -73,9 +73,60 @@ Guidance for the body:
 - **Lead with the problem in plain words.** Why the work was needed, not what you typed.
 - **Show code and SQL in fenced blocks.** Use ` ```SQL ` for SQL — that exact casing is used throughout the vault. Before/after comparisons in one block beat prose.
 - **Use a Markdown table** for lists of files, fields, or environments with a note each.
-- **Link PRs and issues** as `[#199](url)` with their state, e.g. `(MERGED)`, `(OPEN)`.
+- **Link every PR and issue the work touched** — see [Linking PRs and Issues](#linking-prs-and-issues) below.
 - **End with the trap.** A `# WATCH OUT` section for the behavior change or silent failure mode a future reader would miss. This is the highest-value part of the entry.
 - **Leave room for screenshots.** The user pastes `![[Pasted image ....png]]` under headers like `# VERIFICATION` after the fact. Do not fabricate image links.
+
+## Linking PRs and Issues
+
+If the work opened, updated, reviewed, or merged a PR — or closed an issue — the entry
+**must** carry a live hyperlink to it. A bare `#199` or a repo name is not enough; future-you
+opens the note to get to the PR, and an unlinked number costs a search.
+
+Never hand-assemble the URL from memory. Ask `gh` for the real one and its current state:
+
+```bash
+gh pr view <number|branch> --repo transactrx/<repo> --json number,title,url,state,baseRefName,headRefName
+```
+
+For everything touched in the session at once:
+
+```bash
+gh pr list --repo transactrx/<repo> --state all --limit 5 \
+  --json number,title,url,state,baseRefName,headRefName
+```
+
+If `gh` is unavailable or the PR does not exist yet, write the plain text and say so in your
+reply — never fabricate a URL.
+
+### Format
+
+Group them under a `# PRs` header (or `# PROD PRS` when they are the promotion pair). Two
+shapes are already in use — match whichever fits:
+
+```markdown
+# PRs
+- [#199](https://github.com/transactrx/ras-datawarehouse-reference-data/pull/199) feature/dlopez -> Development (MERGED)
+- [#200](https://github.com/transactrx/ras-datawarehouse-reference-data/pull/200) Development -> Production (OPEN)
+```
+
+```markdown
+# PRs
+[PR - PROD - Fix Clinical Plus SA Role](https://github.com/transactrx/SnowflakeWHAdministration/pull/978)
+```
+
+Rules:
+
+- Use the `#<number>` + branch-arrow form when the branch flow is the point (a
+  Development → Production promotion). Use the descriptive-label form when *what the PR does*
+  is the point.
+- Always append the state — `(OPEN)`, `(MERGED)`, `(CLOSED)`, `(DRAFT)` — on the numbered form.
+  State captured at write time is a fact about that moment; do not go back and update it.
+- One line per PR. A promotion pair is two lines, never one line with two links.
+- Issues follow the same shape: `[#42](url) short title (CLOSED)`.
+- Links to a failed or notable **workflow run** belong here too, labeled so they are not
+  mistaken for the PR itself, e.g. `[PROD APPLY - run 23017445986](url)`.
+- Do not nest a URL inside a URL. One `[label](url)` per line.
 
 ## Quick Reference
 
@@ -85,8 +136,9 @@ Guidance for the body:
 | 2 | `date "+%Y-%m-%d %H:%M"` → note filename + entry timestamp |
 | 3 | Read `<vault>/YYYY-MM-DD.md` to see today's existing entries |
 | 4 | Pick entry type + reuse existing tags |
-| 5 | Append after the last entry with `Edit` |
-| 6 | Tell the user what type/tags you chose so they can correct |
+| 5 | `gh pr view ... --json url,state` for any PR touched → `# PRs` section |
+| 6 | Append after the last entry with `Edit` |
+| 7 | Tell the user what type/tags you chose so they can correct |
 
 ## Common Mistakes
 
@@ -99,5 +151,7 @@ Guidance for the body:
 | Inserting the entry at the top | Append at the bottom |
 | Writing a narrative of the chat | Record problem → fix → consequence |
 | Inventing a new tag when one exists | Grep the vault first |
+| Writing a bare `#199` with no link | Every PR/issue mention gets a `[label](url)` |
+| Hand-assembling a PR URL from memory | `gh pr view --json url` — or say it's unlinked |
 | Omitting the separator | Every entry starts with `---` on its own line |
 | Fabricating `![[Pasted image ...]]` links | Only the user adds screenshots |

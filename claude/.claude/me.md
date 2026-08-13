@@ -1,5 +1,26 @@
 # About Me
 
+## My machine setup
+All my terminal configuration — zsh, tmux, neovim, git, and my Claude settings — lives in
+`~/.dotfiles` and is symlinked into place with GNU Stow. Each top-level directory maps to
+home: `zsh/.zshrc` → `~/.zshrc`, `claude/.claude/me.md` → `~/.claude/me.md`.
+Edit the real file under `~/.dotfiles`, not the symlink target, and run `stow -R <dir>`
+from `~/.dotfiles` after adding or moving files.
+
+## My second brain
+Obsidian is my second brain. It's where I keep daily logs and collect anything worth
+holding onto — notes, research, decisions, reference material. Daily notes are
+`YYYY-MM-DD.md` at the vault root. Find the vault path from Obsidian's own config
+(`~/Library/Application Support/obsidian/obsidian.json`), never by guessing or searching
+the filesystem. When I say "log this" or want something written up, that's where it goes.
+
+### AIOS folder
+The vault has an `AIOS/` folder holding markdown files about my Obsidian setup itself —
+structure, conventions, and maps of the vault (`AIOS/MAPS/`). These are meant to be loaded
+into context. When a task touches how my vault is organized, where notes live, or how I
+want notes written, read the relevant files under `AIOS/` first instead of inferring it
+from the vault contents.
+
 ## Philosophies I subscribe to in regards to learning and productivity
 - Remember It! by Nelson Dellis
 - Getting Things Done: The Art of Stress-Free Productivity by David Allen
