@@ -33,7 +33,7 @@ Entries are separated by `---` and open with a colored HTML header. Copy this sh
 
 ---
 # <span style="color:rgb(0, 112, 192)">TASK</span> [17:30] - Short Descriptive Title
-#task #topic1 #topic2
+#task #topic1 #topic2 #ai-claude
 
 # SECTION HEADER
 Body content.
@@ -56,13 +56,66 @@ Most session write-ups are TASK.
 
 ### Tags
 
-First tag is always the type tag. Add 1-3 topical tags, lowercase, no spaces. **Reuse existing tags** — grep the vault before inventing one:
+The tag line has three parts, in this order:
+
+1. **The type tag** — always first, matching the entry type (`#task`, `#research`, ...).
+2. **1-3 topical tags** — lowercase, no spaces.
+3. **The agent attribution tag** — always last, exactly one. See below.
+
+Add 1-3 topical tags. **Reuse existing tags** — grep the vault before inventing one:
 
 ```bash
 grep -rhoE '^#[a-z][a-z0-9_-]*( #[a-z][a-z0-9_-]*)*' --include="20*.md" <vault> | tr ' ' '\n' | sort | uniq -c | sort -rn | head -30
 ```
 
-If no existing tag fits, coin one and say so in your reply so the user can correct it.
+If no existing topical tag fits, coin one and say so in your reply so the user can correct it.
+
+### Agent Attribution Tag (REQUIRED on every entry)
+
+Every entry written by an AI agent carries exactly one `#ai-<agent>` tag as the **last tag on
+the tag line**. It marks the entry as agent-authored so it can be told apart from notes the
+user typed himself.
+
+**The rule:** `<agent>` is the lowercase name of the model family or agent product **you**
+are — the thing that stays constant across versions. Strip version numbers, size names, and
+vendor prefixes.
+
+Resolve it by answering "what am I?" and reducing to one word:
+
+| If you are | Write | Not |
+| ---------- | ----- | --- |
+| Any Claude model — Opus, Sonnet, Haiku, Fable, any version number | `#ai-claude` | `#ai-opus5`, `#ai-claude-opus-5`, `#ai-anthropic`, `#ai-sonnet` |
+| Codex / the Codex CLI | `#ai-codex` | `#ai-gpt5`, `#ai-openai`, `#ai-chatgpt` |
+| Gemini / Gemini CLI | `#ai-gemini` | `#ai-google`, `#ai-gemini-pro` |
+| GitHub Copilot | `#ai-copilot` | `#ai-github` |
+| Cursor's built-in agent | `#ai-cursor` | `#ai-cursor-agent` |
+| Any other agent | `#ai-<its one-word product name>` | a version-qualified name |
+
+**Normalization rules, applied in order:**
+
+1. Take your model family or agent product name.
+2. Lowercase it.
+3. Drop every version number, date stamp, and release qualifier (`5`, `4.5`, `-latest`, `20251001`).
+4. Drop the size or tier name (Opus, Sonnet, Haiku, Mini, Pro, Turbo, Flash).
+5. Drop the vendor name if the product has its own name (Anthropic → the product is Claude;
+   OpenAI → the product is Codex).
+6. Replace any remaining spaces with `-`. The result must match `^[a-z][a-z0-9-]*$`.
+7. Prefix with `ai-` and `#`.
+
+**Worked examples:** `claude-opus-5` → family is Claude → `#ai-claude`. `Claude Haiku 4.5` →
+`#ai-claude`. `gpt-5-codex` running as the Codex CLI → `#ai-codex`. `gemini-2.5-pro` →
+`#ai-gemini`.
+
+**Edge cases:**
+
+- **Never** version the tag. Every Claude model, forever, writes `#ai-claude`. This is
+  deliberate — the tag answers "was a machine involved," not "which build."
+- One tag per entry, even if several agents contributed. Use the agent that wrote the entry.
+- A subagent uses the same tag as its parent model. Do not invent a subagent-specific tag.
+- If you genuinely cannot determine what model you are, use `#ai-unknown` and say so in your
+  reply so the user can correct it. Do not guess a vendor.
+- Entries the user writes by hand carry no `#ai-` tag. Never add one to an existing entry you
+  did not write.
 
 ## Body: Choose Sections From the Work
 
@@ -135,7 +188,7 @@ Rules:
 | 1 | `cat ~/Library/Application\ Support/obsidian/obsidian.json` → vault path |
 | 2 | `date "+%Y-%m-%d %H:%M"` → note filename + entry timestamp |
 | 3 | Read `<vault>/YYYY-MM-DD.md` to see today's existing entries |
-| 4 | Pick entry type + reuse existing tags |
+| 4 | Pick entry type + reuse existing tags + append your `#ai-<agent>` tag last |
 | 5 | `gh pr view ... --json url,state` for any PR touched → `# PRs` section |
 | 6 | Append after the last entry with `Edit` |
 | 7 | Tell the user what type/tags you chose so they can correct |
@@ -151,6 +204,9 @@ Rules:
 | Inserting the entry at the top | Append at the bottom |
 | Writing a narrative of the chat | Record problem → fix → consequence |
 | Inventing a new tag when one exists | Grep the vault first |
+| Omitting the `#ai-<agent>` tag | Every agent-written entry needs one, last on the tag line |
+| Versioning it (`#ai-opus5`, `#ai-claude-4`) | Family name only — `#ai-claude` |
+| Using the vendor (`#ai-anthropic`, `#ai-openai`) | Use the product — `#ai-claude`, `#ai-codex` |
 | Writing a bare `#199` with no link | Every PR/issue mention gets a `[label](url)` |
 | Hand-assembling a PR URL from memory | `gh pr view --json url` — or say it's unlinked |
 | Omitting the separator | Every entry starts with `---` on its own line |

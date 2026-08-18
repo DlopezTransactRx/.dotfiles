@@ -61,6 +61,44 @@
 4. `terraform/job-def.tf` - Defines AWS Batch job (customize env vars, secrets, resources)
 5. `terraform/documentation.tf` - Registers job docs in DynamoDB
 
+## Service development (applies to every service, batch job, and script)
+
+### NO PHI IN LOGS — EVER
+- **Never log PHI or PII at any log level, in any environment.** Not at `debug`, not "temporarily",
+  not behind a flag, not locally. Log identifiers, shapes, and counts — never payloads.
+- **Error strings count as logs.** Anything returned up the stack gets logged by the caller, so an
+  error message carrying PHI is a PHI log. Check what goes into every `fmt.Errorf`.
+- **PHI hides inside composite ids.** An id that looks opaque may be assembled from PHI fields —
+  e.g. ClinicalPlus's `PatientRxIDString` is `<PatientIDHash>|<rx_number>|<fill_number>|<npi>`, so
+  logging it leaks the prescription number. Before logging any id, check how the producer builds it.
+- **`eventId` is always a valid substitute for PHI in a log — use it.** Every event carries one (see
+  "Events" below), it is a UUID assigned upstream, and it carries no patient data. When a log line
+  needs to name a record, log the `eventId` instead of the record id, patient id, or payload. It also
+  keeps the line actionable, because the event it names can be pulled and read back from the event
+  store. If an event somehow arrives without one, derive a correlate-only fallback
+  (e.g. `norefid-<8 hex of SHA-256>`) — never fall back to the PHI value.
+- **Test it.** Add a test asserting the record id / payload never appears in the log or error output,
+  and one asserting the safe reference is populated — otherwise the logging story silently rots.
+
+## Events (the envelope, and what is actually guaranteed)
+
+Events flow through the eventsCollector and land in the Snowflake event stage table. Every event —
+inbound or outbound, whatever the type — is wrapped in the same envelope.
+
+- **The ONLY three fields common to all events are `eventId`, `eventTime`, and `eventPayload`.**
+  Nothing else is guaranteed. Do not assume any other top-level field exists across event types.
+- `eventId` — a UUID identifying this transmission, assigned upstream. Log-safe (see the PHI rules
+  above). It is per **transmission**, so the same logical record re-sent carries a different
+  `eventId`. Never make it part of a durable/business key.
+- `eventTime` — when the event was emitted, not when the underlying thing happened.
+- `eventPayload` — everything type-specific. Its shape is defined ENTIRELY by the event type; there
+  is no shared schema inside it. Read the producer to learn it, never guess.
+- **Declare only the payload fields you read.** JSON unmarshal ignores the rest, so a partial struct
+  is correct and stays resilient when the producer adds fields. Never assume your struct is the
+  whole event.
+- **Trace a log line back to its event** by looking the `eventId` up in the stage table, e.g.
+  `SELECT * FROM <db>.STAGING.STAGE_EVENTS WHERE DATA:eventId::VARCHAR = '<id>'`.
+
 ## Creating an ECS service (my conventions)
 When I create a new ECS (Fargate) service, always include the following unless I say otherwise:
 - **LOG_LEVEL support** — a `LOG_LEVEL` env var (debug|info|warn|error, default info) driving a
