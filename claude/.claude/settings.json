@@ -10,8 +10,12 @@
       "Bash(grep:*)",
       "Bash(wc:*)",
       "Bash(rg:*)"
+    ],
+    "deny": [
+      "Artifact"
     ]
   },
+  "disableArtifact": true,
   "model": "sonnet",
   "hooks": {
     "Stop": [
