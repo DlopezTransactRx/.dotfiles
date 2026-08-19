@@ -7,7 +7,9 @@ description: Use when work in the current session is done and should be recorded
 
 Append an entry for the work just completed to today's Obsidian daily note, matching the existing entry format exactly.
 
-**Core principle:** The note is a future-self reference, not a transcript. Record the problem, the fix, and what will bite later. Never restate the conversation.
+**Core principle:** The note is a scannable index, not documentation. Record **what changed, the git/CI trail, and any issue created** — then stop. Detail belongs in the PR, the issue, or a code comment; the log links to it. Never restate the conversation.
+
+**Target length: 20-40 lines of body.** Past ~50 lines you are writing a report, not a log entry. See [Body](#body-a-10000-foot-view-not-a-write-up).
 
 ## Locating the Vault and Today's Note
 
@@ -117,18 +119,80 @@ Resolve it by answering "what am I?" and reducing to one word:
 - Entries the user writes by hand carry no `#ai-` tag. Never add one to an existing entry you
   did not write.
 
-## Body: Choose Sections From the Work
+## Body: A 10,000-Foot View, Not a Write-Up
 
-There is no fixed section list. `#`-level headers are chosen to fit what happened. Common ones: `# PROBLEM`, `# FIX`, `# ROOT CAUSE`, `# METRICS`, `# BACKUP`, `# EXECUTED`, `# VERIFICATION`, `# RESULT`, `# PRs`, `# WATCH OUT`, `# QUESTION`, `# NEXT STEPS`.
+**The entry is a scannable index of what happened, not documentation of it.** Aim for
+**20-40 lines of body**. If it runs past ~50, you are writing a report — cut it.
 
-Guidance for the body:
+Detail does not belong here. It belongs where someone will act on it: a code comment at the
+site, the PR body, or an issue. The log's job is to say *what changed and where to look*, so
+future-you can re-enter the work in thirty seconds.
 
-- **Lead with the problem in plain words.** Why the work was needed, not what you typed.
-- **Show code and SQL in fenced blocks.** Use ` ```SQL ` for SQL — that exact casing is used throughout the vault. Before/after comparisons in one block beat prose.
-- **Use a Markdown table** for lists of files, fields, or environments with a note each.
-- **Link every PR and issue the work touched** — see [Linking PRs and Issues](#linking-prs-and-issues) below.
-- **End with the trap.** A `# WATCH OUT` section for the behavior change or silent failure mode a future reader would miss. This is the highest-value part of the entry.
-- **Leave room for screenshots.** The user pastes `![[Pasted image ....png]]` under headers like `# VERIFICATION` after the fact. Do not fabricate image links.
+### The default four sections
+
+Use these unless the work genuinely doesn't fit. Same order every time, so entries are
+scannable at a glance:
+
+```markdown
+# WHAT CHANGED
+- **Thing** - one or two lines. What it does now, not how it was built.
+
+# GIT
+- `abc1234` commit subject
+- Pushed to `<branch>` (note anything surprising, e.g. branch recreated)
+
+# PRs
+- [#N](url) title, head -> base (STATE)
+- [PLAN - run <id>](url) success - 12 to add, 0 to change, 0 to destroy
+
+# ISSUES CREATED
+- [#N](url) title - one line on what it holds
+```
+
+Drop a section that has no content. Add at most one extra (`# NEXT STEPS`, `# VERIFICATION`
+for a screenshot) and only when it carries something the four cannot.
+
+### Rules
+
+- **One or two lines per bullet.** A bullet that needs a paragraph is a link to an issue.
+- **A table only when comparing** across environments, files, or before/after. Not to hold
+  prose.
+- **No code or SQL blocks.** A query worth keeping goes in the issue or the PR; the log links
+  to it. Exception: a single short line that *is* the finding (a renamed object, a corrected
+  value).
+- **Always include the workflow result** when CI ran — the run link plus the plan/apply
+  counts (`164 to add, 0 to change, 0 to destroy`). That one line is what future-you checks
+  first.
+- **Link every PR and issue** — see [Linking PRs and Issues](#linking-prs-and-issues).
+- **Push detail outward, then link to it.** Instead of explaining a trap in the log, put it in
+  the issue and write "full detail in #981". If it has no home yet, that is a signal to create
+  one.
+- **Leave room for screenshots.** The user pastes `![[Pasted image ....png]]` after the fact.
+  Never fabricate image links.
+
+### When a `# WATCH OUT` earns its place
+
+Only for a trap that has **no other home** — nothing tracked it, no code comment marks it, no
+issue covers it. Then: **one or two lines, maximum.** If you find yourself writing three
+bullets of caveats, open an issue and link it instead.
+
+### Do not write these
+
+`# PROBLEM`, `# ROOT CAUSE`, `# FIX`, `# WHY`, `# EXECUTED`, `# ALSO FOUND`, or a narrative of
+the reasoning. They pull the entry toward a write-up. The *what* and the *where* are the
+deliverable; the *why* lives in the commit message and PR body, which the log already links.
+
+### The user may append to an existing stub
+
+The user sometimes writes the header and pastes a screenshot before the work is logged. When
+today's note already has an entry whose title matches the work:
+
+- Fill in **that** entry's body. Do not append a duplicate entry.
+- Leave their header, timestamp, and tag line untouched — including adding no `#ai-` tag,
+  since they authored the header (see the Agent Attribution rules).
+- Preserve any `![[Pasted image ...]]` lines exactly where they are.
+- Say in your reply that you filled in their stub and left the tag line alone, so they can add
+  topical tags themselves.
 
 ## Linking PRs and Issues
 
@@ -190,8 +254,10 @@ Rules:
 | 3 | Read `<vault>/YYYY-MM-DD.md` to see today's existing entries |
 | 4 | Pick entry type + reuse existing tags + append your `#ai-<agent>` tag last |
 | 5 | `gh pr view ... --json url,state` for any PR touched → `# PRs` section |
-| 6 | Append after the last entry with `Edit` |
-| 7 | Tell the user what type/tags you chose so they can correct |
+| 6 | Write the four default sections: `# WHAT CHANGED`, `# GIT`, `# PRs`, `# ISSUES CREATED` |
+| 7 | Count the lines — 20-40 body lines. Over ~50, cut it |
+| 8 | Append after the last entry (or fill in the user's stub) with `Edit` |
+| 9 | Tell the user what type/tags you chose so they can correct |
 
 ## Common Mistakes
 
@@ -202,7 +268,14 @@ Rules:
 | Using the date from context | Run `date` — context dates drift |
 | Timestamp copied from an earlier entry | Use the current time; entries are chronological |
 | Inserting the entry at the top | Append at the bottom |
-| Writing a narrative of the chat | Record problem → fix → consequence |
+| Writing a narrative of the chat | Record what changed + the git/CI trail, then stop |
+| Body runs 60+ lines | You wrote a report. Cut to 20-40; push detail to the PR or an issue |
+| Explaining *why* at length in the log | The why lives in the commit message and PR body, both already linked |
+| Pasting SQL or code blocks | Put them in the issue or PR; the log links to them |
+| Three bullets of caveats under `# WATCH OUT` | Open an issue and link it; keep 1-2 lines max |
+| `# PROBLEM` / `# ROOT CAUSE` / `# FIX` headers | Use `# WHAT CHANGED` — those pull toward a write-up |
+| Omitting the CI result | Always include the run link + plan/apply counts |
+| Appending a new entry when the user already wrote a matching stub | Fill in that entry's body; leave their header and tag line alone |
 | Inventing a new tag when one exists | Grep the vault first |
 | Omitting the `#ai-<agent>` tag | Every agent-written entry needs one, last on the tag line |
 | Versioning it (`#ai-opus5`, `#ai-claude-4`) | Family name only — `#ai-claude` |
