@@ -12,12 +12,16 @@ tap "snowflakedb/snowflake-cli", trusted: true
 tap "transactrx/tap", trusted: true
 # Cryptography and SSL/TLS Toolkit
 brew "openssl@3"
+# Record and share terminal sessions
+brew "asciinema"
 # Securely store and access AWS credentials in development environments
 brew "aws-vault"
 # Official Amazon AWS command-line interface
 brew "awscli"
 # Simple command-line tool to read AWS CloudWatch logs
 brew "awslogs"
+# Microsoft Azure CLI 2.0
+brew "azure-cli"
 # Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
 # Resource monitor. C++ version and continuation of bashtop and bpytop
@@ -120,6 +124,8 @@ brew "procs"
 brew "ranger"
 # Search tool like grep and The Silver Searcher
 brew "ripgrep"
+# Open agent skills ecosystem
+brew "skills"
 # CLI for snowflake
 brew "snowflake-cli"
 # Cross-shell prompt for astronauts

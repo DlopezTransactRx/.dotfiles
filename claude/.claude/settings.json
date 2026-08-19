@@ -12,7 +12,7 @@
       "Bash(rg:*)"
     ]
   },
-  "model": "opus",
+  "model": "sonnet",
   "hooks": {
     "Stop": [
       {
