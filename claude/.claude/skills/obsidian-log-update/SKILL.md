@@ -58,11 +58,14 @@ Most session write-ups are TASK.
 
 ### Tags
 
-The tag line has three parts, in this order:
+The tag line has four parts, in this order:
 
 1. **The type tag** — always first, matching the entry type (`#task`, `#research`, ...).
 2. **1-3 topical tags** — lowercase, no spaces.
-3. **The agent attribution tag** — always last, exactly one. See below.
+3. **Repo and issue tags** — one `#<RepoName>` per repo touched, and one `#ISSUE-<number>` per
+   GitHub issue the work created or worked. Include them **whenever they apply**; omit them when
+   the work touched no repo and no issue. See below.
+4. **The agent attribution tag** — always last, exactly one. See below.
 
 Add 1-3 topical tags. **Reuse existing tags** — grep the vault before inventing one:
 
@@ -71,6 +74,47 @@ grep -rhoE '^#[a-z][a-z0-9_-]*( #[a-z][a-z0-9_-]*)*' --include="20*.md" <vault> 
 ```
 
 If no existing topical tag fits, coin one and say so in your reply so the user can correct it.
+
+### Repo and Issue Tags (whenever available)
+
+These make the log searchable by codebase and by ticket. A single Obsidian search for
+`#ISSUE-981` should surface every day it was worked.
+
+**Repo tag** — one per repo the work actually touched, written as the repo name **exactly as
+GitHub spells it**, no owner prefix:
+
+```
+transactrx/SnowflakeWHAdministration  ->  #SnowflakeWHAdministration
+transactrx/ras-datawarehouse-reference-data  ->  #ras-datawarehouse-reference-data
+```
+
+Do not lowercase it, do not shorten it, do not include `transactrx/`. Get it from the shell
+rather than memory:
+
+```bash
+gh repo view --json nameWithOwner -q .nameWithOwner   # from inside the repo
+basename -s .git "$(git config --get remote.origin.url)"
+```
+
+If the session touched two repos, add both tags. If it touched none (a meeting, pure research),
+add none.
+
+**Issue tag** — `#ISSUE-<number>` for each GitHub issue the work created, closed, or worked on.
+Uppercase `ISSUE`, a hyphen, then the bare number:
+
+```
+issue 981  ->  #ISSUE-981
+```
+
+One tag per issue, at most a few. The tag is *in addition to* the `[#981](url)` hyperlink in the
+body — the tag makes it searchable, the link makes it clickable. Never replace one with the other.
+Never tag a PR number as an issue.
+
+Full tag line with both:
+
+```markdown
+#task #snowflake #terraform #SnowflakeWHAdministration #ISSUE-981 #ai-claude
+```
 
 ### Agent Attribution Tag (REQUIRED on every entry)
 
@@ -252,7 +296,7 @@ Rules:
 | 1 | `cat ~/Library/Application\ Support/obsidian/obsidian.json` → vault path |
 | 2 | `date "+%Y-%m-%d %H:%M"` → note filename + entry timestamp |
 | 3 | Read `<vault>/YYYY-MM-DD.md` to see today's existing entries |
-| 4 | Pick entry type + reuse existing tags + append your `#ai-<agent>` tag last |
+| 4 | Pick entry type + reuse existing tags + add `#<RepoName>` / `#ISSUE-<n>` when they apply + append your `#ai-<agent>` tag last |
 | 5 | `gh pr view ... --json url,state` for any PR touched → `# PRs` section |
 | 6 | Write the four default sections: `# WHAT CHANGED`, `# GIT`, `# PRs`, `# ISSUES CREATED` |
 | 7 | Count the lines — 20-40 body lines. Over ~50, cut it |
@@ -277,6 +321,11 @@ Rules:
 | Omitting the CI result | Always include the run link + plan/apply counts |
 | Appending a new entry when the user already wrote a matching stub | Fill in that entry's body; leave their header and tag line alone |
 | Inventing a new tag when one exists | Grep the vault first |
+| Omitting `#<RepoName>` when a repo was touched | Tag every repo the work touched, exact GitHub spelling |
+| Lowercasing or owner-prefixing the repo tag (`#snowflakewhadministration`, `#transactrx/repo`) | Repo name verbatim, no owner — `#SnowflakeWHAdministration` |
+| Omitting `#ISSUE-<n>` for an issue created or worked | Add one per issue, uppercase `ISSUE`, bare number |
+| Tagging a PR number as `#ISSUE-<n>` | Issues only; PRs live as links in the `# PRs` section |
+| Dropping the body hyperlink because the tag is there | Keep both — tag for search, link to click |
 | Omitting the `#ai-<agent>` tag | Every agent-written entry needs one, last on the tag line |
 | Versioning it (`#ai-opus5`, `#ai-claude-4`) | Family name only — `#ai-claude` |
 | Using the vendor (`#ai-anthropic`, `#ai-openai`) | Use the product — `#ai-claude`, `#ai-codex` |
