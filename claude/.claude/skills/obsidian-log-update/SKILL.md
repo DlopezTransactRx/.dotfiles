@@ -37,9 +37,16 @@ Entries are separated by `---` and open with a colored HTML header. Copy this sh
 # <span style="color:rgb(0, 112, 192)">TASK</span> [17:30] - Short Descriptive Title
 #task #topic1 #topic2 #ai-claude
 
-# SECTION HEADER
+## SECTION HEADER
 Body content.
 ```
+
+**Heading levels:** the entry title is the only `#` in the entry. Every section heading inside
+the entry — `## WHAT CHANGED`, `## GIT`, `## PRs`, `## ISSUES CREATED`, `## WATCH OUT`, and any
+other — starts with `##`, so it nests under the entry in Obsidian's outline. This applies to
+entries built from the `<vault>/@TEMPLATES/` templates too: the template already supplies the
+`#` title line, so anything you add below it is `##` or deeper. Never write a body section as a
+bare `#`.
 
 ### Entry Types
 
@@ -178,22 +185,22 @@ Use these unless the work genuinely doesn't fit. Same order every time, so entri
 scannable at a glance:
 
 ```markdown
-# WHAT CHANGED
+## WHAT CHANGED
 - **Thing** - one or two lines. What it does now, not how it was built.
 
-# GIT
+## GIT
 - `abc1234` commit subject
 - Pushed to `<branch>` (note anything surprising, e.g. branch recreated)
 
-# PRs
+## PRs
 - [#N](url) title, head -> base (STATE)
 - [PLAN - run <id>](url) success - 12 to add, 0 to change, 0 to destroy
 
-# ISSUES CREATED
+## ISSUES CREATED
 - [#N](url) title - one line on what it holds
 ```
 
-Drop a section that has no content. Add at most one extra (`# NEXT STEPS`, `# VERIFICATION`
+Drop a section that has no content. Add at most one extra (`## NEXT STEPS`, `## VERIFICATION`
 for a screenshot) and only when it carries something the four cannot.
 
 ### Rules
@@ -214,7 +221,7 @@ for a screenshot) and only when it carries something the four cannot.
 - **Leave room for screenshots.** The user pastes `![[Pasted image ....png]]` after the fact.
   Never fabricate image links.
 
-### When a `# WATCH OUT` earns its place
+### When a `## WATCH OUT` earns its place
 
 Only for a trap that has **no other home** — nothing tracked it, no code comment marks it, no
 issue covers it. Then: **one or two lines, maximum.** If you find yourself writing three
@@ -222,7 +229,7 @@ bullets of caveats, open an issue and link it instead.
 
 ### Do not write these
 
-`# PROBLEM`, `# ROOT CAUSE`, `# FIX`, `# WHY`, `# EXECUTED`, `# ALSO FOUND`, or a narrative of
+`## PROBLEM`, `## ROOT CAUSE`, `## FIX`, `## WHY`, `## EXECUTED`, `## ALSO FOUND`, or a narrative of
 the reasoning. They pull the entry toward a write-up. The *what* and the *where* are the
 deliverable; the *why* lives in the commit message and PR body, which the log already links.
 
@@ -262,17 +269,17 @@ reply — never fabricate a URL.
 
 ### Format
 
-Group them under a `# PRs` header (or `# PROD PRS` when they are the promotion pair). Two
+Group them under a `## PRs` header (or `## PROD PRS` when they are the promotion pair). Two
 shapes are already in use — match whichever fits:
 
 ```markdown
-# PRs
+## PRs
 - [#199](https://github.com/transactrx/ras-datawarehouse-reference-data/pull/199) feature/dlopez -> Development (MERGED)
 - [#200](https://github.com/transactrx/ras-datawarehouse-reference-data/pull/200) Development -> Production (OPEN)
 ```
 
 ```markdown
-# PRs
+## PRs
 [PR - PROD - Fix Clinical Plus SA Role](https://github.com/transactrx/SnowflakeWHAdministration/pull/978)
 ```
 
@@ -297,8 +304,8 @@ Rules:
 | 2 | `date "+%Y-%m-%d %H:%M"` → note filename + entry timestamp |
 | 3 | Read `<vault>/YYYY-MM-DD.md` to see today's existing entries |
 | 4 | Pick entry type + reuse existing tags + add `#<RepoName>` / `#ISSUE-<n>` when they apply + append your `#ai-<agent>` tag last |
-| 5 | `gh pr view ... --json url,state` for any PR touched → `# PRs` section |
-| 6 | Write the four default sections: `# WHAT CHANGED`, `# GIT`, `# PRs`, `# ISSUES CREATED` |
+| 5 | `gh pr view ... --json url,state` for any PR touched → `## PRs` section |
+| 6 | Write the four default sections: `## WHAT CHANGED`, `## GIT`, `## PRs`, `## ISSUES CREATED` |
 | 7 | Count the lines — 20-40 body lines. Over ~50, cut it |
 | 8 | Append after the last entry (or fill in the user's stub) with `Edit` |
 | 9 | Tell the user what type/tags you chose so they can correct |
@@ -316,20 +323,21 @@ Rules:
 | Body runs 60+ lines | You wrote a report. Cut to 20-40; push detail to the PR or an issue |
 | Explaining *why* at length in the log | The why lives in the commit message and PR body, both already linked |
 | Pasting SQL or code blocks | Put them in the issue or PR; the log links to them |
-| Three bullets of caveats under `# WATCH OUT` | Open an issue and link it; keep 1-2 lines max |
-| `# PROBLEM` / `# ROOT CAUSE` / `# FIX` headers | Use `# WHAT CHANGED` — those pull toward a write-up |
+| Three bullets of caveats under `## WATCH OUT` | Open an issue and link it; keep 1-2 lines max |
+| `## PROBLEM` / `## ROOT CAUSE` / `## FIX` headers | Use `## WHAT CHANGED` — those pull toward a write-up |
 | Omitting the CI result | Always include the run link + plan/apply counts |
 | Appending a new entry when the user already wrote a matching stub | Fill in that entry's body; leave their header and tag line alone |
 | Inventing a new tag when one exists | Grep the vault first |
 | Omitting `#<RepoName>` when a repo was touched | Tag every repo the work touched, exact GitHub spelling |
 | Lowercasing or owner-prefixing the repo tag (`#snowflakewhadministration`, `#transactrx/repo`) | Repo name verbatim, no owner — `#SnowflakeWHAdministration` |
 | Omitting `#ISSUE-<n>` for an issue created or worked | Add one per issue, uppercase `ISSUE`, bare number |
-| Tagging a PR number as `#ISSUE-<n>` | Issues only; PRs live as links in the `# PRs` section |
+| Tagging a PR number as `#ISSUE-<n>` | Issues only; PRs live as links in the `## PRs` section |
 | Dropping the body hyperlink because the tag is there | Keep both — tag for search, link to click |
 | Omitting the `#ai-<agent>` tag | Every agent-written entry needs one, last on the tag line |
 | Versioning it (`#ai-opus5`, `#ai-claude-4`) | Family name only — `#ai-claude` |
 | Using the vendor (`#ai-anthropic`, `#ai-openai`) | Use the product — `#ai-claude`, `#ai-codex` |
 | Writing a bare `#199` with no link | Every PR/issue mention gets a `[label](url)` |
 | Hand-assembling a PR URL from memory | `gh pr view --json url` — or say it's unlinked |
+| Writing a body section as `# WHAT CHANGED` instead of `## WHAT CHANGED` | Only the entry title is `#`; every section under it is `##` |
 | Omitting the separator | Every entry starts with `---` on its own line |
 | Fabricating `![[Pasted image ...]]` links | Only the user adds screenshots |

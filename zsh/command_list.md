@@ -30,3 +30,4 @@
 [ras] [DOC - Pharmacy Claims Routing] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/RedSail/Pharmacy Claim Routing.md"
 [ras] [DOC - Kafka Lag Alert Reasons] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/Kafka/Kafka Lag Alert Reasons.md"
 [ras] [DOC - NCPDP Specs] yazi "/Users/dlopez/Documents/Specs/NCPDP"
+[ras] [Obsidian - Edit KeyMap Plugin(vimrc) ] nvim /Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/.obsidian.vimrc
