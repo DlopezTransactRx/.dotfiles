@@ -12,6 +12,10 @@
 [ras] [AWS - SSM Session]  awsp && id=$(aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].[Tags[?Key=='Name']|[0].Value,InstanceId]" --output text | sort | fzf --prompt="Pick an instance: " | awk '{print $NF}') && [ -n "$id" ] && (trap 'printf "\033]111\007"' EXIT INT; printf '\033]11;#241a3a\007'; aws ssm start-session --target "$id")
 [ras] [NATS Discover Prod] ndp
 [ras] [NATS Discover Dev] ndd
+[ras] [NATS - Edit Context (Development) ] nvim /Users/dlopez/.config/nats/context/Development.json
+[ras] [NATS - Edit Key/Seed (Development) ] nvim /Users/dlopez/.nats/dlopez_dev.creds
+[ras] [NATS - Edit Context (Production) ] nvim /Users/dlopez/.config/nats/context/Production.json
+[ras] [NATS - Edit Key/Seed (Production) ] nvim /Users/dlopez/.nats/dlopez_prod.creds
 [ras] [Network Test] nt
 [ras] [Postgres - Edit PGCLI Config] nvim ~/.config/pgcli/config
 [ras] [Postgres - Edit Passwords] nvim ~/.pgpass && chmod 600 ~/.pgpass
@@ -26,5 +30,3 @@
 [ras] [DOC - Pharmacy Claims Routing] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/RedSail/Pharmacy Claim Routing.md"
 [ras] [DOC - Kafka Lag Alert Reasons] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/Kafka/Kafka Lag Alert Reasons.md"
 [ras] [DOC - NCPDP Specs] yazi "/Users/dlopez/Documents/Specs/NCPDP"
-
-

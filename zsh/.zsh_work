@@ -46,6 +46,22 @@ function ndp(){
 }
 
 #******************************************************************************
+# Nats-Discover
+#******************************************************************************
+function nad(){
+	{
+		figlet "[NATS Agents (Development)]"
+		nats-agents -context Development "$@" 2>&1
+	} | gum style --border-foreground 39 --foreground 39
+}
+function nap(){
+	{
+		figlet "[NATS Agents (Production)]"
+		nats-agents -context Production "$@" 2>&1
+	} | gum style --border-foreground 196 --foreground 196
+}
+
+#******************************************************************************
 # Network Connectivity Test
 # Tests specific host:port combinations using netcat
 # Targets are defined in .zsh_hidden (NETWORK_TEST_TARGETS array)
