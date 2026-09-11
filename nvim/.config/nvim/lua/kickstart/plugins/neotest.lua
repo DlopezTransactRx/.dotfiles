@@ -65,6 +65,13 @@ return {
       desc = '[T]est: toggle [O]utput panel',
     },
     {
+      '<leader>TC',
+      function()
+        require('neotest').output_panel.clear()
+      end,
+      desc = '[T]est: [C]lear output panel',
+    },
+    {
       '<leader>TS',
       function()
         require('neotest').run.stop()

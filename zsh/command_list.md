@@ -33,3 +33,5 @@
 [ras] [Obsidian - Edit KeyMap Plugin(vimrc) ] nvim /Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/.obsidian.vimrc
 [ras] [Nats-Agents Chat - snowflakeOpsAssistant (Development)] nad chat snowflakeOpsAssistant ""
 [ras] [Nats-Agents Chat - snowflakeOpsAssistant (Production)] nap chat snowflakeOpsAssistant ""
+[ras] [Script - Protect Repo Branches (Github)] sh /Users/dlopez/scripts/github-branch-protection/config-repo.sh "transactrx" "<REPO_NAME>"
+

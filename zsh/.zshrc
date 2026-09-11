@@ -328,3 +328,6 @@ while IFS= read -r -d '' f; do
   ln -sf "$f" "$link"
 done < <(find "$SCRIPTS_DIR" -type f -name "*.sh" ! -path "$SCRIPTS_BIN/*" -print0)
 
+
+# Cortex CLI completion (disable via /settings in cortex)
+[[ -s ~/.zsh/completions/cortex.zsh ]] && source ~/.zsh/completions/cortex.zsh
