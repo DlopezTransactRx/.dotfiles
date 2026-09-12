@@ -28,6 +28,12 @@ function tmuxfit () {
   echo "tmuxfit: resized all windows to ${w}x${h}"
 }
 
+# Nested tmux: runs a second tmux server on its own socket with the prefix on
+# C-a, so the outer session keeps C-b. Args pass through (e.g. `itmux attach`).
+function itmux () {
+  tmux -L inner -f ~/.tmux.inner.conf "$@"
+}
+
 # Copy Working Directory to Clipboard
 alias pwdc="pwd | pbcopy"
 alias rp="realpath"
@@ -149,9 +155,11 @@ alias x='codex'
 alias ch='claude --model haiku'
 alias cs='claude --model sonnet'
 alias co='claude --model opus'
+alias cf='claude --model fable'
 alias cha='claude agents --model haiku'
 alias csa='claude agents --model sonnet'
 alias coa='claude agents --model opus'
+alias cfa='claude agents --model fable'
 
 alias cae='claude --permission-mode acceptEdits'
 # NOTE: As of the this time, claude MCP servers cannot be configured globally. They must exist locally to the project.  This alias will create a symlink to my .mcp.json file to make MCP available to a project.
