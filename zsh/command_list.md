@@ -21,9 +21,8 @@
 [ras] [Postgres - Edit Passwords] nvim ~/.pgpass && chmod 600 ~/.pgpass
 [ras] [Postgres - Alias List] pgcli --list-dsn
 [ras] [Postgres - DB Connect] p=$(pgcli --list-dsn | cut -d: -f1 | gum filter) && print -z "pgcli -D $p"
-[ras] [SnowSql - Edit Config] nvim	 ~/.snowsql/config
-[ras] [Snow - Edit Config] nvim	 ~/.snowflake/config.toml
-[ras] [Snowflake - DB Connect] p=$(snow connection list --format CSV |rg -v connection_name | cut -d, -f1 | gum filter) && print -z "snow sql -c $p"
+[ras] [Snowflake - Edit Config] nvim	 ~/.snowflake/config.toml
+[ras] [Snowflake - Connect] p=$(snow connection list --format CSV |rg -v connection_name | cut -d, -f1 | gum filter) && print -z "snow sql -c $p"
 [ras] [GitHub Login] gh auth login
 [ras] [DOC - NCPDP Codes Spec] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/NCPDP/NCPDP - Transaction Codes Explained.md"
 [ras] [DOC - Pharmacy Business Terminology] glow "/Users/dlopez/Library/CloudStorage/OneDrive-RedSailTechnologies,LLC/Obsidian/Work/ATLAS/RedSail/Pharmacy Business Terminology.md"
@@ -34,4 +33,3 @@
 [ras] [Nats-Agents Chat - snowflakeOpsAssistant (Development)] nad chat snowflakeOpsAssistant ""
 [ras] [Nats-Agents Chat - snowflakeOpsAssistant (Production)] nap chat snowflakeOpsAssistant ""
 [ras] [Script - Protect Repo Branches (Github)] sh /Users/dlopez/scripts/github-branch-protection/config-repo.sh "transactrx" "<REPO_NAME>"
-
