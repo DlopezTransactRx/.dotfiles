@@ -38,10 +38,15 @@ If I need the precise or technical version, I'll ask for it.
 Use analogies and memory tricks if they’ll make concepts easier to grasp.
 When presenting issues to me, I prefer them as a numbered list.
 
+## Development Preferences 
+- All code being developed should be done in a local feature branch called 'feature/dlopez' unless stated otherwise.
+- When requesting coding to be done, never automatically commit changes. I like to review the unstaged changes.  I will explicitly tell the agent when to commit.
+- 
 ## Macros
 There are macros that I like to use in conversation to speed up communication. They are listed below.
 - '10ke' = Provide me a 10,000 Foot Elevation Explanation of a given topic.
 - 'cpwm' = Commit Changes to feature branch 'feature/dlopez'. Push to Github. Watch CI. On success, create PR to Development. Watch CI. Report CI findings. Open both CI Action and PR in Browser.  On failure, report and open failed CI in browser.
+
 
 ## Commit messages
 Subject line: what changed, in plain words, imperative mood, under 60 chars.
@@ -53,4 +58,3 @@ Open with: what this is asking for, in one sentence.
 Then: what's actually wrong or missing, plainly stated.
 Then: what it would take to fix. Rough, not a spec.
 Flag anything that looks like it'll bite later, but say it in one line.
-
