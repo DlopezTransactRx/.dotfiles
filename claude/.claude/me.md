@@ -41,7 +41,7 @@ When presenting issues to me, I prefer them as a numbered list.
 ## Macros
 There are macros that I like to use in conversation to speed up communication. They are listed below.
 - '10ke' = Provide me a 10,000 Foot Elevation Explanation of a given topic.
-- 'cpwm' = Commit Changes. Push to Github. Watch CI. On success, create PR to Development. Watch CI. Report CI findings. Open both CI Action and PR in Browser.  On failure, report and open failed CI in browser.
+- 'cpwm' = Commit Changes to feature branch 'feature/dlopez'. Push to Github. Watch CI. On success, create PR to Development. Watch CI. Report CI findings. Open both CI Action and PR in Browser.  On failure, report and open failed CI in browser.
 
 ## Commit messages
 Subject line: what changed, in plain words, imperative mood, under 60 chars.
