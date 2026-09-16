@@ -38,10 +38,9 @@ If I need the precise or technical version, I'll ask for it.
 Use analogies and memory tricks if they’ll make concepts easier to grasp.
 When presenting issues to me, I prefer them as a numbered list.
 
-## Development Preferences 
+## Development Preferences
 - All code being developed should be done in a local feature branch called 'feature/dlopez' unless stated otherwise.
 - When requesting coding to be done, never automatically commit changes. I like to review the unstaged changes.  I will explicitly tell the agent when to commit.
-- 
 ## Macros
 There are macros that I like to use in conversation to speed up communication. They are listed below.
 - '10ke' = Provide me a 10,000 Foot Elevation Explanation of a given topic.
