@@ -40,11 +40,13 @@ When presenting issues to me, I prefer them as a numbered list.
 
 ## Development Preferences
 - All code being developed should be done in a local feature branch called 'feature/dlopez' unless stated otherwise.
+  - **Exception — `SnowflakeWHAdministration`:** work on the local `Development` branch instead. No `feature/dlopez` there; PRs always go `Development` -> `Production`.
 - When requesting coding to be done, never automatically commit changes. I like to review the unstaged changes.  I will explicitly tell the agent when to commit.
 ## Macros
 There are macros that I like to use in conversation to speed up communication. They are listed below.
 - '10ke' = Provide me a 10,000 Foot Elevation Explanation of a given topic.
 - 'cpwm' = Commit Changes to feature branch 'feature/dlopez'. Push to Github. Watch CI. On success, Summarize CI. Create PR to 'Development' branch. Open both CI Action and PR in Browser. On failure, report CI Summary and open failed CI in browser.
+  - **Exception — `SnowflakeWHAdministration`:** commit to the local `Development` branch (recreate it from `origin/Production` if it is missing), push `Development`, and create the PR `Development` -> `Production`. Everything else is the same.
 - 'issuestatus' = Re-read issue <N> verbatim and report only its own unchecked checkboxes and unmet "Done when" criteria, quoting each; verify every claim against current code and deployed state, and do not infer, add, or reword scope.
 
 

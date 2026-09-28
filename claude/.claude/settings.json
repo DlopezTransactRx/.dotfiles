@@ -15,8 +15,7 @@
       "Artifact"
     ]
   },
-  "disableArtifact": true,
-  "model": "sonnet",
+  "model": "opus[1m]",
   "hooks": {
     "Stop": [
       {
@@ -39,6 +38,7 @@
       }
     ]
   },
+  "disableArtifact": true,
   "statusLine": {
     "type": "command",
     "command": "bash /Users/dlopez/.claude/statusline-command.sh"
