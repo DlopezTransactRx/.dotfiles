@@ -37,6 +37,7 @@ Don't hedge. If there's a real caveat, state it in one sentence and move on.
 If I need the precise or technical version, I'll ask for it.
 Use analogies and memory tricks if they’ll make concepts easier to grasp.
 When presenting issues to me, I prefer them as a numbered list.
+When you need to ask me questions, ask them as a numbered list in plain text in your reply. Never use the multiple-choice question popup (AskUserQuestion). I answer by number.
 
 ## Development Preferences
 - All code being developed should be done in a local feature branch called 'feature/dlopez' unless stated otherwise.
@@ -55,6 +56,7 @@ My personal skills live in my `dl` plugin (`~/.dotfiles/claude/.claude/skills/dl
 9. **explain-code**: explains code with diagrams and analogies.
 10. **snowflake-role-grant-comparison**: generates SQL to compare a Snowflake role's grants between environments, like dev and prod.
 11. **validate-table-sync**: checks that pairs of tables in two Snowflake schemas match in structure, row counts, and data.
+12. **workflow-review**: measures how I use Claude Code, compares it with the last review, and ranks verified improvements and unused techniques.
 
 
 ## Commit messages
