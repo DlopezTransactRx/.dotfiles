@@ -9,7 +9,7 @@ Append an entry for the work just completed to today's Obsidian daily note, matc
 
 **Core principle:** The note is a scannable index, not documentation. Record **what changed, the git/CI trail, and any issue created** — then stop. Detail belongs in the PR, the issue, or a code comment; the log links to it. Never restate the conversation.
 
-**Target length: 20-40 lines of body.** Past ~50 lines you are writing a report, not a log entry. See [Body](#body-a-10000-foot-view-not-a-write-up).
+**Size the entry to the work.** A small change (one commit, one PR, no issue) gets the 3-5 line [compact form](#compact-form-for-small-changes). Multi-part work gets the four sections, 20-40 lines of body. Past ~50 lines you are writing a report, not a log entry. See [Body](#body-a-10000-foot-view-not-a-write-up).
 
 ## Locating the Vault and Today's Note
 
@@ -172,16 +172,39 @@ Resolve it by answering "what am I?" and reducing to one word:
 
 ## Body: A 10,000-Foot View, Not a Write-Up
 
-**The entry is a scannable index of what happened, not documentation of it.** Aim for
-**20-40 lines of body**. If it runs past ~50, you are writing a report — cut it.
+**The entry is a scannable index of what happened, not documentation of it.** Size it to
+the work: **3-5 lines** for a small change, **20-40 lines** for multi-part work. If it runs
+past ~50, you are writing a report — cut it.
 
 Detail does not belong here. It belongs where someone will act on it: a code comment at the
 site, the PR body, or an issue. The log's job is to say *what changed and where to look*, so
 future-you can re-enter the work in thirty seconds.
 
+### Compact form for small changes
+
+Use it when the work is **one commit, one PR, and no issue**: a user added or disabled, a
+flag flipped, a one-file fix. Four headers over four bullets is just scaffolding. Write one
+sentence on the outcome, then the links:
+
+```markdown
+Disabled Carli Luebbert's Snowflake user. The user and grants are kept, so it can be re-enabled.
+- [#1069](url) Development -> Production (MERGED) · `8db4140`
+- [PROD APPLY - run <id>](url) success - 0 added, 1 changed, 0 destroyed
+```
+
+- No section headers.
+- The commit hash goes on the PR line instead of in a `## GIT` section.
+- Link only the **last** CI run that matters. That's the apply once it has run, otherwise the
+  plan. Once the apply has succeeded, the plan link adds nothing.
+- Leave out the routine branch mechanics (fast-forwards, a recreated branch). Mention one
+  only when it changed what shipped.
+
+If the work has a second PR, an issue, or a step that needs its own line, use the four
+sections instead.
+
 ### The default four sections
 
-Use these unless the work genuinely doesn't fit. Same order every time, so entries are
+Use these for multi-part work, unless the work genuinely doesn't fit. Same order every time, so entries are
 scannable at a glance:
 
 ```markdown
@@ -305,8 +328,8 @@ Rules:
 | 3 | Read `<vault>/YYYY-MM-DD.md` to see today's existing entries |
 | 4 | Pick entry type + reuse existing tags + add `#<RepoName>` / `#ISSUE-<n>` when they apply + append your `#ai-<agent>` tag last |
 | 5 | `gh pr view ... --json url,state` for any PR touched → `## PRs` section |
-| 6 | Write the four default sections: `## WHAT CHANGED`, `## GIT`, `## PRs`, `## ISSUES CREATED` |
-| 7 | Count the lines — 20-40 body lines. Over ~50, cut it |
+| 6 | Small change (one commit, one PR, no issue) → compact form. Otherwise the four sections: `## WHAT CHANGED`, `## GIT`, `## PRs`, `## ISSUES CREATED` |
+| 7 | Count the lines — 3-5 for compact, 20-40 for sections. Over ~50, cut it |
 | 8 | Append after the last entry (or fill in the user's stub) with `Edit` |
 | 9 | Tell the user what type/tags you chose so they can correct |
 
@@ -321,6 +344,8 @@ Rules:
 | Inserting the entry at the top | Append at the bottom |
 | Writing a narrative of the chat | Record what changed + the git/CI trail, then stop |
 | Body runs 60+ lines | You wrote a report. Cut to 20-40; push detail to the PR or an issue |
+| Four section headers for a one-line change | Use the compact form: one sentence plus the PR and apply links |
+| Linking both the plan and the apply run | Once the apply succeeded, link only the apply |
 | Explaining *why* at length in the log | The why lives in the commit message and PR body, both already linked |
 | Pasting SQL or code blocks | Put them in the issue or PR; the log links to them |
 | Three bullets of caveats under `## WATCH OUT` | Open an issue and link it; keep 1-2 lines max |
