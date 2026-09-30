@@ -1,0 +1,12 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "dl",
+  "version": "0.1.0",
+  "description": "Daniel Lopez's personal skills: shipping (promote, watchci), issue and handoff helpers, Obsidian second-brain workflows, and Snowflake checks.",
+  "author": {
+    "name": "Daniel Lopez"
+  },
+  "skills": [
+    "./skills/"
+  ]
+}

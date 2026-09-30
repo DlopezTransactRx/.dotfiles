@@ -42,13 +42,19 @@ When presenting issues to me, I prefer them as a numbered list.
 - All code being developed should be done in a local feature branch called 'feature/dlopez' unless stated otherwise.
   - **Exception — `SnowflakeWHAdministration`:** work on the local `Development` branch instead. No `feature/dlopez` there; PRs always go `Development` -> `Production`.
 - When requesting coding to be done, never automatically commit changes. I like to review the unstaged changes.  I will explicitly tell the agent when to commit.
-## Macros
-There are macros that I like to use in conversation to speed up communication. They are listed below.
-- '$10ke' = Provide me a 10,000 Foot Elevation Explanation of a given topic.
-- '$cpwm' = Commit Changes to feature branch 'feature/dlopez'. Push to Github. Watch CI. On success, Summarize CI. Create PR to 'Development' branch. Open both CI Action and PR in Browser. On failure, report CI Summary and open failed CI in browser.
-  - **Exception — `SnowflakeWHAdministration`:** commit to the local `Development` branch (recreate it from `origin/Production` if it is missing), push `Development`, and create the PR `Development` -> `Production`. Everything else is the same.
-- '$issuestatus' = Re-read issue <N> verbatim and report only its own unchecked checkboxes and unmet "Done when" criteria, quoting each; verify every claim against current code and deployed state, and do not infer, add, or reword scope.
-- '$hop' = Create a handoff prompt to transfer work to another agent. 
+## My personal skills
+My personal skills live in my `dl` plugin (`~/.dotfiles/claude/.claude/skills/dl/`). Run each one as `/dl:<name>`. When I name one, with or without the `dl:` prefix, run that skill. It holds the full definition.
+1. **promote**: `Dev` commits on `feature/dlopez`, pushes, watches CI, and on success opens the PR to `Development`. `Prod` only creates the `Development` → `Production` PR and opens it.
+2. **watchci**: watches CI on a branch (`Dev`, `Prod`, or any name), opens the finished run, and summarizes what changed.
+3. **handoff**: writes a copy-ready prompt so a fresh agent can pick up the current work. `hop` still triggers it.
+4. **issuestatus**: lists an issue's own unchecked boxes and "Done when" items, quoted exactly and checked against the code.
+5. **10ke**: a plain, big-picture 10,000-foot explanation of a topic.
+6. **obsidian-log-update**: adds an entry for the work just finished to today's Obsidian daily note.
+7. **obsidian-weekly-status**: summarizes the week's accomplishments from my Obsidian log.
+8. **adversarial-review**: sends several independent reviewers over code, checks every finding against the source, fixes the real ones, and repeats until a round comes back clean.
+9. **explain-code**: explains code with diagrams and analogies.
+10. **snowflake-role-grant-comparison**: generates SQL to compare a Snowflake role's grants between environments, like dev and prod.
+11. **validate-table-sync**: checks that pairs of tables in two Snowflake schemas match in structure, row counts, and data.
 
 
 ## Commit messages

@@ -544,7 +544,6 @@ Expected output:
 - Check that log sections are divided by `---`
 - Verify section format includes proper header: `# <span>TYPE</span> [TIME] - Title`
 - Ensure entries have meaningful content beyond just the header
-- Try running `/obsidian-research` first to ensure MCP connection works
 
 **Output format issues**
 - If details/sub-bullets are missing, check that content includes markdown list items (-, *, •)
