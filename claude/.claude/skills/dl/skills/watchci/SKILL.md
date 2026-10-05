@@ -15,7 +15,7 @@ The script is `~/.claude/skills/dl/scripts/ci.sh`. Run it from the repo root.
 1. **Branch.** If no branch was given, ask for one. `Dev` means `Development` and `Prod` means `Production`, in any case. Any other name is used as-is.
 2. **Watch.** Run `~/.claude/skills/dl/scripts/ci.sh watch <branch>` in ONE Bash call with `run_in_background: true` and a 30-minute timeout. Wait for the completion notification. Don't poll with `gh run list`, `gh run view`, or `sleep` loops yourself.
 
-   The script watches the newest commit on `origin/<branch>`. After a merge, that's the merge commit. The script opens each finished run in the browser itself with `open`. Don't open it again.
+   The script watches the newest commit on `origin/<branch>`. After a merge, that's the merge commit. The script opens the browser itself with `open`: only the failed runs if any failed, otherwise only the run that finished last. Prechecks that passed are not opened. Don't open anything again.
 3. **Read the result.**
    - Exit 0: CI passed.
    - Exit 1: CI failed. The output includes the failed jobs' log tails.

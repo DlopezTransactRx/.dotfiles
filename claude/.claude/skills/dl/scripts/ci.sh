@@ -50,7 +50,9 @@ cmd_watch() {
     exit 3
   fi
 
-  local failed=0 id run url
+  # Open only what matters: every failed run, or when all pass, just the run
+  # that finished last (the final build/deploy), not each precheck.
+  local failed=0 id run url ended last_url="" last_end="" failed_urls=()
   for id in $ids; do
     run="repos/{owner}/{repo}/actions/runs/$id"
     url="$(gh api "$run" --jq .html_url)"
@@ -60,15 +62,24 @@ cmd_watch() {
     gh api "$run/jobs" --jq '.jobs[] | "  \(.name): \(.conclusion)"'
     if [[ "$(gh api "$run" --jq .conclusion)" != "success" ]]; then
       failed=1
+      failed_urls+=("$url")
       local job
       for job in $(gh api "$run/jobs" --jq '.jobs[] | select(.conclusion == "failure") | .id'); do
         echo "--- failed job $job log (last 80 lines) ---"
         gh api "repos/{owner}/{repo}/actions/jobs/$job/logs" 2>/dev/null | tail -80 || true
       done
     fi
-    # `gh --web` is a no-op in background sessions; macOS `open` always works.
-    open "$url"
+    ended="$(gh api "$run" --jq .updated_at)"   # ISO 8601 UTC, sorts as text
+    if [[ -z "$last_end" || "$ended" > "$last_end" ]]; then
+      last_end="$ended"; last_url="$url"
+    fi
   done
+  # `gh --web` is a no-op in background sessions; macOS `open` always works.
+  if (( failed )); then
+    for url in "${failed_urls[@]}"; do open "$url"; done
+  else
+    open "$last_url"
+  fi
   print_changes "$branch" "$sha"
   exit "$failed"
 }
