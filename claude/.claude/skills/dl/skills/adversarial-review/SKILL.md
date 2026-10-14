@@ -5,9 +5,9 @@ description: >
   (blind to each other, default all Claude — the user may swap some for Codex
   agents, and if so must name the specific Codex model to use), verify every
   finding against actual source/git history before touching anything, auto-fix
-  what's real, then re-run the whole panel against the updated code. Repeats
-  until every agent comes back clean in the same round, or a user-chosen stop
-  condition (round count or time budget) is hit. Use when the user asks for
+  what's real and blocking or major, then re-run the whole panel on just the
+  code those fixes changed. Repeats until no blocking or major finding survives verification
+  in a round, or a user-chosen stop condition (round count or time budget) is hit. Use when the user asks for
   "adversarial review", "iterative review", "review and fix until clean", or
   wants a repo/diff hammered on by multiple agents until nothing real is left.
 ---
@@ -29,7 +29,9 @@ they're right, the fix gets corrected — not defended.
 
 ## Step 0 — Ask the setup questions
 
-Before touching anything, ask (a single `AskUserQuestion` call covering all of these):
+Before touching anything, ask all of these in one reply, as a numbered list in plain
+text. Never use the `AskUserQuestion` popup. The user answers by number, and you wait
+for those answers before starting round 1:
 
 1. **How many reviewer agents per round?** (2 is the minimum for "independent," but
    there's no fixed cap — more agents costs more tokens/time per round for broader
@@ -44,8 +46,8 @@ Before touching anything, ask (a single `AskUserQuestion` call covering all of t
    default silently.
 3. **Stop condition**: a fixed number of rounds, or a wall-clock time budget (e.g. "30
    minutes"), whichever the user prefers. Either way, the loop can also end EARLY if
-   every agent in a round comes back clean — don't run to the cap if the panel agrees
-   first.
+   no blocking or major finding survives verification in a round — don't run to the
+   cap if the panel agrees first.
 4. **Scope**: whole repo, a specific PR/diff, or the working tree's uncommitted
    changes. Same as any code review — confirm before starting.
 
@@ -85,17 +87,29 @@ Hunt for: correctness bugs, race conditions, security holes, leaked secrets/PHI-
 violations, missing error handling, unhandled edge cases, resource leaks, broken
 invariants, and call-order mistakes.
 
-Severity, strict:
-- blocking: wrong output, data loss, crash, security hole, broken invariant.
-- major: a real defect with a plausible trigger, or a missing guard that will fire.
-- minor: true but inconsequential.
+Severity is decided by impact, not by whether a trigger exists. A finding is
+blocking or major ONLY if its trigger leads to one of these:
+1. Wrong data — a caller gets stale, missing, or incorrect results, or data is lost.
+2. Silent failure — work stops or fails without the error reaching a return value,
+   a log, or an error callback.
+3. Hang or crash — a panic, deadlock, unbounded block, or goroutine/resource leak.
+4. Docs lie — a README, doc comment, or API contract promises behavior the code
+   does not have.
+5. Security or PHI — a security hole, or secrets/PHI reaching logs or error strings.
+6. Breaking change — an exported API or default behavior changes in a way that
+   breaks an existing caller on upgrade.
 
-For a claimed defect, state the concrete input/state that triggers it. If you cannot
-name one, it is minor at most.
+- blocking: one of the above, on a path that runs in normal use.
+- major: one of the above, on a plausible but less common path.
+- minor: everything else, even when a concrete trigger exists — false-positive
+  warnings that don't change results, performance without a demonstrated size that
+  breaks, theoretical type edge cases no current caller uses.
 
-Do NOT report: style, naming, formatting, test-coverage gaps, or stale docs/comments
-that disagree with the code (unless the stale doc would cause a wrong operational
-action).
+For a claimed defect, state the concrete input/state that triggers it and which
+numbered impact it causes. If you cannot name both, it is minor at most.
+
+Do NOT report: style, naming, formatting, test-coverage gaps, or docs that are merely
+incomplete (docs that promise wrong behavior are impact 4, above).
 
 Do not praise. If you find nothing real, say so explicitly and return an empty list.
 
@@ -108,16 +122,29 @@ fixes already applied, and findings already investigated and refuted with the re
 why — so agents don't re-litigate the same ground every round. Keep this list accurate
 and current; it grows every round.
 
+**Every round after the first, review only the delta.** Before applying a round's
+fixes, record a snapshot of the code (`git stash create`, which saves the working tree
+without changing it, or `git rev-parse HEAD` if the tree is clean). The next round's
+Scope is the diff from that snapshot to now, plus the direct callers and callees of
+the changed functions. Code untouched since round 1 is not re-reviewed. If a round
+applied no fixes, there is no delta — stop.
+
 ### 2. Verify every finding yourself before acting
 
 For each finding from each agent, actually read the cited file/line and confirm the
 claim against real behavior — grep for the referenced function, check what a library
 dependency actually does, check git history/blame if a comment claims something is
 "deliberate" or "spec-derived," trace the call path the finding claims exists. Do not
-fix anything on an agent's assertion alone.
+fix anything on an agent's assertion alone. Re-grade severity yourself against the
+numbered impact list — an agent's severity label is a claim too.
 
-- **Confirmed real** → fix it immediately (see Step 3). No pause to ask permission
-  per-fix — that was the point of choosing this loop over a plain review.
+- **Confirmed real, blocking or major** → fix it immediately (see Step 3). No pause
+  to ask permission per-fix — that was the point of choosing this loop over a plain
+  review.
+- **Confirmed real, minor** → do NOT fix it. Record it on a minor list for the final
+  report, and add it to the settled list so later rounds don't re-raise it. Fixing
+  minors adds new code for the next round to pick at, which keeps the loop from
+  converging.
 - **Refuted** → say so, with the specific evidence that settles it (a file:line, a git
   commit, a library function's actual behavior). A "no concrete trigger named" finding
   is refuted by the same bar the prompt sets for reporting it in the first place.
@@ -136,9 +163,10 @@ moving to the next round. Never carry a round forward on an unverified fix.
 
 ### 4. Decide whether to continue
 
-- If every agent in this round returned an empty finding list (or every non-empty
-  finding was refuted) → **the panel agrees, stop**, even if the round/time cap isn't
-  hit yet.
+- If no blocking or major finding survived verification this round (every agent
+  returned nothing, only minors, or only findings that were refuted) → **stop**,
+  even if the round/time cap isn't hit yet. Minor findings never keep the loop
+  running.
 - If the round/time cap is hit first → stop and report where things stand, findings or
   not.
 - Otherwise → next round, with the settled-list updated.
@@ -157,7 +185,10 @@ to finish, and say so when stopping early for that reason.
 watching a multi-round process and doesn't need a re-read of the full findings every
 time, just the delta.
 
-**At the end**, two different things may be asked for — don't conflate them:
+**At the end**, always list the minor findings that were confirmed but not fixed,
+one line each, so the user can file them as a follow-up.
+
+Two other things may be asked for — don't conflate them:
 
 - **"Do the agents agree?"** — answer literally, round by round if useful. Agreement
   happening in the *final* round is the stop condition; it does not imply agreement
