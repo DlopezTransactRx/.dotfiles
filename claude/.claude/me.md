@@ -55,10 +55,9 @@ My personal skills live in my `dl` plugin (`~/.dotfiles/claude/.claude/skills/dl
 8. **adversarial-review**: sends several independent reviewers over code, checks every finding against the source, fixes the real ones, and repeats until a round comes back clean.
 9. **explain-code**: explains code with diagrams and analogies.
 10. **snowflake-role-grant-comparison**: generates SQL to compare a Snowflake role's grants between environments, like dev and prod.
-11. **validate-table-sync**: checks that pairs of tables in two Snowflake schemas match in structure, row counts, and data.
-12. **workflow-review**: measures how I use Claude Code, compares it with the last review, and ranks verified improvements and unused techniques.
-13. **memory-palace**: turns a concept (or the one we're discussing) into a single ChatGPT image prompt: one vivid scene with numbered parts plus a legend explaining what each part represents.
-14. **learn-concept**: grills me with active-recall questions until I understand a concept, then turns the confirmed recap into a memory palace.
+11. **workflow-review**: measures how I use Claude Code, compares it with the last review, and ranks verified improvements and unused techniques.
+12. **memory-palace**: turns a concept (or the one we're discussing) into a single ChatGPT image prompt: one vivid scene with numbered parts plus a legend explaining what each part represents.
+13. **learn-concept**: grills me with active-recall questions until I understand a concept, then turns the confirmed recap into a memory palace.
 
 
 ## Commit messages

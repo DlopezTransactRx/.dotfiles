@@ -6,7 +6,7 @@
       "context": "Agents",
       "bindings": {
         "ctrl+f": null,
-        "ctrl+g": "agents:find"
+        "ctrl+q": "agents:find"
       }
     }
   ]
