@@ -58,6 +58,7 @@ My personal skills live in my `dl` plugin (`~/.dotfiles/claude/.claude/skills/dl
 11. **validate-table-sync**: checks that pairs of tables in two Snowflake schemas match in structure, row counts, and data.
 12. **workflow-review**: measures how I use Claude Code, compares it with the last review, and ranks verified improvements and unused techniques.
 13. **memory-palace**: turns a concept (or the one we're discussing) into a single ChatGPT image prompt: one vivid scene with numbered parts plus a legend explaining what each part represents.
+14. **learn-concept**: grills me with active-recall questions until I understand a concept, then turns the confirmed recap into a memory palace.
 
 
 ## Commit messages
