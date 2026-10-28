@@ -1,8 +1,16 @@
 #******************************************************************************
 # Function to Format NCPDP messages from the clipboard. 
 #******************************************************************************
+# Accepts raw separator bytes (CHR 28-30), JSON-escaped separators (\u001c),
+# and the SQL-rendered tags (' <FS>', ' <RS> ', ' <GS> '). The spaces the SQL
+# pads around a tag are removed exactly; bare tags are handled too, so field
+# padding is never trimmed.
 function fmtNcpdp(){
-    sed 's/\\u001c/|/g' | sed 's/\\u001e/\n/g' | sed 's/\\u001d/\n/g' | sed 's/\\u0003/\n/g'
+    sed $'s/\x1c/|/g' | sed $'s/\x1e/\\\n/g' | sed $'s/\x1d/\\\n/g' |
+    sed 's/\\u001c/|/g' | sed 's/\\u001e/\n/g' | sed 's/\\u001d/\n/g' | sed 's/\\u0003/\n/g' |
+    sed 's/ <FS>/|/g; s/<FS>/|/g' |
+    sed 's/ <RS> /\n/g; s/<RS>/\n/g' |
+    sed 's/ <GS> /\n/g; s/<GS>/\n/g'
 }
 
 #******************************************************************************
