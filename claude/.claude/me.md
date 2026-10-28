@@ -58,6 +58,7 @@ My personal skills live in my `dl` plugin (`~/.dotfiles/claude/.claude/skills/dl
 11. **workflow-review**: measures how I use Claude Code, compares it with the last review, and ranks verified improvements and unused techniques.
 12. **memory-palace**: turns a concept (or the one we're discussing) into a single ChatGPT image prompt: one vivid scene with numbered parts plus a legend explaining what each part represents.
 13. **learn-concept**: grills me with active-recall questions until I understand a concept, then turns the confirmed recap into a memory palace.
+14. **obsidian-todo**: adds an item to the bottom of my GTD to-do list (`EFFORT/GTD.md`) when I say "add this to my to-do list".
 
 
 ## Commit messages

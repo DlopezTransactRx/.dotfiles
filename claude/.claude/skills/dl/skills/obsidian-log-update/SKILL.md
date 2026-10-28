@@ -7,6 +7,8 @@ description: Use when work in the current session is done and should be recorded
 
 Append an entry for the work just completed to today's Obsidian daily note, matching the existing entry format exactly.
 
+**Not for to-dos.** "Add this to my to-do list" means an open loop, not finished work. That goes to `EFFORT/GTD.md` via the `obsidian-todo` skill, not the daily note.
+
 **Core principle:** The note is a scannable index, not documentation. Record **what changed, the git/CI trail, and any issue created** — then stop. Detail belongs in the PR, the issue, or a code comment; the log links to it. Never restate the conversation.
 
 **Size the entry to the work.** A small change (one commit, one PR, no issue) gets the 3-5 line [compact form](#compact-form-for-small-changes). Multi-part work gets the four sections, 20-40 lines of body. Past ~50 lines you are writing a report, not a log entry. See [Body](#body-a-10000-foot-view-not-a-write-up).
