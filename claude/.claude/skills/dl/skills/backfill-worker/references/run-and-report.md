@@ -1,4 +1,4 @@
-# Steps 11-14 — Estimate, kick off, report progress, final report
+# Steps 11-15 — Estimate, kick off, report progress, final report, retire the worker
 
 ## 11. Estimates — two tables, then the user picks
 
@@ -21,7 +21,7 @@ For the chosen option:
 
 ## 13. Progress reports
 
-1. **Ask how often**, scaled to the total time to finish, with a suggestion: under 2 hours → every 15 min; 2-12 hours → hourly; over 12 hours → every 4 hours or twice a day. The user picks.
+1. **Ask how often**, scaled to the total time to finish, with a suggestion: under 3 hours → every 15 min; 3-12 hours → hourly; over 12 hours → every 4 hours or twice a day. The user picks. Aim for several reports over the run, including one soon after the slowest chunk should finish; if the estimate sits near a boundary, suggest the shorter interval. Schedule on off-minutes (e.g. `4,19,34,49 * * * *`, `7 * * * *`).
 2. **Schedule it in this session** (CronCreate, or `/loop <interval>`). The `CLAUDE` connection signs in through the user's browser on this Mac, so the session must stay open here; a cloud routine cannot reach Snowflake. Say so.
    **The scheduled prompt must be self-contained**: it fires with only its own text, so anything it does not spell out gets skipped. Write into it: the backfill name and the progress folder; the three reads below (status, run log, `NN_rows_touched.sql`); the exact `status_header.py` command with `--to-fill` set to the kickoff `STILL_EMPTY` total and `--chunks`; the report layout in order — header in a code block, then the plain-words report (problems first), then the rows-touched table; the baseline counts; the user's time zone; the line to append to `progress.md`; and the completion check from item 6, including deleting the job. Re-create the job (delete + create) whenever the report format changes.
 3. **Each report** reads, through `snow sql -c CLAUDE` (needs `SELECT` on the framework's `BACKFILL_STATUS` and `BACKFILL_RUN_LOG`):
@@ -83,4 +83,23 @@ FROM BY_CHUNK GROUP BY GROUPING SETS ((CHUNK_NO), ()) ORDER BY CHUNK_NO NULLS LA
 3. Open it: `open backfills/<TABLE>_<TICKET>/report_<ENV>.html`.
 4. Summarize it in a few plain lines: total rows, total time vs the estimate, average speed, and every issue (or "no issues").
 
-The report holds counts, times and states only — no data values.
+The report holds counts, times and states only — no data values. It is committed with the archived worker in step 15 (both `report_Development.html` and `report_Production.html`).
+
+## 15. Retire the worker (only after Production completes)
+
+The worker file serves both environments: one `backfill_<table>_<ticket>.tf`, deployed by each workspace. Retire it **only when the Production backfill is `COMPLETE`** (its step 14 done). If only Development is complete, leave the file in place and say why: removing it now would destroy the Development worker and ride the next Development → Production PR, so Production would never get its worker.
+
+1. **Check it is safe** (READ-ONLY, both environments): `BACKFILL_STATUS.STATE = 'COMPLETE'` for `<TABLE>_<TICKET>` and its `BACKFILL_TASK_<name>` is gone (`SHOW TASKS LIKE 'BACKFILL_TASK_%' IN SCHEMA <framework>`; if one is left, the framework's `CLEANUP_BACKFILL_TASKS()` drops it — through the query loop). Leave `BACKFILL_CONTROL` and `BACKFILL_RUN_LOG` rows alone; they are the permanent record.
+2. **Archive the file in git.** `backfills/` is git-ignored, and git cannot re-include a file inside an ignored folder — so an exception line under `backfills/` does nothing (tested). **Replace** the `backfills/` line in the owning repo's `.gitignore` with:
+   ```
+   backfills/*
+   !backfills/*/
+   backfills/*/*
+   !backfills/*/backfill_*.tf.archived
+!backfills/*/report_*.html
+   ```
+   This tracks only the archived worker (`*.tf.archived`) and the final HTML reports (`report_<ENV>.html`, counts and times only — no data values); queries, results, JSON and progress notes stay ignored. Check: `git check-ignore -q backfills/<TABLE>_<TICKET>/backfill_<table>_<ticket>.tf.archived` fails (not ignored) and `git status --porcelain -uall backfills/` lists only the `.tf.archived` file and the `report_*.html` files. Stage those, plus `.gitignore`, in the same commit as the move. Then `git mv backfill_<table>_<ticket>.tf backfills/<TABLE>_<TICKET>/backfill_<table>_<ticket>.tf.archived` — the `.archived` extension means no tool (Terraform, `terraform fmt -recursive`, tflint) ever treats it as live config. Everything else in `backfills/` (queries, results, progress, HTML) stays ignored.
+3. **Header comment.** Add one line at the top of the archived file: `# RETIRED <YYYY-MM-DD> after Production completed (<rows> rows). Archived for history; not deployed.`
+4. **Promote Development** — `/dl:promote Dev` (the user runs it, or asks you to). In the CI plan, the only change must be **1 to destroy**: `snowflake_procedure_sql.backfill_<table>_<ticket>`. Anything else in the plan → stop and show it.
+5. **Promote Production** — after the Development PR is merged and applied, `/dl:promote Prod`; check the Production plan the same way (1 to destroy, the worker only).
+6. Update `progress.md` (step 15 ✅, commit and PR links) and tell the user the worker is retired in both environments.

@@ -39,6 +39,7 @@ Show this list at the start and again after every step, with ✅ done / ▶ next
 12. ⬜ **Kick off** — register and start the chosen option (user runs, with permission).
 13. ⬜ **Progress reports** — on the schedule the user chooses; each shows the rows-touched table (what the target itself shows, per chunk).
 14. ⬜ **Final report** — HTML, per-time averages and issues.
+15. ⬜ **Retire the worker** — only after Production completes: `git mv` the `.tf` to `backfills/<TABLE>_<TICKET>/backfill_<table>_<ticket>.tf.archived` and commit it with both HTML reports (tracked via a `.gitignore` exception), promote Dev then Prod; each plan destroys only the worker.
 
 **Progress file — the checklist survives a new session.** Keep the checklist in `backfills/<TABLE>_<TICKET>/progress.md` (owning repo, git-ignored): each step's state, its one-line result, and the facts later steps need (worker name and where it is deployed, test windows used, measured speed and warehouse size, daily-volume files, chosen option, backfill names, schedule). Update it after every step.
 
@@ -46,7 +47,7 @@ Show this list at the start and again after every step, with ✅ done / ▶ next
 
 **Otherwise, at the start, look for it.** If `progress.md` exists, read it, show the checklist, and resume at the first unfinished step — never redo finished steps. Then re-check only what can have changed since: is the worker still deployed, are the test windows still empty (an earlier run may have filled them — pick new ones from fresh counts), are any backfills already registered (`BACKFILL_STATUS`). If there is no progress file but the worker file or Snowflake objects already exist, say so, record what you find as done, and continue from there.
 
-Details for 4-10: [references/verification.md](references/verification.md). Steps 11-14: [references/run-and-report.md](references/run-and-report.md).
+Details for 4-10: [references/verification.md](references/verification.md). Steps 11-15: [references/run-and-report.md](references/run-and-report.md).
 
 ## The query loop (every query the user must run)
 
