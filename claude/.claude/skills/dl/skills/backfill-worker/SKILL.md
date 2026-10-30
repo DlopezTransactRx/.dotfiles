@@ -37,7 +37,7 @@ Show this list at the start and again after every step, with ✅ done / ▶ next
 10. ⬜ **Production volume** — rows to fill per day (read-only)
 11. ⬜ **Estimates** — two tables, Development and Production; each recommends one warehouse + one chunk size (one backfill, set and forget); the user picks an option for each.
 12. ⬜ **Kick off** — register and start the chosen option (user runs, with permission).
-13. ⬜ **Progress reports** — on the schedule the user chooses.
+13. ⬜ **Progress reports** — on the schedule the user chooses; each shows the rows-touched table (what the target itself shows, per chunk).
 14. ⬜ **Final report** — HTML, per-time averages and issues.
 
 **Progress file — the checklist survives a new session.** Keep the checklist in `backfills/<TABLE>_<TICKET>/progress.md` (owning repo, git-ignored): each step's state, its one-line result, and the facts later steps need (worker name and where it is deployed, test windows used, measured speed and warehouse size, daily-volume files, chosen option, backfill names, schedule). Update it after every step.
