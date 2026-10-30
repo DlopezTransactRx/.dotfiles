@@ -130,7 +130,7 @@ CALL <FRAMEWORK_DB>.<FRAMEWORK_SCHEMA>.REGISTER_BACKFILL(
     <NULL | '<warehouse>'>,                              -- NULL = serverless
     <time limit minutes>);
 
--- Pause stream consumers on the target here if any must not see the updates.
+-- Stream consumers: apply the plan the user chose in gather.md § Streams on the target (e.g. the consumer task is already paused via Terraform).
 
 CALL <FRAMEWORK_DB>.<FRAMEWORK_SCHEMA>.START_BACKFILL('<TABLE>_<TICKET>');
 

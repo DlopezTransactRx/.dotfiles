@@ -25,7 +25,7 @@ The framework (control table, run log, lifecycle procedures, one task per backfi
 
 Show this list at the start and again after every step, with ✅ done / ▶ next / ⬜ to do, and one line of result next to each done item.
 
-1. ⬜ **Gather** — read the table's Terraform and live load ([references/gather.md](references/gather.md)).
+1. ⬜ **Gather** — read the table's Terraform and live load, and find streams on the target and their consumers ([references/gather.md](references/gather.md)).
 2. ⬜ **Write the worker** — `backfill_<table>_<ticket>.tf` ([references/worker.md](references/worker.md)).
 3. ⬜ **Static review** — the 14 contract checks ([references/contract.md](references/contract.md)).
 4. ⬜ **Q1 — Can it find every row?** (read-only)
@@ -75,6 +75,7 @@ Before the first file, make sure the owning repo's `.gitignore` has `backfills/`
 
 ## Red flags — stop
 
+- Kicking off while a standard stream on the target has a consumer whose impact was not predicted and whose handling the user has not chosen → gather.md § Streams on the target.
 - About to run a `CALL`/DML yourself → it goes through the query loop instead.
 - Handing over SQL without a plain explanation, or moving on without explaining a result.
 - Worker copies the live task's per-record dedup on an insert-only, hash-keyed table → worker.md § Insert-only hash-keyed.

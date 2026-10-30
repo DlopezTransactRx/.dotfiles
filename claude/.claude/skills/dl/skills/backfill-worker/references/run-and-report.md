@@ -5,6 +5,7 @@
 Run `scripts/size_backfill.py` twice (see verification.md § Recommendation): once on Development's daily volume, once on Production's, both with the time per row measured in the Development speed test.
 
 - Show **two separate tables**, each with the script's title line ("Estimated time to complete the full backfill — <table> #<ticket>, <ENV>"), context line, and the two notes under it. Never merge them.
+- Under each table, the stream impact for that environment (gather.md § Streams on the target): each consumer, the largest batch of backfill changes it will face, and whether that fits its timeout. If no option has been chosen yet, ask now.
 - Under each table, one plain sentence: the ★ recommendation (one warehouse, one chunk size, time limit, total time, credits) and why.
 - Say plainly what the numbers rest on (time per row measured on one size in Development; other sizes estimated).
 - Ask the user to answer with an option number per environment. If an environment is not ready (framework, worker or columns not deployed), say what is missing and size it anyway; it cannot be started until ready.
@@ -13,7 +14,7 @@ Run `scripts/size_backfill.py` twice (see verification.md § Recommendation): on
 
 For the chosen option:
 
-1. Say in plain words what will happen: one backfill (`<TABLE>_<TICKET>`), its range, chunk size, compute (warehouse name, or serverless), time limit, and the total time to finish from the table. It runs on its own until it completes.
+1. Say in plain words what will happen: one backfill (`<TABLE>_<TICKET>`), its range, chunk size, compute (warehouse name, or serverless), time limit, the stream-consumer plan the user chose (gather.md § Streams on the target — or "no streams" / "append-only only"), and the total time to finish from the table. It runs on its own until it completes.
 2. **Ask for permission to start.** Do nothing until the user says yes.
 3. Through the query loop, one file (`NN_register_<name>.sql` + `.result.json`): `REGISTER_BACKFILL(...)` then `START_BACKFILL('<name>')`. The user runs it and pastes the results. Explain the result ("registered and started; first chunk within a minute").
 4. `START_BACKFILL` needs SYSADMIN to hold `EXECUTE TASK` (warehouse) or `EXECUTE MANAGED TASK` (serverless). If unknown, check it first through the query loop (`SHOW GRANTS TO ROLE SYSADMIN`).
