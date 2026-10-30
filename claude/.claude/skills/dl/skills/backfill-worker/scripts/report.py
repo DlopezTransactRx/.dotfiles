@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Backfill completion report (HTML) from BACKFILL_CONTROL and BACKFILL_RUN_LOG rows exported as JSON.
 
-Usage: report.py control.json runlog.json [--estimate-hours H] --out report.html
+Usage: report.py control.json runlog.json [--estimate-hours H] [--credits credits.json] --out report.html
+credits.json: list of {"SOURCE": str, "CREDITS": number, "NOTE": str} (e.g. the backfill task, test runs).
+--rows-touched: the rows-touched markdown table (CHUNK ... STILL_EMPTY, PCT_DONE); any STILL_EMPTY > 0 is flagged.
+--analysis: the issue analysis (plain text; "## " headings and "- " bullets), shown when given.
 Counts, times and states only; no data values.
 """
 import argparse, datetime as dt, html, json, statistics
@@ -33,9 +36,13 @@ def main():
     a = argparse.ArgumentParser()
     a.add_argument("control"); a.add_argument("runlog")
     a.add_argument("--estimate-hours", type=float); a.add_argument("--out", required=True)
+    a.add_argument("--credits", help="JSON list of {SOURCE, CREDITS, NOTE} from the credits query")
+    a.add_argument("--rows-touched", help="markdown table from the rows-touched query")
+    a.add_argument("--analysis", help="issue analysis text (## headings, - bullets)")
     o = a.parse_args()
     ctl = json.load(open(o.control)); log = json.load(open(o.runlog))
     ctl = ctl if isinstance(ctl, list) else [ctl]
+    credits = json.load(open(o.credits)) if o.credits else []
     parts = []
     for c in ctl:
         name = c.get("BACKFILL_NAME")
@@ -88,11 +95,50 @@ def main():
                      + ("".join(f"<p class=warn>{html.escape(n)}</p>" for n in issue_notes)
                         + (table(["Chunk start", "State", "SQLCODE", "Query id", "Note"], issues) if issues else "")
                         if issues or issue_notes else "<p class=ok>No failed, timed-out or skipped chunks. Worker unchanged.</p>"))
-    css = ("body{font-family:-apple-system,Helvetica,Arial,sans-serif;margin:2em;color:#222}"
-           "table{border-collapse:collapse;margin:.5em 0 1.5em}td,th{border:1px solid #ccc;padding:4px 10px;text-align:left}"
-           "th{background:#f3f3f3}.ok{color:#1a7f37}.warn{color:#b35900;font-weight:bold}")
+    if o.rows_touched:
+        lines = [l.strip() for l in open(o.rows_touched) if l.strip().startswith("|") and not l.strip().startswith("|---")]
+        if lines:
+            head = [c.strip() for c in lines[0].strip("|").split("|")]
+            body = [[c.strip() for c in l.strip("|").split("|")] for l in lines[1:]]
+            col = head.index("STILL_EMPTY") if "STILL_EMPTY" in head else None
+            gaps = [r for r in body if col is not None and r[0] != "TOTAL" and r[col].replace(",", "") not in ("0", "")]
+            note = ("<p class=warn>" + html.escape(f"{len(gaps)} chunk(s) still have empty rows: "
+                    + ", ".join(f"chunk {r[0]} ({r[col]} rows)" for r in gaps) + ". Every chunk may still report SUCCEEDED.")
+                    + "</p>") if gaps else "<p class=ok>No rows left empty in the range.</p>"
+            parts.append("<h2>Rows touched — what the table itself shows</h2>" + note + table(head, body))
+    if o.analysis:
+        out_lines, in_list = [], False
+        for raw in open(o.analysis):
+            line = raw.rstrip("\n")
+            if line.startswith("- "):
+                if not in_list:
+                    out_lines.append("<ul>"); in_list = True
+                out_lines.append(f"<li>{html.escape(line[2:])}</li>"); continue
+            if in_list:
+                out_lines.append("</ul>"); in_list = False
+            if line.startswith("## "):
+                out_lines.append(f"<h3>{html.escape(line[3:])}</h3>")
+            elif line.startswith("# "):
+                continue
+            elif line.strip():
+                out_lines.append(f"<p>{html.escape(line)}</p>")
+        if in_list:
+            out_lines.append("</ul>")
+        parts.append("<h2>Issue analysis</h2>" + "".join(out_lines))
+    if credits:
+        total_c = sum(float(c.get("CREDITS") or 0) for c in credits)
+        rows_all = sum(int(r.get("ROWS_AFFECTED") or 0) for r in log if r.get("STATE") == "SUCCEEDED")
+        crow = [(c.get("SOURCE"), f"{float(c.get('CREDITS') or 0):,.2f}", c.get("NOTE") or "") for c in credits]
+        crow.append(("Total", f"{total_c:,.2f}", f"{total_c / rows_all * 1e6:,.3f} credits per million rows updated" if rows_all else ""))
+        parts.append("<h2>Credits</h2>" + table(["Source", "Credits", "Note"], crow))
+    css = ("body{font-family:-apple-system,Helvetica,Arial,sans-serif;margin:2em;background:#0d1117;color:#e6edf3}"
+           "h1,h2,h3{color:#f0f6fc}p{color:#c9d1d9}"
+           "table{border-collapse:collapse;margin:.5em 0 1.5em;background:#0d1117}"
+           "td,th{border:1px solid #30363d;padding:4px 10px;text-align:left}"
+           "th{background:#161b22;color:#f0f6fc}tr:nth-child(even) td{background:#11161d}li{color:#c9d1d9;margin:.2em 0}"
+           ".ok{color:#3fb950}.warn{color:#f0883e;font-weight:bold}")
     title = "Backfill report — " + ", ".join(str(c.get("BACKFILL_NAME")) for c in ctl)
-    out = (f"<!doctype html><html><head><meta charset=utf-8><title>{html.escape(title)}</title><style>{css}</style></head>"
+    out = (f"<!doctype html><html><head><meta charset=utf-8><meta name=color-scheme content=dark><title>{html.escape(title)}</title><style>{css}</style></head>"
            f"<body><h1>{html.escape(title)}</h1><p>Generated {dt.datetime.now():%Y-%m-%d %H:%M}. Counts, times and states only.</p>"
            + "".join(parts) + "</body></html>")
     open(o.out, "w").write(out)

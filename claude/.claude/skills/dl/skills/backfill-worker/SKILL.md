@@ -75,6 +75,7 @@ Before the first file, make sure the owning repo's `.gitignore` has `backfills/`
 
 ## Red flags — stop
 
+- Reporting a gap, failure, count mismatch or badly slow chunk without having run the issue analysis (run-and-report.md § Issue analysis) — run it first, unasked.
 - Kicking off while a standard stream on the target has a consumer whose impact was not predicted and whose handling the user has not chosen → gather.md § Streams on the target.
 - About to run a `CALL`/DML yourself → it goes through the query loop instead.
 - Handing over SQL without a plain explanation, or moving on without explaining a result.

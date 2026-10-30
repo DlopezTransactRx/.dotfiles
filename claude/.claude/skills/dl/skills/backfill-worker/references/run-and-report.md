@@ -34,7 +34,7 @@ For the chosen option:
    Then **summarize in plain words**, a few lines: where it is (percent, chunks), speed since the last report (rows per minute), new estimated finish time (remaining rows ÷ observed speed), and anything wrong. Compare the observed speed with the estimate once.
    Then **show the rows-touched table** (every chunk line plus TOTAL) and one sentence on it: how many rows the backfill has filled so far and how many are still empty. If `BACKFILL_STATUS.TOTAL_ROWS` and the table's `BY_BACKFILL` disagree for finished chunks, say so first — it is a problem.
 5. **On a problem**, say it first and plainly: `FAILED` (which chunk, the safe error fields, the next step from the framework README: fix and `RESUME_BACKFILL`, or skip with a reason), `STALLED` (chunk exceeded its time limit), `WORKER_CHANGED`. Keep reporting until the user says stop.
-6. **When the backfill completes**, run the rows-touched query once more. Done means `STILL_EMPTY` = 0 on every line and `TOTAL_ROWS` = `BY_BACKFILL` + `BY_MANUAL_TEST` + `BY_LIVE_LOAD`. Show the table, say so, stop the schedule and go to step 14. If `STILL_EMPTY` is not 0, say which chunks and stop — that is the "rows still NULL" red flag.
+6. **When the backfill completes**, run the rows-touched query once more. Done means `STILL_EMPTY` = 0 on every line and `TOTAL_ROWS` = `BY_BACKFILL` + `BY_MANUAL_TEST` + `BY_LIVE_LOAD`. Show the table, say so, stop the schedule and go to step 14. If `STILL_EMPTY` is not 0 — or any other issue showed up (see § Issue analysis) — stop the schedule, **run the issue analysis automatically, without being asked**, and put its findings in the same report before saying anything is done. A gap reported without its likely cause is incomplete.
 
 ### § Rows touched — query template
 
@@ -77,12 +77,33 @@ FROM BY_CHUNK GROUP BY GROUPING SETS ((CHUNK_NO), ()) ORDER BY CHUNK_NO NULLS LA
 - Before the kickoff, the `STILL_EMPTY` TOTAL is the number of rows the backfill will fill; record it in `progress.md`. At the end `BY_BACKFILL` TOTAL must equal it.
 - Working example: `backfills/TRANSACTION_LOG_182/14_rows_touched.sql` in ras-datawarehouse-powerline.
 
+### § Issue analysis (runs automatically on completion)
+
+Trigger: any of — `STILL_EMPTY` > 0 on any line; `BACKFILL_STATUS.TOTAL_ROWS` ≠ the `BY_BACKFILL` total; a chunk `FAILED` / `TIMED_OUT` / `SKIPPED`; `WORKER_CHANGED`; a chunk that took more than 2x its estimate; a stream consumer that failed or timed out during the run. Run every applicable check (read-only; counts and key shapes only, never row values) and write the findings to `backfills/<TABLE>_<TICKET>/analysis_<ENV>.md` — plain sentences and `- ` bullets, each finding with its evidence.
+
+**Gap (rows still empty):**
+1. **Locate it** — still-empty rows per day and per hour in the affected chunks: first and last timestamp, number of days, rows.
+2. **Source coverage** — per affected hour, target rows vs stage copies (the window column on both). Target rows > stage copies, or 0 copies, means those rows have no source the worker can read (removed from the stage, loaded another way, or split differently).
+3. **Key match** — for the still-empty rows: does the same `HASH_KEY` (or match key) exist in the stage-derived source at another timestamp? Does the window value differ? This separates "no source" from "source exists but the key or timestamp is built differently".
+4. **Live-load history** — `git log` on the live load's Terraform for the window ± 2 days (first/last empty timestamp), and the Development → Production merge times of any change found. A change to the split, key, filters or derivations whose deploy and rollback line up with the gap's edges is the likely cause; quote the commits.
+5. **Production exposure** — whether that change reached Production, and for how long (merge-to-rollback window). Say how many Production rows the same check should be run on before its kickoff.
+6. **Options** — fill from another source, a targeted repair of the window (delete + replay through the current live load — outside the update-only worker contract), a correction worker, or accept and document. Give the trade-off of each in one line; the user decides.
+
+**Failed / timed-out chunk:** the chunk window, `SQLCODE` and query id from the run log; give the user the query-history query for that id (duration, warehouse size, spill, error text — the user reads the error text, it is never stored); compare its rows with the rest; name the likely cause (scale, compute size, data) and the framework's next step (`RESUME_BACKFILL`, skip with a reason, smaller chunks or a named warehouse).
+
+**Count mismatch:** per chunk, `ROWS_AFFECTED` vs the rows-touched `BY_BACKFILL` for that chunk's window; name the chunks that disagree.
+
+**Slow chunk (> 2x estimate):** rows vs the speed test's rows (scale), compute (serverless starts at XSMALL), and the speed of the chunks after it; say what it means for the Production estimate.
+
+Every finding states its confidence: *confirmed* (the evidence shows it) or *likely* (the evidence fits, not proven).
+
 ## 14. Final report (HTML)
 
 1. Pull, through `snow sql -c CLAUDE --format JSON`, the control row and all run log rows for the backfill name; save them to `backfills/<TABLE>_<TICKET>/report_control.json` and `report_runlog.json`.
-2. Run `python3 -I <skill>/scripts/report.py backfills/<TABLE>_<TICKET>/report_control.json backfills/<TABLE>_<TICKET>/report_runlog.json --estimate-hours <total time to finish from the chosen option> --out backfills/<TABLE>_<TICKET>/report_<ENV>.html`.
-3. Open it: `open backfills/<TABLE>_<TICKET>/report_<ENV>.html`.
-4. Summarize it in a few plain lines: total rows, total time vs the estimate, average speed, and every issue (or "no issues").
+2. Save the final rows-touched result as `rows_touched_<ENV>.md` (the markdown table) and, if any issue was found, the issue analysis as `analysis_<ENV>.md`. Get the credits through the query loop (serverless: `SNOWFLAKE.ACCOUNT_USAGE.SERVERLESS_TASK_HISTORY` for the backfill task — up to ~3 h latency; warehouse and test runs: `SNOWFLAKE.ACCOUNT_USAGE.QUERY_ATTRIBUTION_HISTORY` by the run log's query ids — up to ~8 h latency) into `credits_<ENV>.json` as `[{"SOURCE","CREDITS","NOTE"}]`.
+3. Run `python3 -I <skill>/scripts/report.py backfills/<TABLE>_<TICKET>/report_control.json backfills/<TABLE>_<TICKET>/report_runlog.json --estimate-hours <total time to finish from the chosen option> --rows-touched backfills/<TABLE>_<TICKET>/rows_touched_<ENV>.md [--analysis backfills/<TABLE>_<TICKET>/analysis_<ENV>.md] [--credits backfills/<TABLE>_<TICKET>/credits_<ENV>.json] --out backfills/<TABLE>_<TICKET>/report_<ENV>.html`. The report shows the rows-touched table and flags any `STILL_EMPTY`; the analysis section appears whenever an analysis file is given.
+4. Open it: `open backfills/<TABLE>_<TICKET>/report_<ENV>.html`.
+5. Summarize it in a few plain lines: total rows, total time vs the estimate, average speed, credits, and every issue with its likely cause (or "no issues").
 
 The report holds counts, times and states only — no data values. It is committed with the archived worker in step 15 (both `report_Development.html` and `report_Production.html`).
 
