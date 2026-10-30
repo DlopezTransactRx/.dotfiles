@@ -14,11 +14,44 @@ Run `scripts/size_backfill.py` twice (see verification.md § Recommendation): on
 
 For the chosen option:
 
-1. Say in plain words what will happen: one backfill (`<TABLE>_<TICKET>`), its range, chunk size, compute (warehouse name, or serverless), time limit, the stream-consumer plan the user chose (gather.md § Streams on the target — or "no streams" / "append-only only"), and the total time to finish from the table. It runs on its own until it completes.
+0. **Restore point and rollback plan first** (§ Restore point and rollback plan below): retention checked, the run fits inside it, both rollback levels written into `progress.md`. No kickoff without them.
+
+1. Say in plain words what will happen: one backfill (`<TABLE>_<TICKET>`), its range, chunk size, compute (warehouse name, or serverless), time limit, the stream-consumer plan the user chose (gather.md § Streams on the target — or "no streams" / "append-only only"), the total time to finish from the table, and the restore window (how long a full restore stays possible). It runs on its own until it completes.
 2. **Ask for permission to start.** Do nothing until the user says yes.
 3. Through the query loop, one file (`NN_register_<name>.sql` + `.result.json`): `REGISTER_BACKFILL(...)` then `START_BACKFILL('<name>')`. The user runs it and pastes the results. Explain the result ("registered and started; first chunk within a minute").
 4. `START_BACKFILL` needs SYSADMIN to hold `EXECUTE TASK` (warehouse) or `EXECUTE MANAGED TASK` (serverless). If unknown, check it first through the query loop (`SHOW GRANTS TO ROLE SYSADMIN`).
-5. **Write the rows-touched query** for this backfill — `NN_rows_touched.sql` in `backfills/<TABLE>_<TICKET>/`, from the template in § Rows touched below — and give it to the user to run on their own whenever they want. Every progress report runs it too.
+5. **Record the restore point** as soon as chunk 1 has started: its `QUERY_ID` from `BACKFILL_RUN_LOG` (and `STARTED_AT`) goes into `progress.md` — that is the exact "before the backfill" moment for a full restore.
+6. **Write the rows-touched query** for this backfill — `NN_rows_touched.sql` in `backfills/<TABLE>_<TICKET>/`, from the template in § Rows touched below — and give it to the user to run on their own whenever they want. Every progress report runs it too.
+
+### § Restore point and rollback plan (before kickoff, per environment)
+
+Snowflake Time Travel keeps every old row version for the table's retention period, so the state "just before the backfill" stays recoverable without a copy — as long as the run, plus time to notice a problem, fits inside it.
+
+1. **Check retention** (READ-ONLY): `SHOW TABLES LIKE '<TABLE>' IN SCHEMA <DB>.<SCHEMA>` → `retention_time` (days), plus `SHOW PARAMETERS LIKE 'MAX_DATA_EXTENSION_TIME_IN_DAYS' IN TABLE <DB>.<SCHEMA>.<TABLE>`. Development often has far less than Production — check both.
+2. **Does it fit?** Restore window = retention − (total time to finish from the chosen estimate) − review margin (default 2 days, to notice and decide). Report it in days. If it is under 1 day, or the run is longer than the retention: recommend an **explicit pre-backfill clone** instead — a zero-copy `CLONE` taken just before kickoff, kept until Production review is done. Say plainly that its storage grows to roughly the whole table while the backfill rewrites it (all old blocks stay alive), and that it is DDL outside the Terraform-only rule: it needs the user's explicit approval as a break-glass step (or a temporary Terraform resource), and a date to drop it.
+3. **Write the rollback plan into `progress.md`** before kickoff, both levels, with names, dates and the run's own values filled in:
+   - **Level 1 — surgical undo (default).** Reverses only rows stamped by this backfill; live inserts are untouched; no DDL. Template (WRITE, query loop, per chunk window or the whole range):
+     ```sql
+     UPDATE <DB>.<SCHEMA>.<TABLE>
+        SET <COL_1> = NULL, ..., <COL_N> = NULL,
+            TASK_META = FILTER(TASK_META, m -> NOT (m:BACKFILL_NAME::STRING = '<TABLE>_<TICKET>'
+                                                AND m:OPERATION::STRING = 'BACKFILL'))
+      WHERE <window col> >= '<start>' AND <window col> < '<end>'
+        AND ARRAY_SIZE(FILTER(TASK_META, m -> m:BACKFILL_NAME::STRING = '<TABLE>_<TICKET>'
+                                           AND m:OPERATION::STRING = 'BACKFILL')) > 0;
+     ```
+     It is another wave of updates: streams on the target see them again (gather.md § Streams on the target applies).
+   - **Level 2 — full restore (break-glass, user-approved, within the restore window).** For when the data itself cannot be trusted:
+     1. Pause the live task (its own stage stream keeps arriving data — nothing is lost) and the stream consumers.
+     2. Clone the target **before the restore point**: `CREATE TABLE <T>_RESTORE CLONE <T> BEFORE(STATEMENT => '<chunk 1 query id>')`.
+     3. Find everything since on the **original** table: a temporary stream `CREATE STREAM <T>_SINCE ON TABLE <T> BEFORE(STATEMENT => '<chunk 1 query id>')` — a stream can start in the past on the original (it has change tracking); a clone has no history before it was created.
+     4. Replay only true inserts (`METADATA$ACTION = 'INSERT' AND METADATA$ISUPDATE = FALSE`) from `<T>_SINCE` into `<T>_RESTORE`; drop the backfill's updates. Record the counts.
+     5. Verify on `<T>_RESTORE`: row count = before-point count + replayed inserts; grants, PHI tags and masking policies match the original.
+     6. `ALTER TABLE <T> SWAP WITH <T>_RESTORE`.
+     7. Recreate each stream on the target (through Terraform, where the provider supports it); it starts now, so its consumer never sees the backfill. Write the replayed-insert counts into the consumer's output by hand if it summarizes changes (e.g. a data-quality log).
+     8. Resume the live task and consumers; drop `<T>_SINCE`; keep the swapped-out table until the user signs off, then drop it.
+     To check in Development before relying on it: what a swap does to existing streams, whether `BEFORE(STATEMENT => <CALL id>)` resolves to before the worker's update, and the Terraform provider's stream `at`/`before` support.
+4. Tell the user the restore window in the kickoff summary ("full restore possible until <date>"), and in the final report.
 
 ## 13. Progress reports
 
@@ -103,7 +136,7 @@ Every finding states its confidence: *confirmed* (the evidence shows it) or *lik
 2. Save the final rows-touched result as `rows_touched_<ENV>.md` (the markdown table) and, if any issue was found, the issue analysis as `analysis_<ENV>.md`. Get the credits through the query loop (serverless: `SNOWFLAKE.ACCOUNT_USAGE.SERVERLESS_TASK_HISTORY` for the backfill task — up to ~3 h latency; warehouse and test runs: `SNOWFLAKE.ACCOUNT_USAGE.QUERY_ATTRIBUTION_HISTORY` by the run log's query ids — up to ~8 h latency) into `credits_<ENV>.json` as `[{"SOURCE","CREDITS","NOTE"}]`.
 3. Run `python3 -I <skill>/scripts/report.py backfills/<TABLE>_<TICKET>/report_control.json backfills/<TABLE>_<TICKET>/report_runlog.json --estimate-hours <total time to finish from the chosen option> --rows-touched backfills/<TABLE>_<TICKET>/rows_touched_<ENV>.md [--analysis backfills/<TABLE>_<TICKET>/analysis_<ENV>.md] [--credits backfills/<TABLE>_<TICKET>/credits_<ENV>.json] --out backfills/<TABLE>_<TICKET>/report_<ENV>.html`. The report shows the rows-touched table and flags any `STILL_EMPTY`; the analysis section appears whenever an analysis file is given.
 4. Open it: `open backfills/<TABLE>_<TICKET>/report_<ENV>.html`.
-5. Summarize it in a few plain lines: total rows, total time vs the estimate, average speed, credits, and every issue with its likely cause (or "no issues").
+5. Summarize it in a few plain lines: total rows, total time vs the estimate, average speed, credits, every issue with its likely cause (or "no issues"), and the date the restore window closes (restore point + retention) — after that only the surgical undo remains.
 
 The report holds counts, times and states only — no data values. It is committed with the archived worker in step 15 (both `report_Development.html` and `report_Production.html`).
 
