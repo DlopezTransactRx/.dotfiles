@@ -33,8 +33,8 @@ Show this list at the start and again after every step, with ✅ done / ▶ next
 6. ⬜ **Deploy the worker to Development** (user promotes the PR).
 7. ⬜ **Q3 — Does it fix one day, and leave it alone on a re-run?** (Development writes)
 8. ⬜ **Speed test — how long does a heavy hour take?** (Development write + timing)
-9. ⬜ **Development volume** — rows to fill per day (read-only)
-10. ⬜ **Production volume** — rows to fill per day (read-only)
+9. ⬜ **Development volume** — rows to fill per day, plus the per-hour coverage check: predicted rows the worker cannot match (read-only)
+10. ⬜ **Production volume** — rows to fill per day, plus the per-hour coverage check (read-only)
 11. ⬜ **Estimates** — two tables, Development and Production; each recommends one warehouse + one chunk size (one backfill, set and forget); the user picks an option for each.
 12. ⬜ **Kick off** — register and start the chosen option (user runs, with permission).
 13. ⬜ **Progress reports** — on the schedule the user chooses; each shows the rows-touched table (what the target itself shows, per chunk).
@@ -75,6 +75,7 @@ Before the first file, make sure the owning repo's `.gitignore` has `backfills/`
 
 ## Red flags — stop
 
+- Estimating or kicking off without the per-hour coverage check (verification.md § Coverage per hour) — a gap found only after the run should have been predicted before it.
 - Reporting a gap, failure, count mismatch or badly slow chunk without having run the issue analysis (run-and-report.md § Issue analysis) — run it first, unasked.
 - Kicking off while a standard stream on the target has a consumer whose impact was not predicted and whose handling the user has not chosen → gather.md § Streams on the target.
 - About to run a `CALL`/DML yourself → it goes through the query loop instead.

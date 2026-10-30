@@ -70,6 +70,17 @@ FROM (
 
 It returns duration, warehouse and size in one row, so the user never has to ask how to find them. Never ask the user for a timing without having given this query.
 
+### § Coverage per hour — predict the gap before kickoff (both environments, READ-ONLY)
+
+Q1 proves the worker matches every row **in one test window**. A range can still hold windows the worker cannot match — rows with no stage copy, or rows the live load built with different logic at the time (TRANSACTION_LOG #182: 7,032 rows inserted while a since-rolled-back split change was live; found only after the run). Find them before kickoff, cheapest check first:
+
+1. **Ratio sieve (counts only, `CLAUDE`).** From the per-hour volume query (`EMPTY_ROWS` and `STAGE_COPIES` per hour — already collected for sizing), compute each hour's ratio = rows to fill ÷ stage copies. Find the table's normal ratio (median over hours with ≥ 100 rows). Flag hours with **0 copies**, or a ratio more than **1.5x the median** (more rows than the source normally yields). One copy may legitimately produce several rows, so judge against the table's own normal, not against 1.
+2. **Live-load history (free).** `git log` on the live load's Terraform over the whole backfill range: any commit that changed the split, the match key or its inputs, the live filters, or the derivations. For each, find when it deployed and when it was replaced in **this** environment (merge times into `Development` / `Production`). Add every such window to the flagged hours — the ratio may not move when only the key changed.
+3. **Exact check on what was flagged (query loop, user runs — UDFs).** Run the Q1 logic (`q1_find_rows.sql`) over the flagged hours only: `EMPTY_UNMATCHED` is the exact number of rows the worker will leave empty there. Batch adjacent flagged hours into one window per run; keep each run bounded (a few days).
+4. **Report the prediction** with the estimates: unmatched rows per window, the likely cause (no stage copy / logic change with its commits / unknown), and the options from run-and-report.md § Issue analysis (fill from another source, repair the window, correction worker, accept). The user decides **before** kickoff; record the choice in `progress.md`. After the run, `STILL_EMPTY` should equal the predicted count — anything more triggers the issue analysis.
+
+Save the flagged hours and results as `coverage_<ENV>.json` (counts only).
+
 **Spikes.** Count guard-NULL rows per day over the whole range and name any day far above the median (e.g. a bulk-load day). **Never split the range into several backfills because of a spike.** A backfill is set and forget: one registered backfill, one chunk size, one warehouse, run to completion. A spike only makes the longest chunk longer; the sizer accounts for it (longest chunk, time limit) and moves to a bigger warehouse when a chunk would run too long.
 
 Rate for sizing: `N / elapsed seconds` from step 4.
@@ -83,7 +94,7 @@ Stop at the first failing step and say which check failed and what it means. Do 
 | Drift | `GET_DDL('TASK', '<live task in PROD>')` | Must match the Terraform |
 | Framework | `SHOW TABLES LIKE 'BACKFILL_CONTROL' IN SCHEMA <framework PROD>` | Must exist before kickoff; if not, the framework is not deployed in Production yet |
 | Preview | Step 2 above on one recent Production window | Source unique; keys match guard-NULL rows |
-| Coverage | `MIN(<stage window col>)` of the stage vs `MIN(<target window col>)` of guard-NULL target rows; count of guard-NULL target rows older than the stage minimum | Rows older than the stage cannot be rebuilt — report the count |
+| Coverage | `MIN(<stage window col>)` of the stage vs `MIN(<target window col>)` of guard-NULL target rows; count of guard-NULL target rows older than the stage minimum; then § Coverage per hour | Rows older than the stage cannot be rebuilt — report the count; per-hour gaps — report the predicted count |
 | Daily volume | Over the range: guard-NULL target rows per day (rows to update) and, for stage replay, stage rows per day (copies to read) | Feeds the recommendation |
 
 ### Recommendation — one warehouse + one chunk size, with an ETA
