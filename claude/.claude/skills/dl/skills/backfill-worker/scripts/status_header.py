@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Progress-report header: an ASCII-art "Status: <backfill name>" banner, then two progress bars.
+"""Progress-report header: an ASCII-art "Status: <backfill name>" banner, the time the report was generated
+(local time zone), then two progress bars.
 
 Rows bar   = rows filled by this backfill / rows it had to fill (the STILL_EMPTY total at kickoff).
 Chunks bar = chunks done / total chunks, plus what is running now.
@@ -9,7 +10,7 @@ Usage:
       [--running "chunk 1 running, 21 min"]
 The banner uses figlet (font "small") when it is installed, plain text otherwise. Counts only.
 """
-import argparse, shutil, subprocess
+import argparse, datetime as dt, shutil, subprocess
 
 WIDTH = 30
 
@@ -37,6 +38,7 @@ def main():
     rows = o.filled / o.to_fill if o.to_fill else 1.0
     chunks = o.chunks_done / o.chunks if o.chunks else 1.0
     print(banner(f"Status: {o.name}"))
+    print(f"Generated: {dt.datetime.now().astimezone().strftime('%Y-%m-%d %-I:%M %p %Z')}")
     print()
     print(f"Rows    {bar(rows)} {100 * rows:5.1f}%   {o.filled:,} / {o.to_fill:,}")
     note = f"  ({o.running})" if o.running else ""
