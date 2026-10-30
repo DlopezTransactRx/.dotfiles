@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Progress-report header: an ASCII-art "Status: <backfill name>" banner, the time the report was generated
-(local time zone), then two progress bars.
+"""Progress-report header: an ASCII-art "Status: <backfill name>" banner, the time the report was generated and
+the ETA of the whole backfill (local time zone), then two progress bars.
 
 Rows bar   = rows filled by this backfill / rows it had to fill (the STILL_EMPTY total at kickoff).
 Chunks bar = chunks done / total chunks, plus what is running now.
 
 Usage:
   status_header.py --name TRANSACTION_LOG_182 --filled 0 --to-fill 299251880 --chunks-done 0 --chunks 9 \
-      [--running "chunk 1 running, 21 min"]
+      [--running "chunk 1 running, 21 min"] [--eta-min 79]
+--eta-min = minutes from now until the whole backfill should be done (the caller computes it: rows still to fill
+minus the running chunk's expected progress, divided by the observed rate, plus ~1 min per chunk not started).
+Omit it when there is no basis yet; the ETA then shows "unknown".
 The banner uses figlet (font "small") when it is installed, plain text otherwise. Counts only.
 """
 import argparse, datetime as dt, shutil, subprocess
@@ -34,11 +37,22 @@ def main():
     a.add_argument("--chunks-done", type=int, required=True)
     a.add_argument("--chunks", type=int, required=True)
     a.add_argument("--running", default="", help="short note, e.g. \"chunk 2 running, 3 min\"")
+    a.add_argument("--eta-min", type=float, help="minutes from now until the backfill should complete")
     o = a.parse_args()
     rows = o.filled / o.to_fill if o.to_fill else 1.0
     chunks = o.chunks_done / o.chunks if o.chunks else 1.0
     print(banner(f"Status: {o.name}"))
-    print(f"Generated: {dt.datetime.now().astimezone().strftime('%Y-%m-%d %-I:%M %p %Z')}")
+    now = dt.datetime.now().astimezone()
+    stamp = lambda t: t.strftime("%Y-%m-%d %-I:%M %p %Z")
+    if o.eta_min is None:
+        eta = "unknown"
+    elif o.eta_min <= 0:
+        eta = "now (finishing)"
+    else:
+        h, m = divmod(round(o.eta_min), 60)
+        left = f"{h} h {m} min" if h else f"{m} min"
+        eta = f"{stamp(now + dt.timedelta(minutes=o.eta_min))} (in ~{left})"
+    print(f"Generated: {stamp(now)}    ETA: {eta}")
     print()
     print(f"Rows    {bar(rows)} {100 * rows:5.1f}%   {o.filled:,} / {o.to_fill:,}")
     note = f"  ({o.running})" if o.running else ""
