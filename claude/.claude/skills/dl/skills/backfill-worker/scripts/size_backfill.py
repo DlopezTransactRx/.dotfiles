@@ -36,6 +36,7 @@ ENV_SIZES = {
 }
 CHEAP_BAND = 1.25        # Production: fastest option within 25% of the cheapest option's credits
 FRAMEWORK_MAX_MIN = 1440  # REGISTER_BACKFILL refuses a longer time limit
+SCALE_WARN = 4            # flag a plan whose biggest chunk updates > 4x the rows of the largest speed-test CALL
 
 def calendar(days):
     """Fill missing dates with zero rows so chunks align to the range start, as the framework's do."""
@@ -67,11 +68,14 @@ def best_chunk(days, rate, overhead_s, cap_s, xs_rate=None, ceiling_min=FRAMEWOR
     for label, n in CHUNKS:
         rows = chunk_rows(days, n)
         runs = [overhead_s + r / rate for r in rows]
+        if xs_rate is not None and runs:
+            # Serverless: the first chunk has no history, so Snowflake runs it at the XSMALL start size.
+            runs[0] = overhead_s + rows[0] / xs_rate
         wall = sum(max(60, math.ceil(r / 60) * 60) for r in runs)
         longest = max(runs)
         gate = longest if xs_rate is None else overhead_s + max(rows) / xs_rate  # what the time limit must cover
         cand = {"chunk": label, "chunks": len(runs), "longest": longest, "gate": gate,
-                "compute": sum(runs), "wall": wall}
+                "compute": sum(runs), "wall": wall, "max_rows": max(rows)}
         ok = longest <= cap_s and 2 * gate <= ceiling_min * 60
         if closest is None or cand["gate"] < closest["gate"]:
             closest = cand
@@ -102,6 +106,8 @@ def main():
                    help="the warehouse's STATEMENT_TIMEOUT_IN_SECONDS (SHOW PARAMETERS ... IN WAREHOUSE); caps warehouse rows")
     a.add_argument("--serverless-multiplier", type=float, default=0.9,
                    help="credits per compute-hour multiplier for serverless tasks (check Snowflake's consumption table)")
+    a.add_argument("--tested-rows", type=int,
+                   help="rows updated by the largest single speed-test CALL; chunks far beyond it are flagged")
     a.add_argument("--sizes", help="comma list overriding the environment's sizes")
     a.add_argument("--label", default="backfill", help="e.g. \"TRANSACTION_LOG #182, Production\"")
     o = a.parse_args()
@@ -166,8 +172,10 @@ def main():
         mark = " ★" if r is rec else ""
         b = r["best"]
         if b:
+            scale = b["max_rows"] / o.tested_rows if o.tested_rows else 0
+            flag = f" ⚠ {scale:.0f}x tested" if scale > SCALE_WARN else ""
             print(f"| {i}{mark} | {label} | {1e6/r['rate']:.1f} µs{tag} | {b['chunk']} | {b['chunks']:,} | "
-                  f"{b['limit']} min | {fmt_min(b['compute'] / b['chunks'])} | {fmt_min(b['longest'])} | {fmt_h(b['compute'])} | "
+                  f"{b['limit']} min | {fmt_min(b['compute'] / b['chunks'])} | {fmt_min(b['longest'])}{flag} | {fmt_h(b['compute'])} | "
                   f"{fmt_h(b['wall'])} | ~{r['credits']:,.0f} |")
         else:
             m = r["miss"]
@@ -182,6 +190,11 @@ def main():
               f"~{fmt_h(b['wall'])}, ~{rec['credits']:,.0f} credits.** Why: {why}.\n")
     else:
         print("**No option fits.** Raise --max-chunk-min or add bigger sizes.\n")
+    if rec and o.tested_rows and rec["best"]["max_rows"] > SCALE_WARN * o.tested_rows:
+        print(f"⚠ **The recommended plan's biggest chunk updates {rec['best']['max_rows']:,} rows in one call — "
+              f"{rec['best']['max_rows'] / o.tested_rows:.0f}x the largest speed test ({o.tested_rows:,}).** Speed does not "
+              "scale linearly that far (TRANSACTION_LOG #182: a 221M-row chunk ran at 45% of the 25M-row test rate). "
+              "Re-test at that scale in Development before trusting these times.\n")
     print("Warehouse timeout = the most one chunk may run before Snowflake stops it (the backfill's time limit per "
           "chunk, set to ~2x the longest chunk); compare it with Avg time per chunk and Longest chunk to see the "
           "headroom. Processing time = time the compute is working. Total time to finish = start to done, including the "
@@ -193,8 +206,10 @@ def main():
           "fixed cost per chunk; 1 chunk per minute minimum. Warehouse timeout ≤ the warehouse statement timeout "
           f"({o.wh_timeout_s:,} s) and ≤ {FRAMEWORK_MAX_MIN} min. Serverless: Snowflake picks the size (starts at "
           "XSMALL, scales up to the account's SERVERLESS_TASK_MAX_STATEMENT_SIZE), so its speed is not guaranteed — only serverless at the measured size can be recommended, other serverless rows are "
-          "scenarios; its "
-          f"warehouse timeout covers the longest chunk at XSMALL speed, max {FRAMEWORK_MAX_MIN} min.")
+          "scenarios; its first chunk is timed at XSMALL speed (no history yet) and its "
+          f"warehouse timeout covers the longest chunk at XSMALL speed, max {FRAMEWORK_MAX_MIN} min."
+          + (f" ⚠ marks a biggest chunk more than {SCALE_WARN}x the largest speed test ({o.tested_rows:,} rows)." if o.tested_rows else
+             " Pass --tested-rows to flag chunks far beyond the speed test."))
 
 if __name__ == "__main__":
     main()
