@@ -7,7 +7,9 @@ input=$(cat)
 model_id=$(echo "$input" | jq -r '.model.id // "unknown"')
 model_display=$(echo "$input" | jq -r '.model.display_name // "Claude"')
 project_dir=$(echo "$input" | jq -r '.workspace.project_dir // .workspace.current_dir // ""')
-session_start=$(echo "$input" | jq -r '.session_start // empty')
+session_name=$(echo "$input" | jq -r '.session_name // empty')
+cost_usd=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
+duration_ms=$(echo "$input" | jq -r '.cost.total_duration_ms // 0')
 used_percent=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
 
 # Determine model short name
@@ -53,24 +55,12 @@ for ((i=0; i<empty; i++)); do
     progress+="·"
 done
 
-# Calculate cost (placeholder - you'll need actual token costs)
-total_input=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
-total_output=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
-# Rough cost estimation (adjust rates as needed)
-cost=$(echo "scale=2; ($total_input * 0.000003) + ($total_output * 0.000015)" | bc -l 2>/dev/null || echo "0.00")
+# Cost as reported by Claude Code (list-price estimate, all models)
+cost=$(printf "%.2f" "$cost_usd" 2>/dev/null || echo "0.00")
 
-# Calculate elapsed time (if session_start is available)
-elapsed="0m 0s"
-if [ -n "$session_start" ]; then
-    start_epoch=$(date -j -f "%Y-%m-%dT%H:%M:%S" "${session_start:0:19}" "+%s" 2>/dev/null || echo "0")
-    now_epoch=$(date +%s)
-    if [ "$start_epoch" -gt 0 ]; then
-        elapsed_seconds=$((now_epoch - start_epoch))
-        minutes=$((elapsed_seconds / 60))
-        seconds=$((elapsed_seconds % 60))
-        elapsed="${minutes}m ${seconds}s"
-    fi
-fi
+# Elapsed session time as reported by Claude Code
+duration_s=$(( ${duration_ms%.*} / 1000 ))
+elapsed="$((duration_s / 60))m $((duration_s % 60))s"
 
 # ANSI color codes (dimmed as noted)
 RESET="\033[0m"
@@ -79,10 +69,18 @@ GREEN="\033[32m"
 YELLOW="\033[33m"
 BLUE="\033[34m"
 CYAN="\033[36m"
+MAGENTA="\033[35m"
+
+# Session name segment (only when the session has a name or title)
+name_segment=""
+if [ -n "$session_name" ]; then
+    name_segment=" ${MAGENTA}🏷${RESET} ${session_name} ${DIM}|${RESET}"
+fi
 
 # Build status line
-printf "${DIM}[${RESET}%s${DIM}]${RESET} ${BLUE}📁${RESET} %s ${DIM}|${RESET} ${GREEN}🌿${RESET} %s ${GREEN}%s${RESET} ${CYAN}%d%%${RESET} ${DIM}|${RESET} ${YELLOW}\$%s${RESET} ${DIM}|${RESET} 🕐 %s" \
+printf "${DIM}[${RESET}%s${DIM}]${RESET}%b ${BLUE}📁${RESET} %s ${DIM}|${RESET} ${GREEN}🌿${RESET} %s ${GREEN}%s${RESET} ${CYAN}%d%%${RESET} ${DIM}|${RESET} ${YELLOW}\$%s${RESET} ${DIM}|${RESET} 🕐 %s" \
     "$model_short" \
+    "$name_segment" \
     "$project_name" \
     "$git_branch" \
     "$progress" \
