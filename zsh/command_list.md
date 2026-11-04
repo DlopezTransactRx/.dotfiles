@@ -21,6 +21,7 @@
 [ras] [Postgres - Edit Passwords] nvim ~/.pgpass && chmod 600 ~/.pgpass
 [ras] [Postgres - Alias List] pgcli --list-dsn
 [ras] [Postgres - DB Connect] p=$(pgcli --list-dsn | cut -d: -f1 | gum filter) && print -z "pgcli -D $p"
+[ras] [Snowflake - Update Client Version] echo "Updating SnowSql" | lolcat && gum spin -- sh -c 'snowsql --upgrade --version' | lolcat
 [ras] [Snowflake - Edit Config] nvim	 ~/.snowflake/config.toml
 [ras] [Snowflake - Connect] p=$(snow connection list --format CSV |rg -v connection_name | cut -d, -f1 | gum filter) && print -z "snow sql -c $p"
 [ras] [GitHub Login] gh auth login
