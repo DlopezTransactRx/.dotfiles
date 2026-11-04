@@ -70,11 +70,12 @@ YELLOW="\033[33m"
 BLUE="\033[34m"
 CYAN="\033[36m"
 MAGENTA="\033[35m"
+NAME_GREEN="\033[1;92m"  # bold bright green
 
 # Session name segment (only when the session has a name or title)
 name_segment=""
 if [ -n "$session_name" ]; then
-    name_segment=" ${MAGENTA}🏷${RESET} ${session_name} ${DIM}|${RESET}"
+    name_segment=" ${MAGENTA}🏷${RESET} ${NAME_GREEN}${session_name}${RESET} ${DIM}|${RESET}"
 fi
 
 # Build status line
