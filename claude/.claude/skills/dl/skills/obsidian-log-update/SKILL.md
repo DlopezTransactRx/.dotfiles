@@ -182,6 +182,29 @@ Detail does not belong here. It belongs where someone will act on it: a code com
 site, the PR body, or an issue. The log's job is to say *what changed and where to look*, so
 future-you can re-enter the work in thirty seconds.
 
+### Plain language in `## WHAT CHANGED`
+
+Write it the way you would tell a colleague who has never seen the system. **Plain talk, no
+analogies.**
+
+- **Open with one plain sentence** that says what is true now, at 10,000 feet.
+- Then short bullets: a bold plain label, then everyday words. Short sentences, one idea each.
+- **No identifiers in this section** - no role, table, schema, file, variable, or resource names,
+  no privilege lists, no counts of grants. Say what the thing does for people ("each environment
+  has its own pool for running ML containers"), not what it is called. The exact names live in
+  the commits and PRs, which `## GIT` and `## PRs` already link.
+- No analogies or metaphors. No *why* beyond a few words; the why is in the PR body.
+
+```markdown
+## WHAT CHANGED
+The data science team's ML pipelines now have their own access in Snowflake.
+- **ML pipeline roles** - one role per environment (dev, stage, prod). Each can build and run ML work in the two ML project schemas in CPE, and nowhere else.
+- **Pipeline login** - a dev service account for the ML GitHub repo. It has no password or key; only that repo's GitHub Actions can sign in with it.
+```
+
+`## GIT` and `## PRs` keep their exact commit hashes, PR numbers, links, and plan/apply counts.
+Plain language applies to `## WHAT CHANGED` (and the compact form's sentence), not to the links.
+
 ### Compact form for small changes
 
 Use it when the work is **one commit, one PR, and no issue**: a user added or disabled, a
@@ -211,7 +234,8 @@ scannable at a glance:
 
 ```markdown
 ## WHAT CHANGED
-- **Thing** - one or two lines. What it does now, not how it was built.
+One plain sentence on what is true now.
+- **Plain label** - one or two lines in everyday words. What it does now, not how it was built.
 
 ## GIT
 - `abc1234` commit subject
@@ -225,8 +249,12 @@ scannable at a glance:
 - [#N](url) title - one line on what it holds
 ```
 
-Drop a section that has no content. Add at most one extra (`## NEXT STEPS`, `## VERIFICATION`
-for a screenshot) and only when it carries something the four cannot.
+Drop a section that has no content. Add at most one extra (`## VERIFICATION` for a screenshot)
+and only when it carries something the four cannot.
+
+**Never add `## NEXT STEPS`**, an open-items list, or follow-up bullets anywhere in the entry. The
+log records what was done. An open loop goes to the GTD list (`obsidian-todo` skill) or into an
+issue - not into the daily note.
 
 ### Rules
 
@@ -254,8 +282,8 @@ bullets of caveats, open an issue and link it instead.
 
 ### Do not write these
 
-`## PROBLEM`, `## ROOT CAUSE`, `## FIX`, `## WHY`, `## EXECUTED`, `## ALSO FOUND`, or a narrative of
-the reasoning. They pull the entry toward a write-up. The *what* and the *where* are the
+`## PROBLEM`, `## ROOT CAUSE`, `## FIX`, `## WHY`, `## EXECUTED`, `## ALSO FOUND`, `## NEXT STEPS`,
+`## TODO`, `## FOLLOW UP`, or a narrative of the reasoning. They pull the entry toward a write-up. The *what* and the *where* are the
 deliverable; the *why* lives in the commit message and PR body, which the log already links.
 
 ### The user may append to an existing stub
@@ -352,6 +380,9 @@ Rules:
 | Pasting SQL or code blocks | Put them in the issue or PR; the log links to them |
 | Three bullets of caveats under `## WATCH OUT` | Open an issue and link it; keep 1-2 lines max |
 | `## PROBLEM` / `## ROOT CAUSE` / `## FIX` headers | Use `## WHAT CHANGED` — those pull toward a write-up |
+| A `## NEXT STEPS` section or follow-up bullets | Leave them out. Open loops go to GTD (`obsidian-todo`) or an issue |
+| Role, table, file or privilege names in `## WHAT CHANGED` | Plain words for what it does; the names live in the linked commits and PRs |
+| An analogy or metaphor in the entry | Plain talk only |
 | Omitting the CI result | Always include the run link + plan/apply counts |
 | Appending a new entry when the user already wrote a matching stub | Fill in that entry's body; leave their header and tag line alone |
 | Inventing a new tag when one exists | Grep the vault first |
