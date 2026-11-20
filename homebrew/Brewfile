@@ -132,6 +132,8 @@ brew "snowflake-cli"
 brew "starship"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
+# TUI explorer application for Amazon S3
+brew "stu"
 # Feature-rich console based todo list manager
 brew "task"
 # Very fast implementation of tldr in Rust
