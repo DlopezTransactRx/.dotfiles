@@ -111,38 +111,3 @@ function nt(){
 function ras() {
   _cmd_category ras "$@"
 }
-
-# Pick an AWS profile and an MWAA (Airflow 3) environment with gum, then log airflowctl in.
-# Trades an MWAA web login token for an Airflow API token (~12h). Re-run when it expires.
-# Exports AIRFLOW_CLI_ENVIRONMENT so later airflowctl commands don't need -e.
-function mwaa-login() {
-  command -v airflowctl >/dev/null || {
-    gum style --foreground 196 "airflowctl not installed. Run: uv tool install apache-airflow-ctl"
-    return 1
-  }
-
-  local profile envs env host token jwt
-  profile=$(aws configure list-profiles | gum filter --header 'AWS profile for Airflow') || return
-  [[ -n "$profile" ]] || return
-
-  if ! aws sts get-caller-identity --profile "$profile" >/dev/null 2>&1; then
-    aws sso login --profile "$profile" || return
-  fi
-
-  envs=$(aws mwaa list-environments --profile "$profile" --query 'Environments[]' --output text | tr '\t' '\n')
-  [[ -n "$envs" ]] || { gum style --foreground 196 "No Airflow (MWAA) environments in $profile"; return 1; }
-  env=$(print -r -- "$envs" | gum choose --header 'Airflow (MWAA) environment') || return
-  [[ -n "$env" ]] || return
-
-  read -r host token < <(aws mwaa create-web-login-token --name "$env" --profile "$profile" \
-    --query '[WebServerHostname,WebToken]' --output text)
-  [[ -n "$token" ]] || { gum style --foreground 196 "Could not get an MWAA login token for $env"; return 1; }
-
-  jwt=$(curl -s -c - -o /dev/null -X POST "https://$host/pluginsv2/aws_mwaa/login" \
-    --data-urlencode "token=$token" | awk '$6=="_token"{print $7}')
-  [[ -n "$jwt" ]] || { gum style --foreground 196 "Airflow login failed for $env (no _token cookie)"; return 1; }
-
-  airflowctl auth login --api-url "https://$host" --api-token "$jwt" -e "$env" || return
-  export AIRFLOW_CLI_ENVIRONMENT="$env"
-  gum style --foreground 39 "✓ airflowctl logged in to $env ($profile). Try: airflowctl dags list -o table"
-}
