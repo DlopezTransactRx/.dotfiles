@@ -1,23 +1,25 @@
 tap "asmvik/formulae", "https://github.com/asmvik/homebrew-formulae.git"
 tap "charmbracelet/tap", trusted: true
+tap "dlopeztransactrx/tap", "https://github.com/DlopezTransactRx/homebrew-tap.git"
 tap "felixkratz/formulae", "https://github.com/FelixKratz/homebrew-formulae", trusted: true
 tap "gromgit/brewtils", trusted: true
 tap "hashicorp/tap", trusted: true
 tap "homebrew/bundle"
+tap "huseyinbabal/tap"
 tap "jesseduffield/lazygit", trusted: true
 tap "jhlee0409/tap"
 tap "nats-io/nats-tools", trusted: true
 tap "reyamira/tap", "https://github.com/reyamira/homebrew-tap.git"
 tap "snowflakedb/snowflake-cli", trusted: true
 tap "transactrx/tap", trusted: true
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@3"
 # Record and share terminal sessions
 brew "asciinema"
 # Securely store and access AWS credentials in development environments
 brew "aws-vault"
 # Official Amazon AWS command-line interface
 brew "awscli"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3"
 # Simple command-line tool to read AWS CloudWatch logs
 brew "awslogs"
 # Microsoft Azure CLI 2.0
@@ -50,6 +52,8 @@ brew "fabric-ai"
 brew "fd"
 # Banner-like program prints strings as ASCII art
 brew "figlet"
+# TUI application for Apache Airflow
+brew "flowrs"
 # Infamous electronic fortune-cookie generator
 brew "fortune"
 # Command-line fuzzy finder written in Go
@@ -132,7 +136,7 @@ brew "snowflake-cli"
 brew "starship"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
-# TUI explorer application for Amazon S3
+# TUI explorer application for Amazon S3 (AWS S3)
 brew "stu"
 # Feature-rich console based todo list manager
 brew "task"
@@ -146,6 +150,8 @@ brew "thefuck"
 brew "toilet"
 # Extremely fast Python package installer and resolver, written in Rust
 brew "uv"
+# Modern watch command
+brew "viddy"
 # Pager/text based browser
 brew "w3m"
 # Internet file retriever
@@ -160,28 +166,35 @@ brew "yazi"
 brew "zoxide"
 # A powerful terminal-based AI assistant for developers, providing intelligent coding assistance directly in your terminal.
 brew "charmbracelet/tap/crush"
+# Terminal UI for AWS Batch jobs, logs and EventBridge schedules
+brew "dlopeztransactrx/tap/batchtui", trusted: true
 # A window border system for macOS
 brew "felixkratz/formulae/borders"
 # Interactive TUI for Homebrew
 brew "gromgit/brewtils/taproom"
 # Terraform
 brew "hashicorp/tap/terraform"
+# Terminal UI for AWS
+brew "huseyinbabal/tap/taws", trusted: true
 # NATS utility
 brew "nats-io/nats-tools/nats"
 # A tool for creating NATS account and user access configurations
 brew "nats-io/nats-tools/nsc"
+# CLI to discover and drive NATS Agent Protocol agents and network tools
+brew "transactrx/tap/nats-agents", trusted: true
 # CLI tool to discover NATS services using the nats-service framework
 brew "transactrx/tap/nats-discover"
 # View, print, and comment on PDF documents
 cask "adobe-acrobat-reader"
 # Chromium based browser
 cask "arc"
-# Desktop password and login vault
+# Open source desktop password manager with encrypted vault and autofilling
 cask "bitwarden"
-# Browse and analyze Claude Code conversation history offline
 cask "jhlee0409/tap/claude-code-history-viewer", trusted: true
 # OpenAI's coding agent that runs in your terminal
 cask "codex"
+# Brings the power of Copilot coding agent directly to your terminal
+cask "copilot-cli"
 # Terminal emulator that uses platform-native UI and GPU acceleration
 cask "ghostty"
 # Free and open-source image editor
@@ -203,7 +216,7 @@ cask "microsoft-office"
 # Knowledge base that works on top of a local folder of plain text Markdown files
 cask "obsidian"
 # Workflow application to improve productivity
-cask "pastebot"
+cask "pastebot", pin: true
 # Collaboration platform for API development
 cask "postman"
 # Move and resize windows using keyboard shortcuts or snap areas
@@ -242,7 +255,6 @@ vscode "file-icons.file-icons"
 vscode "formulahendry.auto-rename-tag"
 vscode "formulahendry.code-runner"
 vscode "github.codespaces"
-vscode "github.copilot-chat"
 vscode "github.vscode-github-actions"
 vscode "github.vscode-pull-request-github"
 vscode "golang.go"
@@ -313,11 +325,13 @@ vscode "vue.volar"
 vscode "wayou.vscode-todo-highlight"
 vscode "xabikos.javascriptsnippets"
 vscode "yzhang.markdown-all-in-one"
+go "batchtui"
 go "github.com/go-delve/delve/cmd/dlv"
 go "github.com/golangci/golangci-lint/cmd/golangci-lint"
 go "golang.org/x/tools/gopls"
 go "github.com/securego/gosec/v2/cmd/gosec"
 go "honnef.co/go/tools/cmd/staticcheck"
+uv "apache-airflow-ctl"
 npm "@anthropic-ai/claude-code"
 npm "ansi"
 npm "neovim"

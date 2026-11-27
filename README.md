@@ -18,6 +18,7 @@ This repository contains my personal dotfiles for various tools, terminal config
 - **[Neovim](./nvim)**: Text editor configuration based on Kickstart.nvim
 - **[Git](./git)**: Global git configuration with delta integration
 - **[Homebrew](./homebrew)**: Package management with Brewfile
+- **[Flowrs](./flowrs)**: Generates the flowrs (Airflow terminal UI) config from AWS; see its README for setup
 
 ### Window Management
 - **[Yabai](./yabai)**: Tiling window manager for macOS

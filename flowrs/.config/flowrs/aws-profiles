@@ -1,0 +1,4 @@
+# AWS profiles (from ~/.aws/config) that flowrs-config.sh searches for Airflow (MWAA)
+# environments. One profile name per line. Lines starting with # are ignored.
+BATCH-DEV
+BATCH-PROD

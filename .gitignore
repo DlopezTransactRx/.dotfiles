@@ -1,3 +1,5 @@
 **/.claude/settings.local.json
 zsh/.zsh_hidden
 tmux/.tmux/resurrect/
+# flowrs config is generated from AWS and holds account details; never commit it
+flowrs/.config/flowrs/config.toml*
